@@ -1,6 +1,6 @@
 services:
   rapid7-docs-mcp:
-    build: .
+    image: rapid7-docs-mcp:latest
     ports:
       - "7000:7000"
     volumes:
