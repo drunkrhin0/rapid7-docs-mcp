@@ -11,6 +11,7 @@ services:
       - CRAWL_SECTIONS=   # leave empty to crawl all sections - otherwise specify section insightidr insightvm insightappsec insightconnect insightagent insightcloudsec metasploit nexpose appspider insightops threat-command surface-command
       - CRAWL_SCHEDULE=0 2 * * 0   # weekly Sunday 2am — use cron syntax
       - CRAWL_DELAY_MS=15           # ms between requests (~60 req/s)
+      - TZ=Australia/Perth # Your timezone here
 
     restart: unless-stopped
 
