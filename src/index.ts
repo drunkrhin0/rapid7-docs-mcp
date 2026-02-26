@@ -427,27 +427,35 @@ async function main(): Promise<void> {
     const transports = new Map<string, SSEServerTransport>();
 
     const httpServer = http.createServer(async (req, res) => {
-      const reqUrl = new URL(req.url!, `http://localhost:${port}`);
+      try {
+        const reqUrl = new URL(req.url!, `http://localhost:${port}`);
 
-      if (reqUrl.pathname === '/mcp') {
-        if (req.method === 'GET') {
-          const transport = new SSEServerTransport('/mcp', res);
-          transports.set(transport.sessionId, transport);
-          res.on('close', () => transports.delete(transport.sessionId));
-          await server.connect(transport);
-        } else if (req.method === 'POST') {
-          const sessionId = reqUrl.searchParams.get('sessionId') ?? '';
-          const transport = transports.get(sessionId);
-          if (transport) {
-            await transport.handlePostMessage(req, res);
+        if (reqUrl.pathname === '/mcp') {
+          if (req.method === 'GET') {
+            // Close previous connection if any (supports reconnection)
+            try { await server.close(); } catch { /* not connected yet */ }
+
+            const transport = new SSEServerTransport('/mcp', res);
+            transports.set(transport.sessionId, transport);
+            res.on('close', () => transports.delete(transport.sessionId));
+            await server.connect(transport);
+          } else if (req.method === 'POST') {
+            const sessionId = reqUrl.searchParams.get('sessionId') ?? '';
+            const transport = transports.get(sessionId);
+            if (transport) {
+              await transport.handlePostMessage(req, res);
+            } else {
+              res.writeHead(400).end('Unknown session');
+            }
           } else {
-            res.writeHead(400).end('Unknown session');
+            res.writeHead(405).end();
           }
         } else {
-          res.writeHead(405).end();
+          res.writeHead(404).end();
         }
-      } else {
-        res.writeHead(404).end();
+      } catch (err) {
+        console.error('Request error:', err);
+        if (!res.headersSent) res.writeHead(500).end(String(err));
       }
     });
 
