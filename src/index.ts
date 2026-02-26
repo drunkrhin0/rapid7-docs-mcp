@@ -3,7 +3,7 @@
  * Rapid7 Docs MCP Server
  * Exposes crawled Rapid7 documentation as MCP tools for Claude.
  *
- * Transport: stdio (for Claude Desktop)
+ * Transport: stdio (default) or HTTP (set MCP_TRANSPORT=http)
  *
  * Tools:
  *   - docs_search   : Full-text search across all crawled docs
@@ -13,14 +13,18 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as http from 'http';
+import { STOP_WORDS, stem } from './text.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const DOCS_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'docs');
 const INDEX_FILE = path.join(DOCS_DIR, 'index.json');
+const SEARCH_INDEX_FILE = path.join(DOCS_DIR, 'search-index.json');
 const MAX_RESULTS = 20;
 const SNIPPET_CHARS = 300;
 
@@ -34,58 +38,174 @@ interface IndexEntry {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// In-memory index cache with mtime-based invalidation
+let _indexCache: IndexEntry[] | null = null;
+let _indexMtime = 0;
+
 function loadIndex(): IndexEntry[] {
   if (!fs.existsSync(INDEX_FILE)) return [];
-  return JSON.parse(fs.readFileSync(INDEX_FILE, 'utf-8')) as IndexEntry[];
+  const mtime = fs.statSync(INDEX_FILE).mtimeMs;
+  if (_indexCache && mtime === _indexMtime) return _indexCache;
+  _indexCache = JSON.parse(fs.readFileSync(INDEX_FILE, 'utf-8')) as IndexEntry[];
+  _indexMtime = mtime;
+  return _indexCache;
 }
+
+// search-index.json: { p: paths[], i: { stem → docId[] } }
+interface SearchIndex {
+  p: string[];
+  i: Record<string, number[]>;
+}
+
+let _searchIndexCache: SearchIndex | null = null;
+let _searchIndexMtime = 0;
+
+function loadSearchIndex(): SearchIndex | null {
+  if (!fs.existsSync(SEARCH_INDEX_FILE)) return null;
+  const mtime = fs.statSync(SEARCH_INDEX_FILE).mtimeMs;
+  if (_searchIndexCache && mtime === _searchIndexMtime) return _searchIndexCache;
+  _searchIndexCache = JSON.parse(fs.readFileSync(SEARCH_INDEX_FILE, 'utf-8')) as SearchIndex;
+  _searchIndexMtime = mtime;
+  return _searchIndexCache;
+}
+
+const DOCS_DIR_RESOLVED = path.resolve(DOCS_DIR);
+
+// LRU doc content cache — avoids re-reading the same files on every search
+const _docCache = new Map<string, string>();
+const DOC_CACHE_MAX = 500;
 
 function readDoc(relativePath: string): string | null {
-  const fullPath = path.join(DOCS_DIR, relativePath);
+  const fullPath = path.resolve(path.join(DOCS_DIR, relativePath));
+  // Prevent path traversal outside docs directory
+  if (!fullPath.startsWith(DOCS_DIR_RESOLVED + path.sep) && fullPath !== DOCS_DIR_RESOLVED) {
+    return null;
+  }
+
+  // Cache hit — move to end (most-recently-used)
+  if (_docCache.has(relativePath)) {
+    const cached = _docCache.get(relativePath)!;
+    _docCache.delete(relativePath);
+    _docCache.set(relativePath, cached);
+    return cached;
+  }
+
   if (!fs.existsSync(fullPath)) return null;
-  return fs.readFileSync(fullPath, 'utf-8');
+  const content = fs.readFileSync(fullPath, 'utf-8');
+
+  // Evict oldest entry when at capacity
+  if (_docCache.size >= DOC_CACHE_MAX) {
+    _docCache.delete(_docCache.keys().next().value!);
+  }
+  _docCache.set(relativePath, content);
+  return content;
 }
 
-function extractSnippet(content: string, query: string): string {
-  const lower = content.toLowerCase();
-  const queryLower = query.toLowerCase();
-  const idx = lower.indexOf(queryLower);
-  if (idx === -1) return content.slice(0, SNIPPET_CHARS) + '...';
+function escapeRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
-  const start = Math.max(0, idx - 100);
-  const end = Math.min(content.length, idx + query.length + 200);
+function extractSnippet(content: string, queryTerms: string[]): string {
+  const lower = content.toLowerCase();
+
+  // Collect all positions where any query term appears
+  const positions: number[] = [];
+  for (const term of queryTerms) {
+    const re = new RegExp(escapeRegex(term), 'g');
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(lower)) !== null) positions.push(m.index);
+  }
+
+  if (positions.length === 0) return content.slice(0, SNIPPET_CHARS) + '...';
+
+  positions.sort((a, b) => a - b);
+
+  // Sliding window: find the start position that covers the most hits within SNIPPET_CHARS
+  let bestStart = positions[0];
+  let bestCount = 0;
+  let left = 0;
+  for (let right = 0; right < positions.length; right++) {
+    while (positions[right] - positions[left] > SNIPPET_CHARS) left++;
+    if (right - left + 1 > bestCount) {
+      bestCount = right - left + 1;
+      bestStart = positions[left];
+    }
+  }
+
+  const start = Math.max(0, bestStart - 40);
+  const end = Math.min(content.length, start + SNIPPET_CHARS);
   return (start > 0 ? '...' : '') + content.slice(start, end) + (end < content.length ? '...' : '');
 }
 
 function searchDocs(query: string, section?: string): Array<{ entry: IndexEntry; snippet: string; score: number }> {
   const index = loadIndex();
-  const queryTerms = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const rawTerms = query.toLowerCase().split(/\s+/).filter(Boolean);
+
+  // Stem query terms, filtering stop words
+  const meaningful = rawTerms.filter(t => !STOP_WORDS.has(t));
+  const stemmedTerms = (meaningful.length > 0 ? meaningful : rawTerms).map(t => stem(t));
+
+  const sectionPrefix = section ? section.replace(/\/$/, '') + '/' : null;
+  const entryMap = new Map(index.map(e => [e.path, e]));
+  const docScores = new Map<string, number>();
+
+  // Use both raw + stemmed terms for snippet highlighting
+  const snippetTerms = [...new Set([...rawTerms, ...stemmedTerms])];
+
+  const searchIdx = loadSearchIndex();
+
+  if (searchIdx) {
+    // Fast path: inverted index lookup — O(matching docs) instead of O(all docs)
+    const candidatePaths = new Set<string>();
+    for (const stemmed of stemmedTerms) {
+      const docIds = searchIdx.i[stemmed];
+      if (!docIds) continue;
+      for (const id of docIds) {
+        const docPath = searchIdx.p[id];
+        if (docPath) candidatePaths.add(docPath);
+      }
+    }
+
+    for (const docPath of candidatePaths) {
+      if (sectionPrefix && !docPath.startsWith(sectionPrefix)) continue;
+      const entry = entryMap.get(docPath);
+      if (!entry) continue;
+      const content = readDoc(docPath);
+      if (!content) continue;
+      const lowerContent = content.toLowerCase();
+      const lowerTitle = entry.title.toLowerCase();
+      let score = 0;
+      for (const stemmed of stemmedTerms) {
+        if (lowerTitle.includes(stemmed)) score += 10;
+        score += (lowerContent.match(new RegExp(escapeRegex(stemmed), 'g')) || []).length;
+      }
+      if (score > 0) docScores.set(docPath, score);
+    }
+  } else {
+    // Slow path: full scan fallback (no search-index.json yet)
+    for (const entry of index) {
+      if (sectionPrefix && !entry.path.startsWith(sectionPrefix)) continue;
+      const content = readDoc(entry.path);
+      if (!content) continue;
+      const lowerContent = content.toLowerCase();
+      const lowerTitle = entry.title.toLowerCase();
+      let score = 0;
+      for (const stemmed of stemmedTerms) {
+        if (lowerTitle.includes(stemmed)) score += 10;
+        score += (lowerContent.match(new RegExp(escapeRegex(stemmed), 'g')) || []).length;
+      }
+      if (score > 0) docScores.set(entry.path, score);
+    }
+  }
+
+  // Build results
   const results: Array<{ entry: IndexEntry; snippet: string; score: number }> = [];
-
-  for (const entry of index) {
-    // Section filter
-    if (section && !entry.path.startsWith(section)) continue;
-
-    const content = readDoc(entry.path);
+  for (const [docPath, score] of docScores) {
+    const entry = entryMap.get(docPath);
+    if (!entry) continue;
+    const content = readDoc(docPath);
     if (!content) continue;
-
-    const lowerContent = content.toLowerCase();
-    const lowerTitle = entry.title.toLowerCase();
-
-    // Score: title matches worth more than body matches
-    let score = 0;
-    for (const term of queryTerms) {
-      if (lowerTitle.includes(term)) score += 10;
-      const bodyMatches = (lowerContent.match(new RegExp(term, 'g')) || []).length;
-      score += bodyMatches;
-    }
-
-    if (score > 0) {
-      results.push({
-        entry,
-        snippet: extractSnippet(content, query),
-        score,
-      });
-    }
+    results.push({ entry, snippet: extractSnippet(content, snippetTerms), score });
   }
 
   return results.sort((a, b) => b.score - a.score).slice(0, MAX_RESULTS);
@@ -230,14 +350,18 @@ server.registerTool(
   'docs_list',
   {
     title: 'List Rapid7 Docs Sections',
-    description: `List all crawled Rapid7 documentation sections and their page counts.
-Also shows when docs were last crawled.
+    description: `List crawled Rapid7 documentation sections or browse pages within a section.
 
-Use this to understand what's available before searching, or to check if a section has been indexed.
+Without a section: shows all sections with page counts and last-crawled date.
+With a section: lists every indexed page title and file path in that section.
 
-Returns:
-  Object with section names as keys and page counts as values, plus total pages and index date.`,
-    inputSchema: z.object({}),
+Args:
+  - section (string, optional): Product section to browse e.g. "insightidr", "insightvm"
+
+Use this to understand what's available, then use docs_search or docs_read.`,
+    inputSchema: z.object({
+      section: z.string().optional().describe('Browse pages within a specific section e.g. insightidr'),
+    }),
     annotations: {
       readOnlyHint: true,
       destructiveHint: false,
@@ -245,13 +369,12 @@ Returns:
       openWorldHint: false,
     },
   },
-  async () => {
-    const sections = getSections();
-    const total = Object.values(sections).reduce((a, b) => a + b, 0);
+  async ({ section }) => {
+    const index = loadIndex();
     const indexStat = fs.existsSync(INDEX_FILE) ? fs.statSync(INDEX_FILE) : null;
     const lastCrawled = indexStat ? indexStat.mtime.toISOString() : 'Never';
 
-    if (total === 0) {
+    if (index.length === 0) {
       return {
         content: [{
           type: 'text',
@@ -260,6 +383,27 @@ Returns:
       };
     }
 
+    // Section browse mode
+    if (section) {
+      const prefix = section.replace(/\/$/, '') + '/';
+      const pages = index.filter(e => e.path.startsWith(prefix));
+      if (pages.length === 0) {
+        const sections = getSections();
+        const available = Object.keys(sections).join(', ');
+        return {
+          content: [{ type: 'text', text: `Section "${section}" not found or not indexed.\nAvailable sections: ${available}` }],
+        };
+      }
+      const pageList = pages.map(p => `  ${p.path.padEnd(60)} ${p.title}`).join('\n');
+      return {
+        content: [{ type: 'text', text: `**${section}** — ${pages.length} pages\n\n${pageList}` }],
+        structuredContent: { section, pages: pages.map(p => ({ path: p.path, title: p.title, url: p.url })) },
+      };
+    }
+
+    // Summary mode
+    const sections = getSections();
+    const total = Object.values(sections).reduce((a, b) => a + b, 0);
     const sectionText = Object.entries(sections)
       .sort((a, b) => b[1] - a[1])
       .map(([name, count]) => `  ${name.padEnd(25)} ${count} pages`)
@@ -278,9 +422,35 @@ Returns:
 // ─── Start ────────────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  const transport = new StdioServerTransport();
-  await server.connect(transport);
-  console.error('Rapid7 Docs MCP server running (stdio)');
+  if (process.env.MCP_TRANSPORT === 'http') {
+    const port = parseInt(process.env.PORT || '3000');
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+
+    await server.connect(transport);
+
+    const httpServer = http.createServer(async (req, res) => {
+      if (req.url === '/mcp') {
+        // Parse body for POST requests
+        let body: unknown;
+        if (req.method === 'POST') {
+          const chunks: Buffer[] = [];
+          for await (const chunk of req) chunks.push(chunk as Buffer);
+          body = JSON.parse(Buffer.concat(chunks).toString());
+        }
+        await transport.handleRequest(req, res, body);
+      } else {
+        res.writeHead(404).end();
+      }
+    });
+
+    httpServer.listen(port, () => {
+      console.error(`Rapid7 Docs MCP server running (HTTP on port ${port})`);
+    });
+  } else {
+    const transport = new StdioServerTransport();
+    await server.connect(transport);
+    console.error('Rapid7 Docs MCP server running (stdio)');
+  }
 }
 
 main().catch(err => {

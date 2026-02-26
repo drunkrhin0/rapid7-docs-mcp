@@ -1,0 +1,18 @@
+services:
+  rapid7-docs-mcp:
+    build: .
+    ports:
+      - "7000:7000"
+    volumes:
+      - docs-data:/app/docs
+    environment:
+      - MCP_TRANSPORT=http
+      - PORT=7000
+      - CRAWL_SECTIONS=insightidr
+      - CRAWL_SCHEDULE=0 2 * * 0   # weekly Sunday 2am — use cron syntax
+      - CRAWL_DELAY_MS=15           # ms between requests (~60 req/s)
+
+    restart: unless-stopped
+
+volumes:
+  docs-data:

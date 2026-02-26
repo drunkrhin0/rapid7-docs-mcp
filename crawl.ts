@@ -16,27 +16,28 @@ import * as cheerio from 'cheerio';
 import TurndownService from 'turndown';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as url from 'url';
+import { STOP_WORDS, stem, tokenize } from './src/text.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const BASE_URL = 'https://docs.rapid7.com';
 const DOCS_DIR = path.join(process.cwd(), 'docs');
-const DELAY_MS = 500;          // polite crawl delay between requests
-const MAX_PAGES = 2000;        // safety cap per run
+const DELAY_MS = parseInt(process.env.CRAWL_DELAY_MS || '15'); // ~60 req/s — fine for a CDN-backed docs site
 
 // Known Rapid7 product sections on docs.rapid7.com
 const PRODUCT_SECTIONS: Record<string, string> = {
-  insightidr:       '/insightidr/docs/',
-  insightvm:        '/insightvm/docs/',
+  insightidr:       '/insightidr/',
+  insightvm:        '/insightvm/',
   insightappsec:    '/insightappsec/',
-  insightconnect:   '/insightconnect/docs/',
+  insightconnect:   '/insightconnect/',
   insightagent:     '/insight-agent/',
+  insightcloudsec:  '/insightcloudsec/',
   metasploit:       '/metasploit/',
   nexpose:          '/nexpose/',
   appspider:        '/appspider/',
-  'tcell':          '/tcell/',
-  'velociraptor':   '/velociraptor/',
+  insightops:       '/insightops/',
+  'threat-command': '/threat-command/',
+  'surface-command':'/surface-command/',
 };
 
 // ─── Turndown setup ───────────────────────────────────────────────────────────
@@ -104,16 +105,15 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
 
     const $ = cheerio.load(resp.data);
 
-    // Extract main content — try common selectors used by docs sites
-    const contentEl =
-      $('main article').first() ||
-      $('main .content').first() ||
-      $('[role="main"]').first() ||
-      $('main').first() ||
-      $('article').first() ||
-      $('body');
-
     const title = $('h1').first().text().trim() || $('title').text().trim();
+
+    // Extract main content — try selectors in priority order, fall back to body
+    const CONTENT_SELECTORS = ['main article', 'main .content', '[role="main"]', 'main', 'article'];
+    let contentEl = $('body'); // fallback
+    for (const sel of CONTENT_SELECTORS) {
+      const el = $(sel).first();
+      if (el.length) { contentEl = el; break; }
+    }
 
     // Remove nav, sidebar, footer noise
     contentEl.find('nav, .nav, .sidebar, .toc, footer, .footer, .breadcrumb, script, style').remove();
@@ -171,7 +171,7 @@ async function crawlSection(startPath: string): Promise<void> {
 
   console.log(`\n🕷  Crawling: ${startUrl}`);
 
-  while (queue.length > 0 && count < MAX_PAGES) {
+  while (queue.length > 0) {
     const pageUrl = queue.shift()!;
     if (visited.has(pageUrl)) continue;
     visited.add(pageUrl);
@@ -188,8 +188,8 @@ async function crawlSection(startPath: string): Promise<void> {
     const filePath = urlToFilePath(pageUrl);
     ensureDir(filePath);
 
-    // Write markdown with frontmatter
-    const content = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\n---\n\n# ${title}\n\n${markdown}`;
+    // Write markdown with frontmatter (h1 comes from the converted HTML, don't duplicate it)
+    const content = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\n---\n\n${markdown}`;
     fs.writeFileSync(filePath, content, 'utf-8');
 
     const relativePath = path.relative(DOCS_DIR, filePath);
@@ -207,6 +207,50 @@ async function crawlSection(startPath: string): Promise<void> {
 
   updateIndex(newEntries);
   console.log(`\n✅ Crawled ${count} pages from ${startPath}`);
+}
+
+// ─── Search index builder ─────────────────────────────────────────────────────
+
+function buildSearchIndex(): void {
+  const indexPath = path.join(DOCS_DIR, 'index.json');
+  if (!fs.existsSync(indexPath)) return;
+
+  const entries: IndexEntry[] = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+  const paths: string[] = [];
+  const invertedIndex: Record<string, Set<number>> = {};
+
+  for (const entry of entries) {
+    const id = paths.length;
+    paths.push(entry.path);
+
+    const filePath = path.join(DOCS_DIR, entry.path);
+    if (!fs.existsSync(filePath)) continue;
+
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const allTokens = tokenize(entry.title + ' ' + content);
+    const stems = new Set<string>();
+    for (const token of allTokens) {
+      if (!STOP_WORDS.has(token)) stems.add(stem(token));
+    }
+
+    for (const s of stems) {
+      if (!invertedIndex[s]) invertedIndex[s] = new Set();
+      invertedIndex[s].add(id);
+    }
+  }
+
+  // Convert Sets to sorted arrays for JSON serialization
+  const serialized: Record<string, number[]> = {};
+  for (const [term, ids] of Object.entries(invertedIndex)) {
+    serialized[term] = Array.from(ids).sort((a, b) => a - b);
+  }
+
+  fs.writeFileSync(
+    path.join(DOCS_DIR, 'search-index.json'),
+    JSON.stringify({ p: paths, i: serialized })
+  );
+
+  console.log(`\n📇 Search index: ${Object.keys(serialized).length} stems across ${entries.length} docs`);
 }
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
@@ -244,6 +288,9 @@ async function main(): Promise<void> {
       await crawlSection(sectionPath);
     }
   }
+
+  // Build inverted search index from all crawled docs
+  buildSearchIndex();
 }
 
 main().catch(err => {

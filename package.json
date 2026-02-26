@@ -2,6 +2,7 @@
   "name": "rapid7-docs-mcp-server",
   "version": "1.0.0",
   "description": "MCP server for Rapid7 documentation reference",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
@@ -18,7 +19,6 @@
     "zod": "^3.22.0"
   },
   "devDependencies": {
-    "@types/cheerio": "^0.22.35",
     "@types/node": "^20.0.0",
     "@types/turndown": "^5.0.4",
     "tsx": "^4.0.0",
