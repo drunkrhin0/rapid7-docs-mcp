@@ -16,6 +16,7 @@ import * as cheerio from 'cheerio';
 import TurndownService from 'turndown';
 import * as fs from 'fs';
 import * as path from 'path';
+import { createHash } from 'crypto';
 import { STOP_WORDS, stem, tokenize } from './src/text.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
@@ -186,16 +187,24 @@ async function crawlSection(startPath: string): Promise<void> {
 
     const { markdown, links, title } = result;
     const filePath = urlToFilePath(pageUrl);
-    ensureDir(filePath);
-
-    // Write markdown with frontmatter (h1 comes from the converted HTML, don't duplicate it)
-    const content = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\n---\n\n${markdown}`;
-    fs.writeFileSync(filePath, content, 'utf-8');
-
     const relativePath = path.relative(DOCS_DIR, filePath);
-    newEntries.push({ path: relativePath, title, url: pageUrl });
 
-    console.log(`✓ ${title || '(untitled)'}`);
+    // Only write if content has changed
+    const newHash = createHash('md5').update(markdown).digest('hex');
+    const existingHash = fs.existsSync(filePath)
+      ? fs.readFileSync(filePath, 'utf-8').match(/^hash: "([a-f0-9]+)"$/m)?.[1]
+      : undefined;
+
+    if (existingHash === newHash) {
+      console.log(`↩ (unchanged)`);
+    } else {
+      ensureDir(filePath);
+      const content = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n${markdown}`;
+      fs.writeFileSync(filePath, content, 'utf-8');
+      console.log(`✓ ${title || '(untitled)'}`);
+    }
+
+    newEntries.push({ path: relativePath, title, url: pageUrl });
 
     // Enqueue new links
     for (const link of links) {
