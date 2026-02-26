@@ -13,7 +13,7 @@
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
+import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -424,27 +424,35 @@ Use this to understand what's available, then use docs_search or docs_read.`,
 async function main(): Promise<void> {
   if (process.env.MCP_TRANSPORT === 'http') {
     const port = parseInt(process.env.PORT || '3000');
-    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
-
-    await server.connect(transport);
+    const transports = new Map<string, SSEServerTransport>();
 
     const httpServer = http.createServer(async (req, res) => {
-      if (req.url === '/mcp') {
-        // Parse body for POST requests
-        let body: unknown;
-        if (req.method === 'POST') {
-          const chunks: Buffer[] = [];
-          for await (const chunk of req) chunks.push(chunk as Buffer);
-          body = JSON.parse(Buffer.concat(chunks).toString());
+      const reqUrl = new URL(req.url!, `http://localhost:${port}`);
+
+      if (reqUrl.pathname === '/mcp') {
+        if (req.method === 'GET') {
+          const transport = new SSEServerTransport('/mcp', res);
+          transports.set(transport.sessionId, transport);
+          res.on('close', () => transports.delete(transport.sessionId));
+          await server.connect(transport);
+        } else if (req.method === 'POST') {
+          const sessionId = reqUrl.searchParams.get('sessionId') ?? '';
+          const transport = transports.get(sessionId);
+          if (transport) {
+            await transport.handlePostMessage(req, res);
+          } else {
+            res.writeHead(400).end('Unknown session');
+          }
+        } else {
+          res.writeHead(405).end();
         }
-        await transport.handleRequest(req, res, body);
       } else {
         res.writeHead(404).end();
       }
     });
 
     httpServer.listen(port, () => {
-      console.error(`Rapid7 Docs MCP server running (HTTP on port ${port})`);
+      console.error(`Rapid7 Docs MCP server running (SSE on port ${port})`);
     });
   } else {
     const transport = new StdioServerTransport();
