@@ -105,6 +105,11 @@ function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Strip YAML frontmatter so snippets/scoring don't see hash/url/date noise */
+function stripFrontmatter(content: string): string {
+  return content.replace(/^---\n[\s\S]*?\n---\n/, '');
+}
+
 function extractSnippet(content: string, queryTerms: string[]): string {
   const lower = content.toLowerCase();
 
@@ -170,8 +175,9 @@ function searchDocs(query: string, section?: string): Array<{ entry: IndexEntry;
       if (sectionPrefix && !docPath.startsWith(sectionPrefix)) continue;
       const entry = entryMap.get(docPath);
       if (!entry) continue;
-      const content = readDoc(docPath);
-      if (!content) continue;
+      const raw = readDoc(docPath);
+      if (!raw) continue;
+      const content = stripFrontmatter(raw);
       const lowerContent = content.toLowerCase();
       const lowerTitle = entry.title.toLowerCase();
       let score = 0;
@@ -185,8 +191,9 @@ function searchDocs(query: string, section?: string): Array<{ entry: IndexEntry;
     // Slow path: full scan fallback (no search-index.json yet)
     for (const entry of index) {
       if (sectionPrefix && !entry.path.startsWith(sectionPrefix)) continue;
-      const content = readDoc(entry.path);
-      if (!content) continue;
+      const raw = readDoc(entry.path);
+      if (!raw) continue;
+      const content = stripFrontmatter(raw);
       const lowerContent = content.toLowerCase();
       const lowerTitle = entry.title.toLowerCase();
       let score = 0;
@@ -203,9 +210,9 @@ function searchDocs(query: string, section?: string): Array<{ entry: IndexEntry;
   for (const [docPath, score] of docScores) {
     const entry = entryMap.get(docPath);
     if (!entry) continue;
-    const content = readDoc(docPath);
-    if (!content) continue;
-    results.push({ entry, snippet: extractSnippet(content, snippetTerms), score });
+    const raw = readDoc(docPath);
+    if (!raw) continue;
+    results.push({ entry, snippet: extractSnippet(stripFrontmatter(raw), snippetTerms), score });
   }
 
   return results.sort((a, b) => b.score - a.score).slice(0, MAX_RESULTS);
@@ -251,7 +258,8 @@ Returns:
 
 Examples:
   - "How do I configure log sources in InsightIDR?" -> query="log source configuration", section="insightidr"
-  - "What CVSS scoring does InsightVM use?" -> query="CVSS scoring", section="insightvm"`,
+  - "What CVSS scoring does InsightVM use?" -> query="CVSS scoring", section="insightvm"
+  - "Find the Splunk extension plugin" -> query="Splunk", section="extensions"`,
     inputSchema: z.object({
       query: z.string().min(2).describe('Search terms'),
       section: z.string().optional().describe('Product section filter e.g. insightidr, insightvm'),
@@ -356,7 +364,7 @@ Without a section: shows all sections with page counts and last-crawled date.
 With a section: lists every indexed page title and file path in that section.
 
 Args:
-  - section (string, optional): Product section to browse e.g. "insightidr", "insightvm"
+  - section (string, optional): Product section to browse e.g. "insightidr", "insightvm", "extensions"
 
 Use this to understand what's available, then use docs_search or docs_read.`,
     inputSchema: z.object({

@@ -2,11 +2,11 @@
 set -e
 
 CRAWL_SCHEDULE="${CRAWL_SCHEDULE:-0 2 * * 0}"
+CRAWL_EXTENSIONS="${CRAWL_EXTENSIONS:-true}"
+EXTENSIONS_CRAWL_SCHEDULE="${EXTENSIONS_CRAWL_SCHEDULE:-0 3 * * 0}"
 
 # Build the crawl command — no CRAWL_SECTIONS means crawl everything
 if [ -n "$CRAWL_SECTIONS" ]; then
-  CRAWL_CMD_ARGS="--section $(echo $CRAWL_SECTIONS | tr ' ' '\n' | head -1)"
-  # will loop below for cron; for initial crawl run each section
   INITIAL_CRAWL() {
     for section in $CRAWL_SECTIONS; do
       npx tsx crawl.ts --section "$section"
@@ -28,11 +28,26 @@ if [ ! -f /app/docs/index.json ]; then
   INITIAL_CRAWL
 fi
 
-# Set up cron
-CRON_ENTRIES | crontab -
+# Initial extensions crawl if enabled and not yet indexed
+if [ "$CRAWL_EXTENSIONS" = "true" ] && [ ! -d /app/docs/extensions ]; then
+  echo "No extensions found — running initial extensions crawl"
+  npx tsx crawl-extensions.ts
+fi
+
+# Set up cron entries
+{
+  CRON_ENTRIES
+  # Extensions cron (if enabled)
+  if [ "$CRAWL_EXTENSIONS" = "true" ]; then
+    echo "${EXTENSIONS_CRAWL_SCHEDULE} cd /app && npx tsx crawl-extensions.ts >> /proc/1/fd/1 2>&1"
+  fi
+} | crontab -
 crond
 
 echo "Cron scheduled: ${CRAWL_SCHEDULE}${CRAWL_SECTIONS:+ for $CRAWL_SECTIONS}"
+if [ "$CRAWL_EXTENSIONS" = "true" ]; then
+  echo "Extensions cron: ${EXTENSIONS_CRAWL_SCHEDULE}"
+fi
 
 # Start MCP server as PID 1
 exec node dist/index.js
