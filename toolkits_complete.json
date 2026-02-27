@@ -1,0 +1,1920 @@
+{
+  "headerCards": [
+    {
+      "title": "Ransomware Containment Toolkit",
+      "description": "Quickly catch and contain ransomware using a fast chat-driven workflow",
+      "icon": "email-sender-warning",
+      "totalNumber": 22,
+      "url": "/wfh-playbook/RansomwareToolkit"
+    },
+    {
+      "title": "Phishing Tackle Box",
+      "description": "Automate your phishing playbook end-to-end with this complete tackle box.",
+      "icon": "fishing-hook-phishing",
+      "totalNumber": 13,
+      "url": "/wfh-playbook/PhishingTackleBox"
+    },
+    {
+      "title": "Vulnerability Management Automation Toolkit",
+      "description": "Handle vulnerability remediation at scale with these powerful workflows",
+      "icon": "rocket-launch",
+      "totalNumber": 24,
+      "url": "/wfh-playbook/InsightVM-Automation-Toolkit"
+    }
+  ],
+  "overviewCards": [
+    {
+      "title": "Phishing Tackle Box",
+      "description": "Modern security teams need to have a plan in place to rapidly detect and effectively respond to phishing attacks. A longtime favorite for attackers, it is estimated that phishing attacks account for more than 80% of reported security incidents.",
+      "link": "PhishingTackleBox",
+      "linkText": "Open the Tackle Box",
+      "icon": "phishing"
+    },
+    {
+      "title": "Vulnerability and Remediation Toolkit",
+      "description": "This toolkit helps security and IT collaborate effectively by integrating crucial communications channels like Slack or Microsoft Teams with ITSM solutions such as JIRA. It will also sync your vulnerability data with your patching solutions and make critical risk data easily accessible outside of Vulnerability Management.",
+      "link": "InsightVM-Automation-Toolkit",
+      "linkText": "Open the Toolkit",
+      "icon": "bug-virus-solid"
+    },
+    {
+      "title": "Ransomware Containment Toolkit",
+      "description": "Ransomware attacks are especially destructive in an already uncertain environment. Leveraging this toolkit will help lessen the severity of such attacks (or prevent them altogether) by containing, blocking, or reducing privileges to endpoints.",
+      "link": "RansomwareToolkit",
+      "linkText": "Open the Toolkit",
+      "icon": "vuln-hazard"
+    },
+    {
+      "title": "Threat Investigation Toolkit",
+      "description": "Context is everything when working with remote teams to neutralize a threat or resolve and incident. This toolkit can help you enrich your alerts and take action on incidents collaboratively, even in a distributed work environment.",
+      "link": "",
+      "icon": "global",
+      "comingSoon": true
+    },
+    {
+      "title": "Identity and Risk Based Access Toolkit",
+      "description": "As remote access to critical systems becomes the norm, this toolkit automates key workflows such as provisioning and deprovisioning, updating privileges based on group membership, and disabling or resetting user accounts.",
+      "link": "",
+      "icon": "hub",
+      "comingSoon": true
+    }
+  ],
+  "toolkits": [
+    {
+      "title": "Phishing Tackle Box",
+      "description": "Modern security teams need to have a plan in place to rapidly detect and effectively respond to phishing attacks. A longtime favorite for attackers, it is estimated that phishing attacks account for more than 80% of reported security incidents. ",
+      "link": "PhishingTackleBox",
+      "icon": "phishing",
+      "subTopics": [
+        {
+          "title": "Phishing Alerts",
+          "description": "Email is dead. Long live email. Forward alerts and key data points from reported phishing emails to Slack or Microsoft Teams.",
+          "icon": "notifications-bell",
+          "link": "PhishingAlerts",
+          "video": "//play.vidyard.com/JKwvuj4E86NirFNTScXASK.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "Funnel alerts and enriched indicators directly to Slack or Microsoft Teams for faster detection and action.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": " Get alerts directly in chat with enriched data"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Ensure everyone on the team is aware of the same things simultaneously"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Move quickly against threats and speed up investigation"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Phishing Alert Workflow Templates",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Post Office 365 Phishing Alerts to Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Microsoft_Office_365_Email_Indicators_to_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Microsoft_Office_365_Email_Indicators_to_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "50% of credentials that are harvested via phishing are collected within the first 60 minutes. This workflow helps speed up your reported phishing review process by pushing alerts and enriched IOCs safely to your team via Slack or Microsoft Teams."
+                },
+                {
+                  "id": "2",
+                  "name": "Post Exchange Phishing Alerts to Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Parse_Phishing_Indicators_with_Microsoft_Exchange_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Post_Exchange_Phishing_Alerts_to_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "50% of credentials that are harvested via phishing are collected within the first 60 minutes. This workflow helps speed up your reported phishing review process by pushing alerts and enriched IOCs safely to your team via Slack or Microsoft Teams."
+                },
+                {
+                  "id": "1",
+                  "name": "Post Gmail Phishing Alerts to Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Parse_Phishing_Indicators_with_Gmail_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Post_Gmail_Phishing_Alerts_to_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "50% of credentials that are harvested via phishing are collected within the first 60 minutes. This workflow helps speed up your reported phishing review process by pushing alerts and enriched IOCs safely to your team via Slack or Microsoft Teams."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Indicator Enrichment",
+          "description": "Indicators of compromise (IOCs) are crucial in positively identifying phishing attempts. These workflows extract and enrich IOCs to help you confidently respond to reported phishes.",
+          "icon": "binoculars-investigation",
+          "link": "IndicatorEnrichment",
+          "video": "//play.vidyard.com/wr9q9EnvBYEzb1AhEyTa7J.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "Find the information you need about threat indicators using Slack or Microsoft Teams chat commands.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Just type in chat to look up an IP address, domain name, hash, and more"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Bring visibility to your team's work by seeing progress out in the open"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Move quickly against threats and speed up investigation"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Indicator Enrichment Workflow Templates",
+              "sectionCopy": "Indicators of compromise (IOCs) are crucial in positively identifying phishing attempts. These workflows extract and enrich IOCs to help you confidently respond to reported phishes.",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Enrich Indicators with OSInt from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Open_Source_Indicator_Enrichment_with_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Open_Source_Indicator_Enrichment_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Threat Intelligence doesn\u2019t have to come with a cost. This workflow uses open-source intelligence (OSINT) to perform domain lookups, header analysis, hash analysis, and more directly from Slack or Microsoft Teams. Just connect your Chat app (Slack or Microsoft Teams) and activate this instant indicator enrichment workflow."
+                },
+                {
+                  "id": "2",
+                  "name": "Enrich URL with VirusTotal from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Slack_Chatbot_URL_Analysis_with_VirusTotal"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Microsoft_Teams_URL_Analysis"
+                    }
+                  ],
+                  "extendedDescription": "Roughly 88% of malicious URLs are delivered via email. This workflow reduces human interaction with suspicious links by automatically extracting and analyzing all URLs in a reported phishing email."
+                },
+                {
+                  "id": "4",
+                  "name": "Enrich IP with IPStack from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "GeoIP_Lookup_with_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "GeoIP_Lookup_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Email header information, like a sender\u2019s origin IP address, can reveal how and from where a malicious email arrived in your inbox. This workflow automates the extraction and geolocation or reputation lookup of an IP address from an email header."
+                },
+                {
+                  "id": "5",
+                  "name": "Enrich Hash with VirusTotal from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Slack_Chatbot_Hash_Analysis_with_VirusTotal"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Enrich_File_Hash_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "While some phishing emails contain links that direct users to malicious sites, others contain attachments that have malware themselves, warranting deeper analysis. This workflow safely extracts file attachment hashes and searches for matches in sandboxing or malware analysis solutions. "
+                },
+                {
+                  "id": "6",
+                  "name": "Unshorten URL with unshorten.me from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Unshorten_URL_with_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Unshorten_URL_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Obfuscated URLs are a favorite tactic for attackers looking to trick users into \u201cwatching hilarious cat videos''. This workflow takes an obfuscated or abbreviated URL (eg, bit.ly, tinyurl) and unshortens it, allowing you to lookup the real phishing link. "
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Email Remediation",
+          "description": "One phish, two phish, red phish, true phish. Use these workflows to delete phishing emails, find who else may have been targeted, and block the sender.",
+          "icon": "email",
+          "link": "EmailRemediation",
+          "video": "//play.vidyard.com/6DQsWrapkqBuxCUzB2XztY.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "Respond to confirmed phishing attempts by removing malicious emails from user inboxes and blocking the point of origin.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Use chat commands to search across user inboxes"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Use delete flags to remove malicious emails from inboxes"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Rapidly respond to phishing threats to minimize user exposure"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Email Remediation Workflow Templates",
+              "sectionCopy": "One phish, two phish, red phish, true phish. Use these workflows to delete phishing emails, find who else may have been targeted, and block the sender.",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Find and Delete Office 365 Emails from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Delete_O365_Emails_With_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Delete_Emails_from_O365_With_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Once you\u2019ve positively identified a phish, removing it from the user\u2019s inbox is critical. This workflow searches for an email with specific criteria such as sender, receiver, or subject and provides the option to delete matches from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "3",
+                  "name": "Purge Emails in Office 365 from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Purge_Office_365_Emails_with_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Purge_Office_365_Emails_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Understanding the scope of a phishing campaign is critical to ensuring no one in your organization takes the bait. This workflow runs a search from Slack or Microsoft Teams and purges emails across Office 365 or Exchange inboxes."
+                },
+                {
+                  "id": "5",
+                  "name": "Block Senders and Domains in Office 365 from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Sender_in_Office_365_with_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Sender_in_Office_365_with_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Don\u2019t fall for the same phish twice. This workflow uses a Slack or Microsoft Teams command to block domains and senders in Office 365."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "User Containment",
+          "description": "Compromised user credentials are a common thread through security incidents and breaches across organizations and threat actors. These workflows help you disrupt the attacker\u2019s kill chain by preventing them from using compromised user credentials for infiltration and lateral movement.",
+          "icon": "user-reporter",
+          "link": "UserContainment",
+          "video": "//play.vidyard.com/MRCYWYeLNLtaCpmZRwipVK.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "Stop savvy attackers from using their favorite trick, compromised user credentials, with simple chat commands to disable user accounts and force password resets.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Use chat commands to disable or reset a target user account."
+                  },
+                  {
+                    "id": "2",
+                    "name": "Keep your team informed of your response actions."
+                  },
+                  {
+                    "id": "3",
+                    "name": "Mitigate the risk of a new threat quickly and confidently."
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "User Containment Workflow Templates",
+              "sectionCopy": "Compromised user credentials are a common thread through security incidents and breaches across organizations and threat actors. These workflows help you disrupt the attacker\u2019s kill chain by preventing them from using compromised user credentials for infiltration and lateral movement.",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Disable User Account in Active Directory from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Suspend_AD_LDAP_User_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Disable_User_in_Active_Directory_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Disabling a compromised account can limit the scope of an attack and buy valuable time to investigate and contain the threat. This workflow disables a domain account straight from Slack or Microsoft Teams. "
+                },
+                {
+                  "id": "2",
+                  "name": "Disable User Account in Azure AD from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Suspend_User_in_Azure_AD_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Suspend_User_in_Azure_AD_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Disabling a compromised account can limit the scope of an attack and buy valuable time to investigate and contain the threat. This workflow disables a domain account straight from Slack or Microsoft Teams. "
+                },
+                {
+                  "id": "3",
+                  "name": "Force Password Reset in Active Directory from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Force_Password_Reset_in_Active_Directory_With_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Force_Password_Reset_in_Active_Directory_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Forcing a user to reset their password is a small inconvenience compared to re-imaging their entire system. This workflow helps you act fast by forcing a password reset directly from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "4",
+                  "name": "Force Password Reset in Azure AD from Slack/Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Force_Password_Reset_in_Azure_AD_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Force_Password_Reset_in_Azure_AD_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Forcing a user to reset their password is a small inconvenience compared to re-imaging their entire system. This workflow helps you act fast by forcing a password reset directly from Slack or Microsoft Teams."
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Vulnerability Management Automation Toolkit",
+      "description": "This toolkit includes dozens of Automation automation workflows designed with the Vulnerability Management user in mind. Help your Security and IT teams collaborate and conquer vulnerability risk by streamlining vulnerability identification, research, ticketing, patching, and exception management with automation.",
+      "link": "InsightVM-Automation-Toolkit",
+      "icon": "lightning-bolt",
+      "subTopics": [
+        {
+          "title": "Vulnerability Enrichment",
+          "description": "In cyberspace, we may not always know our enemy, but we can understand our weaknesses. These workflows help make vulnerability risk relatable and repairable by providing you with important context about the vulnerability, affected host, associated exploits, and remediation steps.",
+          "link": "VulnerabilityEnrichment",
+          "icon": "binoculars-investigation",
+          "video": "//play.vidyard.com/ZL2Cz8vX2NA2Cimho9oMP7.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "These workflows fetch host, vulnerability, exploit, and remediation info from Vulnerability Management, Rapid7's Vulnerability Database, and Rapid7's Attacker Knowledge Base. The details are posted back to the user in a nicely formatted chat message.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Lookup a host, vulnerability, or exploit from chat"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Receive details on the specified item in a thread"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Patch or move on to the next one!"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Vulnerability Enrichment Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Alert on New High-Risk Vulnerability in Vulnerability Management with Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Alert_on_New_High_Risk_Vulnerability_in_InsightVM_with_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Alert_on_New_High_Risk_Vulnerability_in_InsightVM_with_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Trigger an alert in chat for every newly discovered vulnerability with a CVSS score > 7."
+                },
+                {
+                  "id": "2",
+                  "name": "Send Remediated Vulnerabilities Message in Slack or Microsoft Teams from Vulnerability Management",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Send_Remediated_Vulnerabilities_Message_in_Slack_from_InsightVM"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Send_Remediated_Vulnerabilities_Message_in_Microsoft_Teams_from_InsightVM"
+                    }
+                  ],
+                  "extendedDescription": "Trigger a notiication in chat for every newly remediated vulnerability."
+                },
+                {
+                  "id": "3",
+                  "name": "Lookup Vulnerability from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Lookup_Vuln_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Lookup_Vuln_From_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Lookup vulnerability details, including CVSS severity, exploitability, and solution steps, from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "4",
+                  "name": "Lookup Exploit with AttackerKB from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Lookup_Exploit_with_AttackerKB_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Lookup_Exploit_with_AttackerKB_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Lookup exploitability details for a specified vulnerability from Slack or MS Teams."
+                },
+                {
+                  "id": "5",
+                  "name": "Enrich CVE with Recorded Future from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Enrich_CVE_with_Recorded_Future_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Enrich_CVE_with_Recorded_Future_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Collect additional vulnerability intelligence to better understand risk and potential impact with Recorded Future."
+                },
+                {
+                  "id": "6",
+                  "name": "Lookup Top Remediations with Vulnerability Management from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Top_Remediations_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Top_Remediations_For_Asset_In_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Lookup the top 10 remediation steps for a given host from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "7",
+                  "name": "Lookup Vulnerable Hosts with Vulnerability Management from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Lookup_Vulnerable_Hosts_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Lookup_Vulnerable_Hosts_From_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Lookup a vulnerability in Vulnerability Management, find all assets with that vulnerability present, and list those asset details in Chat."
+                },
+                {
+                  "id": "8",
+                  "name": "Lookup Host with Vulnerability Management from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Get_InsightVM_Host_Info_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Lookup_InsightVM_Host_Info_From_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Lookup host details, including hostname, IP, MAC, OS, last scan date, vulnerability summary, and running services, from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "9",
+                  "name": "Most Vulnerable Assets in Sites to Slack",
+                  "configurable": "false",
+                  "slugName": "InsightVM_Top_10_Vuln_Assets_to_Slack",
+                  "extendedDescription": "Lookup host details, including hostname, IP, MAC, OS, last scan date, vulnerability summary, and running services, from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "10",
+                  "name": "Generate CVE Report from Slack",
+                  "configurable": "false",
+                  "slugName": "Generate_CVE_Report_from_Slack",
+                  "extendedDescription": "Collect information about a given CVE and identify all hosts affected by that vulnerability with a Slack command. The CVS data is printed in a Slack thread."
+                },
+                {
+                  "id": "11",
+                  "name": "Lookup Vulnerability with Rapid7 Vulnerability Database",
+                  "configurable": "false",
+                  "slugName": "Lookup_Vulnerability_With_Rapid7_VulnDB",
+                  "extendedDescription": "Look up a vulnerability with an API request."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Asset Management",
+          "description": "Alert on changes in your asset inventory, retrieve information on known devices, manage and delete assets based on inactivity in your environment.",
+          "link": "AssetManagement",
+          "icon": "laptop-computer",
+          "video": "//play.vidyard.com/ZL2Cz8vX2NA2Cimho9oMP7.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "These workflows use webhook events and chat integrations to provide easy access to asset details.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Import the desired workflow from the options below"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Configure the connections to your Vulnerability Management console and chat tool"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Follow specific workflow instructions to configure chat channels and webhook event subscriptions, then activate the workflow for use"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Asset Management Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Alert on New Unknown Assets Discovered by Vulnerability Management with Slack or Microsoft Teams",
+                  "configurable": "false",
+                  "slugName": "Alert_on_New_Unknown_Assets_Discovered_by_InsightVM_with_Slack",
+                  "extendedDescription": "Receive notifications for newly discovered assets that are unknown to Active Directory."
+                },
+                {
+                  "id": "2",
+                  "name": "Scan Asset with Vulnerability Management from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Scan_Asset_With_InsightVM_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Scan_Asset_With_InsightVM_From_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Scan and report on an asset's vulnerabilities and risk posture without leaving your Chat window."
+                },
+                {
+                  "id": "3",
+                  "name": "Get Asset Details and Scan Asset with Vulnerability Management",
+                  "configurable": "false",
+                  "slugName": "Get_Asset_Details_and_Scan_Asset_with_InsightVM",
+                  "extendedDescription": "Use an API Trigger to fetch asset details and scan a target asset with Vulnerability Management."
+                },
+                {
+                  "id": "4",
+                  "name": "List All Inactive Assets with Vulnerability Management from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "List_All_Inactive_Assets_with_InsightVM_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "List_All_Inactive_Assets_with_InsightVM_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Quickly look up inactive assets in Vulnerability Management using a Chat command."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Exception Handling",
+          "description": "Review and approve Vulnerability Management vulnerability exception requests and manage expiring exceptions without leaving the comfort of your chat tool.",
+          "link": "ExceptionHandling",
+          "icon": "flag",
+          "video": "//play.vidyard.com/ZL2Cz8vX2NA2Cimho9oMP7.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "These workflows send new vulnerability exception requests to a Slack or Microsoft Teams channel, where they can be quickly reviewed and either approved or rejected. This enables a highly efficient vulnerability management program when used in tandem with the Vulnerability Intelligence workflows.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Submit a vulnerability exception request in Vulnerability Management"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Receive details on the exception request in chat"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Review, investigate, and approve or reject the exception request in chat"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Exception Handling Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Manage Vulnerability Exception Requests with Vulnerability Management from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Manage_Vulnerability_Exception_Requests_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Teams_Vulnerability_Exception_Handling"
+                    }
+                  ],
+                  "extendedDescription": "Receive chat messages to notify and inform Vulnerability Management administrators to new vulnerability exception requests. Use the host and vulnerability intelligence workflows to augment the exception request with salient information from your environment before deciding to approve or reject the request."
+                },
+                {
+                  "id": "2",
+                  "name": "Manage Expiring Vulnerability Exceptions with Vulnerability Management and Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Manage_Expiring_Vulnerability_Exceptions_with_InsightVM"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Manage_Expiring_Vulnerability_Exceptions_with_InsightVM"
+                    }
+                  ],
+                  "extendedDescription": "Notify users in chat when vulnerability exceptions are near expiration."
+                },
+                {
+                  "id": "3",
+                  "name": "Automate Vulnerability Exception Management in Vulnerability Management",
+                  "configurable": "false",
+                  "slugName": "Manage_Vulnerability_Exceptions_With_InsightConnect",
+                  "extendedDescription": "Automate vulnerability exception management in Vulnerability Management by approving exception requests for low-risk, low-scope vulnerabilities."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Solution-Based Ticketing",
+          "description": "Most security teams do not have control over the patching process. Solution-based ticketing is a great way to help colleagues in IT prioritize the right KBs, software updates, configuration changes, etc.These workflows create solution-based tickets and update them on a daily basis with the latest vulnerability data from Vulnerability Management.",
+          "link": "SolutionBasedTicketing",
+          "icon": "ticket-automated",
+          "video": "//play.vidyard.com/ZL2Cz8vX2NA2Cimho9oMP7.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "These workflows use the Top 25 Remediations from Vulnerability Management to create new or update existing tickets in an ITSM solution. By default, these workflows run once per day, keeping your tickets in sync with your Vulnerability Management data.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Import the appropriate ticketing workflow from the options below"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Configure the connections to your Vulnerability Management console and the ticketing tool and activate the workflow"
+                  },
+                  {
+                    "id": "3",
+                    "name": "There is no step 3 - your workflow will create tickets and update them daily!"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Solution-Based Ticketing Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Create Solution-Based Tickets with Jira from Vulnerability Management",
+                  "configurable": "false",
+                  "slugName": "InsightVM_Top_25_Remediations_to_JIRA",
+                  "extendedDescription": "Create and update solution-based tickets in Jira from the top 25 remediations in Vulnerability Management."
+                },
+                {
+                  "id": "2",
+                  "name": "Create Solution-Based Ticketing with ServiceNow from Vulnerability Management",
+                  "configurable": "false",
+                  "slugName": "InsightVM_Top_25_Remediations_to_ServiceNow",
+                  "extendedDescription": "Create and update solution-based tickets in ServiceNow from the top 25 remediations in Vulnerability Management."
+                },
+                {
+                  "id": "3",
+                  "name": "Create Solution-Based Ticketing with Zendesk from Vulnerability Management",
+                  "configurable": "false",
+                  "slugName": "InsightVM_Top_25_Remediations_to_Zendesk",
+                  "extendedDescription": "Create and update solution-based tickets in Zendesk from the top 25 remediations in Vulnerability Management."
+                },
+                {
+                  "id": "4",
+                  "name": "Create Solution-Based Ticketing with Cherwell from Vulnerability Management",
+                  "configurable": "false",
+                  "comingSoon": true,
+                  "slugName": "InsightVM_Top_25_Remediations_to_Cherwell",
+                  "extendedDescription": "Create and update solution-based tickets in Cherwell from the top 25 remediations in Vulnerability Management."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Patch Management",
+          "description": "Take control of your patch management tools and improve your visibility into unpatched systems with these workflows.",
+          "link": "PatchingAndRemediation",
+          "icon": "checkmark-crosshair",
+          "video": "//play.vidyard.com/ZL2Cz8vX2NA2Cimho9oMP7.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "These workflows integrate with common patching solutions to help identify unpatched systems and push individual patches to specified targets.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Check the patch status of a target system from chat"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Receive up-to-date patching details on the host in a thread"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Deploy a patch to a target system through your patching solution from chat"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Patch Management Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Deploy Patch with HCL BigFix from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Deploy_Patch_With_BigFix_From_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Deploy_Patch_With_BigFix_From_Teams"
+                    }
+                  ],
+                  "extendedDescription": "This workflow deploys a specified patch to a target system with BigFix from Slack or Microsoft Teams."
+                },
+                {
+                  "id": "2",
+                  "name": "Virtually Patch Vulnerabilities Found by Vulnerability Management with Deep Security",
+                  "configurable": "false",
+                  "slugName": "Virtually_Patch_Vulnerabilities_Found_by_InsightVM_with_Deep_Security",
+                  "extendedDescription": "Automatically protect your assets against exploitation of vulnerabilities found by Vulnerability Management with Trend Micro Deep Security Virtual Patching (IPS)."
+                },
+                {
+                  "id": "3",
+                  "name": "Check Agent Status with Ivanti Security Controls from Slack",
+                  "configurable": "false",
+                  "slugName": "Check_Agent_Status_with_Ivanti_Security_Controls_from_Slack",
+                  "extendedDescription": "Lookup the status of an Ivanti Security Controls agent by hostname."
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "title": "Ransomware Toolkit",
+      "description": "Once a single system is infected with ransomware, the clock starts ticking before an organization\u2019s entire network is compromised. Arm your team with an arsenal of powerful Automation workflows to contain the spread of ransomware by blocking infected hosts and C&C servers at the firewall, quarantining endpoints as you investigate further, blacklisting malicious processes based on the latest threat intel, and running on-demand AV scans.",
+      "link": "RansomwareToolkit",
+      "icon": "email-sender-warning",
+      "subTopics": [
+        {
+          "title": "Firewall Blocks",
+          "description": "Operationalize your first line of defense with these workflows that allow you to associate hostnames, IPs, and CIDRs with your finely tuned firewall policies without leaving Slack or Microsoft Teams.",
+          "link": "FirewallBlocks",
+          "icon": "firewall",
+          "video": "//play.vidyard.com/W33tbgkiqhyoj2gNVMkDgD.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "Manage your firewalls from Slack or Microsoft Teams to protect against threats in real-time.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Check to see if IP addresses, CIDR addresses, and domains are already tied to existing policies"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Block net new indicators with simple chat commands"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Supply whitelists and compare against private address spaces to avoid mistakenly blocking essential IP addresses"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Firewall Blocks Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Check Host Block Status with Fortinet Fortigate from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Fortinet_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Fortinet_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Check if domains, IP addresses, or CIDR addresses are assigned to an address group or firewall policy from Slack or MS Teams"
+                },
+                {
+                  "id": "2",
+                  "name": "Block Host with Fortinet Fortigate from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Host_with_Fortinet_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Host_with_Fortinet_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Block domains, IP addresses, or CIDR addresses by adding them to an address group associated with a deny or drop policy from Slack or MS Teams"
+                },
+                {
+                  "id": "3",
+                  "name": "Check Host Block Status with Palo Alto Firewall from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Palo_Alto_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Palo_Alto_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Check if domains, IP addresses, or CIDR addresses are assigned to an address group or firewall policy from Slack or MS Teams"
+                },
+                {
+                  "id": "4",
+                  "name": "Block Host with Palo Alto Firewall from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Host_with_Palo_Alto_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Host_with_Palo_Alto_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Block domains, IP addresses, or CIDR addresses by adding them to an address group associated with a deny or drop policy from Slack or MS Teams"
+                },
+                {
+                  "id": "5",
+                  "name": "Check Host Block Status with Check Point NGFW from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Check_Point_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Check_Point_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Check if IP addresses or CIDR addresses are assigned to an address group or firewall policy from Slack or MS Teams"
+                },
+                {
+                  "id": "6",
+                  "name": "Block Host with Check Point NGFW from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Host_with_Check_Point_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Host_with_Check_Point_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Block IP addresses or CIDR addresses by adding them to an address group associated with a deny or drop policy from Slack or MS Teams"
+                },
+                {
+                  "id": "7",
+                  "name": "Check Host Block Status with Cisco ASA from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Cisco_ASA_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_Cisco_ASA_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": ""
+                },
+                {
+                  "id": "8",
+                  "name": "Block Host with Cisco ASA from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Host_with_Cisco_ASA_Firewall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Host_with_Cisco_ASA_Firewall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": ""
+                },
+                {
+                  "id": "9",
+                  "name": "Check Host Block Status with SonicWall from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_SonicWall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_SonicWall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": ""
+                },
+                {
+                  "id": "10",
+                  "name": "Block Host with SonicWall from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Host_with_SonicWall_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Host_with_SonicWall_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": ""
+                },
+                {
+                  "id": "11",
+                  "name": "Check Host Block Status with Cisco SourceFire from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_SourceFire_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Check_Host_Block_Status_with_SourceFire_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": ""
+                },
+                {
+                  "id": "12",
+                  "name": "Block Host with Cisco SourceFire from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Block_Host_with_SourceFire_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Block_Host_with_SourceFire_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": ""
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Asset Quarantine",
+          "description": "Take your investigations to the source by leveraging these EDR workflows that can prevent the lateral spread of ransomware by preventing access to the endpoint to everyone but your security team.",
+          "link": "AssetQuarantine",
+          "icon": "data-endpoint",
+          "video": "//play.vidyard.com/5ZKrRSthi5UBSbDkSuC3GY.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "These workflows integrate with popular EDR tools, allowing you to quickly quarantine potentially malicious IPs, addresses, hostnames, and devices from Slack or Microsoft Teams.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Quarantine or unquarantine an endpoint with a chat command"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Obtain details on the results of the quarantine action in a thread"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Repress the spread of ransomware efficiently and securely"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Asset Quarantine Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Quarantine Endpoint with Broadcom Symantec Endpoint Protection from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Broadcom_Symantec_Endpoint_Protection_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Broadcom_Symantec_Endpoint_Protection_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname or MAC address."
+                },
+                {
+                  "id": "2",
+                  "name": "Quarantine Endpoint with SentinelOne from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_SentinelOne_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_SentinelOne_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "3",
+                  "name": "Quarantine Endpoint with Trend Micro Apex from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Trend_Micro_Apex_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Trend_Micro_Apex_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "4",
+                  "name": "Quarantine Endpoint with Carbon Black EDR from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Carbon_Black_EDR_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Carbon_Black_EDR_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "5",
+                  "name": "Quarantine Endpoint with CylanceOPTICS from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_CylanceOPTICS_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_CylanceOPTICS_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "7",
+                  "name": "Quarantine Endpoint with Microsoft Defender ATP from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Microsoft_Defender_ATP_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Microsoft_Defender_ATP_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "8",
+                  "name": "Quarantine Endpoint with Crowdstrike Falcon from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_CrowdStrike_Falcon_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_CrowdStrike_Falcon_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "9",
+                  "name": "Quarantine Endpoint with Sophos Central from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Sophos_Central_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Sophos_Central_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                },
+                {
+                  "id": "10",
+                  "name": "Quarantine Endpoint with Microsoft Intune from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Microsoft_Intune_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Quarantine_Endpoint_with_Microsoft_Intune_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Use the simplicity of a chat command to manage the quarantine state of endpoints via hostname, IP address, Agent ID or MAC address."
+                }
+              ]
+            }
+          }
+        },
+        {
+          "title": "Blacklist Hash",
+          "description": "Blacklisting hashes is an important step in preventing known malware from ever running in your environment. These workflows help you efficiently stop attackers from infiltrating your system.",
+          "link": "BlacklistHash",
+          "icon": "list",
+          "video": "//play.vidyard.com/jbACaBYH1wGUd9DxxUb3zL.html?",
+          "content": {
+            "sections": [
+              {
+                "sectionTitle": "How It Works",
+                "sectionCopy": "Proactively blacklist malicious hashes based on the latest threat intel, or kill an actively running process with these workflows that kick off with simple chat commands.",
+                "sectionItems": [
+                  {
+                    "id": "1",
+                    "name": "Leverage chat commands to blacklist or unblacklist a hash with your desired EDR tool"
+                  },
+                  {
+                    "id": "2",
+                    "name": "Receive details on the outcome of the blacklist action in a thread"
+                  },
+                  {
+                    "id": "3",
+                    "name": "Mitigate the threat of potentially malicious applications quickly and confidently"
+                  }
+                ]
+              }
+            ],
+            "workflowList": {
+              "workflowSectionTitle": "Blacklist Hash Workflows",
+              "workflows": [
+                {
+                  "id": "1",
+                  "name": "Blacklist Hash with Broadcom Symantec Endpoint Protection from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Hash_with_Symantec_Endpoint_Protection_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Hash_with_Symantec_Endpoint_Protection_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 globally for all operating systems via chat commands and receive information back."
+                },
+                {
+                  "id": "2",
+                  "name": "Blacklist Hash with SentinelOne from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Hash_with_SentinelOne_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Hash_with_SentinelOne_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 globally for all operating systems via chat commands and receive information back."
+                },
+                {
+                  "id": "3",
+                  "name": "Blacklist Indicators with Trend Micro Apex from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Indicators_with_Trend_Micro_Apex_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Indicators_with_Trend_Micro_Apex_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 hash or an IP address globally for all operating systems via chat commands and receive information back."
+                },
+                {
+                  "id": "4",
+                  "name": "Blacklist Hash with CylancePROTECT from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Hash_with_CylancePROTECT_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Hash_with_CylancePROTECT_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 globally for all operating systems via chat commands and receive information back."
+                },
+                {
+                  "id": "5",
+                  "name": "Blacklist Indicators with Microsoft Defender ATP from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Indicators_with_Microsoft_Defender_ATP_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Indicators_with_Microsoft_Defender_ATP_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 globally for all operating systems via chat commands and receive information back."
+                },
+                {
+                  "id": "7",
+                  "name": "Blacklist Hash with Sophos Central from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Hash_with_Sophos_Central_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Hash_with_Sophos_Central_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 globally for all operating systems via chat commands and receive information back."
+                },
+                {
+                  "id": "",
+                  "name": "Blacklist Indicators with CrowdStrike Falcon from Slack or Microsoft Teams",
+                  "configurable": "true",
+                  "options": [
+                    "Slack",
+                    "MS Teams"
+                  ],
+                  "slugNames": [
+                    {
+                      "options": [
+                        "Slack"
+                      ],
+                      "slugName": "Blacklist_Indicators_with_CrowdStrike_Falcon_from_Slack"
+                    },
+                    {
+                      "options": [
+                        "MS Teams"
+                      ],
+                      "slugName": "Blacklist_Indicators_with_CrowdStrike_Falcon_from_Microsoft_Teams"
+                    }
+                  ],
+                  "extendedDescription": "Blacklist or unblacklist a SHA1 hash or an IP address globally for all operating systems via chat commands and receive information back."
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

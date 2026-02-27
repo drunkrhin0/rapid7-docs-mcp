@@ -17,12 +17,11 @@ import TurndownService from 'turndown';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
-import { STOP_WORDS, stem, tokenize } from './src/text.js';
+import { DOCS_DIR, IndexEntry, ensureDir, updateIndex, buildSearchIndex, sleep } from './src/crawl-utils.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const BASE_URL = 'https://docs.rapid7.com';
-const DOCS_DIR = path.join(process.cwd(), 'docs');
 const DELAY_MS = parseInt(process.env.CRAWL_DELAY_MS || '15'); // ~60 req/s — fine for a CDN-backed docs site
 
 // Known Rapid7 product sections on docs.rapid7.com
@@ -67,19 +66,11 @@ td.addRule('images', {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 function urlToFilePath(pageUrl: string): string {
   const parsed = new URL(pageUrl, BASE_URL);
   let pathname = parsed.pathname.replace(/\/$/, '') || '/index';
   if (!pathname.endsWith('.md')) pathname += '.md';
   return path.join(DOCS_DIR, pathname);
-}
-
-function ensureDir(filePath: string): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
 }
 
 function normalizeUrl(href: string, fromUrl: string): string | null {
@@ -139,29 +130,6 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
   }
 }
 
-// ─── Index builder ────────────────────────────────────────────────────────────
-
-interface IndexEntry {
-  path: string;
-  title: string;
-  url: string;
-}
-
-function updateIndex(entries: IndexEntry[]): void {
-  const indexPath = path.join(DOCS_DIR, 'index.json');
-  let existing: IndexEntry[] = [];
-
-  if (fs.existsSync(indexPath)) {
-    existing = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
-  }
-
-  // Merge by path, dedup
-  const map = new Map(existing.map(e => [e.path, e]));
-  for (const entry of entries) map.set(entry.path, entry);
-
-  fs.writeFileSync(indexPath, JSON.stringify(Array.from(map.values()), null, 2));
-}
-
 // ─── Main crawl ───────────────────────────────────────────────────────────────
 
 async function crawlSection(startPath: string): Promise<void> {
@@ -217,50 +185,6 @@ async function crawlSection(startPath: string): Promise<void> {
 
   updateIndex(newEntries);
   console.log(`\n✅ Crawled ${count} pages from ${startPath}`);
-}
-
-// ─── Search index builder ─────────────────────────────────────────────────────
-
-function buildSearchIndex(): void {
-  const indexPath = path.join(DOCS_DIR, 'index.json');
-  if (!fs.existsSync(indexPath)) return;
-
-  const entries: IndexEntry[] = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
-  const paths: string[] = [];
-  const invertedIndex: Record<string, Set<number>> = {};
-
-  for (const entry of entries) {
-    const id = paths.length;
-    paths.push(entry.path);
-
-    const filePath = path.join(DOCS_DIR, entry.path);
-    if (!fs.existsSync(filePath)) continue;
-
-    const content = fs.readFileSync(filePath, 'utf-8');
-    const allTokens = tokenize(entry.title + ' ' + content);
-    const stems = new Set<string>();
-    for (const token of allTokens) {
-      if (!STOP_WORDS.has(token)) stems.add(stem(token));
-    }
-
-    for (const s of stems) {
-      if (!invertedIndex[s]) invertedIndex[s] = new Set();
-      invertedIndex[s].add(id);
-    }
-  }
-
-  // Convert Sets to sorted arrays for JSON serialization
-  const serialized: Record<string, number[]> = {};
-  for (const [term, ids] of Object.entries(invertedIndex)) {
-    serialized[term] = Array.from(ids).sort((a, b) => a - b);
-  }
-
-  fs.writeFileSync(
-    path.join(DOCS_DIR, 'search-index.json'),
-    JSON.stringify({ p: paths, i: serialized })
-  );
-
-  console.log(`\n📇 Search index: ${Object.keys(serialized).length} stems across ${entries.length} docs`);
 }
 
 // ─── Entry point ─────────────────────────────────────────────────────────────

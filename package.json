@@ -9,7 +9,8 @@
     "start": "node dist/index.js",
     "dev": "tsx src/index.ts",
     "crawl": "tsx crawl.ts",
-    "crawl:section": "tsx crawl.ts --section"
+    "crawl:section": "tsx crawl.ts --section",
+    "crawl:extensions": "tsx crawl-extensions.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
