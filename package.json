@@ -10,7 +10,8 @@
     "dev": "tsx src/index.ts",
     "crawl": "tsx crawl.ts",
     "crawl:section": "tsx crawl.ts --section",
-    "crawl:extensions": "tsx crawl-extensions.ts"
+    "crawl:extensions": "tsx crawl-extensions.ts",
+    "crawl:site": "tsx crawl-site.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",

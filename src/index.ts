@@ -6,9 +6,12 @@
  * Transport: stdio (default) or HTTP (set MCP_TRANSPORT=http)
  *
  * Tools:
- *   - docs_search   : Full-text search across all crawled docs
- *   - docs_read     : Read a specific doc page by path or URL
- *   - docs_list     : List available sections and page counts
+ *   - docs_search            : Full-text search across all crawled docs
+ *   - docs_read              : Read a specific doc page by path or URL
+ *   - docs_list              : List available sections and page counts
+ *   - get_product_knowledge  : Marketing content, pricing, and FAQs for a Rapid7 product
+ *   - search_blog            : Search the Rapid7 blog index by keyword
+ *   - search_resources       : Search Rapid7 resources (whitepapers, reports, guides)
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -423,6 +426,254 @@ Use this to understand what's available, then use docs_search or docs_read.`,
         text: `**Rapid7 Docs Index**\nLast crawled: ${lastCrawled}\nTotal pages: ${total}\n\n**Sections:**\n${sectionText}`,
       }],
       structuredContent: { sections, total, lastCrawled },
+    };
+  }
+);
+
+// ─── Site data helpers ────────────────────────────────────────────────────────
+
+const DATA_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'data');
+
+interface BlogPost {
+  title: string;
+  url: string;
+  date: string;
+  category: string;
+}
+
+interface Resource {
+  title: string;
+  url: string;
+  type: string;
+  description: string;
+}
+
+let _blogCache: BlogPost[] | null = null;
+let _blogMtime = 0;
+
+function loadBlogIndex(): BlogPost[] {
+  const filePath = path.join(DATA_DIR, 'blog-index.json');
+  if (!fs.existsSync(filePath)) return [];
+  const mtime = fs.statSync(filePath).mtimeMs;
+  if (_blogCache && mtime === _blogMtime) return _blogCache;
+  _blogCache = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as BlogPost[];
+  _blogMtime = mtime;
+  return _blogCache;
+}
+
+let _resourcesCache: Resource[] | null = null;
+let _resourcesMtime = 0;
+
+function loadResources(): Resource[] {
+  const filePath = path.join(DATA_DIR, 'resources.json');
+  if (!fs.existsSync(filePath)) return [];
+  const mtime = fs.statSync(filePath).mtimeMs;
+  if (_resourcesCache && mtime === _resourcesMtime) return _resourcesCache;
+  _resourcesCache = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as Resource[];
+  _resourcesMtime = mtime;
+  return _resourcesCache;
+}
+
+function readProduct(slug: string): string | null {
+  const filePath = path.resolve(path.join(DATA_DIR, 'products', `${slug}.md`));
+  // Prevent path traversal
+  const productsDir = path.resolve(path.join(DATA_DIR, 'products'));
+  if (!filePath.startsWith(productsDir + path.sep)) return null;
+  if (!fs.existsSync(filePath)) return null;
+  return fs.readFileSync(filePath, 'utf-8');
+}
+
+function listProducts(): string[] {
+  const dir = path.join(DATA_DIR, 'products');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir)
+    .filter(f => f.endsWith('.md'))
+    .map(f => f.replace(/\.md$/, ''));
+}
+
+// Tool: get_product_knowledge
+server.registerTool(
+  'get_product_knowledge',
+  {
+    title: 'Get Rapid7 Product Knowledge',
+    description: `Get marketing content, feature descriptions, pricing tiers, and FAQ answers for a Rapid7 product.
+
+Returns the full product page content including overview, features, tier comparisons, and frequently asked questions.
+
+Args:
+  - product (string): Product slug e.g. "command", "insightvm", "siem", "metasploit"
+
+Available products: command, insightappsec, insightcloudsec, insightvm, metasploit, nexpose, siem, threat-command, velociraptor
+
+Returns:
+  Full markdown content of the product page with all scraped sections.`,
+    inputSchema: z.object({
+      product: z.string().describe('Product slug e.g. "command", "insightvm", "siem"'),
+    }),
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  },
+  async ({ product }) => {
+    const content = readProduct(product);
+    if (!content) {
+      const available = listProducts();
+      return {
+        content: [{
+          type: 'text',
+          text: available.length
+            ? `Product "${product}" not found.\nAvailable products: ${available.join(', ')}\n\nRun: npx tsx crawl-site.ts --products`
+            : 'No product data indexed yet.\n\nRun: npx tsx crawl-site.ts --products',
+        }],
+      };
+    }
+    return { content: [{ type: 'text', text: stripFrontmatter(content) }] };
+  }
+);
+
+// Tool: search_blog
+server.registerTool(
+  'search_blog',
+  {
+    title: 'Search Rapid7 Blog',
+    description: `Search the Rapid7 blog index by keyword. Returns matching post titles, dates, categories, and URLs.
+
+Does NOT return full blog content — just metadata for finding relevant posts.
+
+Args:
+  - query (string): Search terms e.g. "ransomware", "MDR", "vulnerability management"
+  - category (string, optional): Filter by category e.g. "Threat Research", "Products and Tools"
+  - limit (number, optional): Max results to return, 1-50 (default: 20)
+
+Returns:
+  Matching blog posts with title, date, category, and URL.`,
+    inputSchema: z.object({
+      query: z.string().min(2).describe('Search terms'),
+      category: z.string().optional().describe('Category filter e.g. "Threat Research"'),
+      limit: z.number().int().min(1).max(50).default(20).describe('Max results'),
+    }),
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  },
+  async ({ query, category, limit }) => {
+    const posts = loadBlogIndex();
+    if (posts.length === 0) {
+      return {
+        content: [{ type: 'text', text: 'No blog data indexed yet.\n\nRun: npx tsx crawl-site.ts --blog' }],
+      };
+    }
+
+    const queryLower = query.toLowerCase();
+    const terms = queryLower.split(/\s+/).filter(Boolean);
+
+    let scored = posts.map(p => {
+      const titleLower = p.title.toLowerCase();
+      const catLower = p.category.toLowerCase();
+      let score = 0;
+      for (const t of terms) {
+        if (titleLower.includes(t)) score += 10;
+        if (catLower.includes(t)) score += 3;
+      }
+      return { post: p, score };
+    }).filter(s => s.score > 0);
+
+    if (category) {
+      const catFilter = category.toLowerCase();
+      scored = scored.filter(s => s.post.category.toLowerCase().includes(catFilter));
+    }
+
+    // Sort by score descending, then by date descending
+    scored.sort((a, b) => b.score - a.score || (b.post.date || '').localeCompare(a.post.date || ''));
+
+    const filtered = scored.map(s => s.post);
+    const results = filtered.slice(0, limit);
+
+    if (results.length === 0) {
+      return {
+        content: [{ type: 'text', text: `No blog posts found matching "${query}"${category ? ` in category "${category}"` : ''}. Total indexed: ${posts.length} posts.` }],
+      };
+    }
+
+    const text = results
+      .map((p, i) => `**[${i + 1}] ${p.title}**\n${p.date ? `Date: ${p.date}` : 'Date: N/A'}${p.category ? ` | Category: ${p.category}` : ''}\nURL: ${p.url}`)
+      .join('\n\n');
+
+    return {
+      content: [{ type: 'text', text: `Found ${results.length} of ${filtered.length} matches (${posts.length} total posts):\n\n${text}` }],
+      structuredContent: { results, total: filtered.length, indexed: posts.length },
+    };
+  }
+);
+
+// Tool: search_resources
+server.registerTool(
+  'search_resources',
+  {
+    title: 'Search Rapid7 Resources',
+    description: `Search the Rapid7 resources index (whitepapers, reports, guides, webinars).
+
+Args:
+  - query (string): Search terms e.g. "SIEM", "compliance", "cloud security"
+  - type (string, optional): Filter by resource type e.g. "Whitepaper", "Report", "Webinar"
+  - limit (number, optional): Max results to return, 1-50 (default: 20)
+
+Returns:
+  Matching resources with title, type, description, and URL.`,
+    inputSchema: z.object({
+      query: z.string().min(2).describe('Search terms'),
+      type: z.string().optional().describe('Resource type filter e.g. "Whitepaper"'),
+      limit: z.number().int().min(1).max(50).default(20).describe('Max results'),
+    }),
+    annotations: {
+      readOnlyHint: true,
+      destructiveHint: false,
+      idempotentHint: true,
+      openWorldHint: false,
+    },
+  },
+  async ({ query, type, limit }) => {
+    const resources = loadResources();
+    if (resources.length === 0) {
+      return {
+        content: [{ type: 'text', text: 'No resource data indexed yet.\n\nRun: npx tsx crawl-site.ts --resources' }],
+      };
+    }
+
+    const queryLower = query.toLowerCase();
+    const terms = queryLower.split(/\s+/).filter(Boolean);
+
+    let filtered = resources.filter(r => {
+      const searchable = `${r.title} ${r.description} ${r.type}`.toLowerCase();
+      return terms.some(t => searchable.includes(t));
+    });
+
+    if (type) {
+      const typeLower = type.toLowerCase();
+      filtered = filtered.filter(r => r.type.toLowerCase().includes(typeLower));
+    }
+
+    const results = filtered.slice(0, limit);
+
+    if (results.length === 0) {
+      return {
+        content: [{ type: 'text', text: `No resources found matching "${query}"${type ? ` of type "${type}"` : ''}. Total indexed: ${resources.length} resources.` }],
+      };
+    }
+
+    const text = results
+      .map((r, i) => `**[${i + 1}] ${r.title}**${r.type ? `\nType: ${r.type}` : ''}\n${r.description ? `${r.description}\n` : ''}URL: ${r.url}`)
+      .join('\n\n');
+
+    return {
+      content: [{ type: 'text', text: `Found ${results.length} matches (${resources.length} total resources):\n\n${text}` }],
+      structuredContent: { results, total: resources.length },
     };
   }
 );

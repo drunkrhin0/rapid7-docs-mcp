@@ -4,6 +4,8 @@ set -e
 CRAWL_SCHEDULE="${CRAWL_SCHEDULE:-0 2 * * 0}"
 CRAWL_EXTENSIONS="${CRAWL_EXTENSIONS:-true}"
 EXTENSIONS_CRAWL_SCHEDULE="${EXTENSIONS_CRAWL_SCHEDULE:-0 3 * * 0}"
+CRAWL_SITE="${CRAWL_SITE:-true}"
+SITE_CRAWL_SCHEDULE="${SITE_CRAWL_SCHEDULE:-0 4 * * 0}"
 
 # Build the crawl command — no CRAWL_SECTIONS means crawl everything
 if [ -n "$CRAWL_SECTIONS" ]; then
@@ -34,6 +36,12 @@ if [ "$CRAWL_EXTENSIONS" = "true" ] && [ ! -d /app/docs/extensions ]; then
   npx tsx crawl-extensions.ts
 fi
 
+# Initial site crawl if enabled and not yet indexed
+if [ "$CRAWL_SITE" = "true" ] && [ ! -d /app/data/products ]; then
+  echo "No site data found — running initial site crawl"
+  npx tsx crawl-site.ts
+fi
+
 # Set up cron entries
 {
   CRON_ENTRIES
@@ -41,12 +49,19 @@ fi
   if [ "$CRAWL_EXTENSIONS" = "true" ]; then
     echo "${EXTENSIONS_CRAWL_SCHEDULE} cd /app && npx tsx crawl-extensions.ts >> /proc/1/fd/1 2>&1"
   fi
+  # Site crawl cron (if enabled)
+  if [ "$CRAWL_SITE" = "true" ]; then
+    echo "${SITE_CRAWL_SCHEDULE} cd /app && npx tsx crawl-site.ts >> /proc/1/fd/1 2>&1"
+  fi
 } | crontab -
 crond
 
 echo "Cron scheduled: ${CRAWL_SCHEDULE}${CRAWL_SECTIONS:+ for $CRAWL_SECTIONS}"
 if [ "$CRAWL_EXTENSIONS" = "true" ]; then
   echo "Extensions cron: ${EXTENSIONS_CRAWL_SCHEDULE}"
+fi
+if [ "$CRAWL_SITE" = "true" ]; then
+  echo "Site crawl cron: ${SITE_CRAWL_SCHEDULE}"
 fi
 
 # Start MCP server as PID 1
