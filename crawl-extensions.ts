@@ -326,6 +326,225 @@ async function crawlSingleExtension(slug: string): Promise<void> {
   }
 }
 
+// ─── Toolkit types ──────────────────────────────────────────────────────────
+
+interface ToolkitSlugRef {
+  options?: string[];
+  slugName: string;
+}
+
+interface ToolkitWorkflow {
+  name: string;
+  configurable?: string;
+  options?: string[];
+  slugNames?: ToolkitSlugRef[];
+  extendedDescription?: string;
+}
+
+interface ToolkitSubTopic {
+  title: string;
+  description: string;
+  link: string;
+  content: {
+    sections?: Array<{
+      sectionTitle: string;
+      sectionCopy: string;
+      sectionItems?: Array<{ name: string }>;
+    }>;
+    workflowList: {
+      workflowSectionTitle: string;
+      workflows: ToolkitWorkflow[];
+    };
+  };
+}
+
+interface ToolkitData {
+  title: string;
+  description: string;
+  link: string;
+  subTopics: ToolkitSubTopic[];
+}
+
+interface ToolkitsJson {
+  headerCards: Array<{ title: string; description: string; totalNumber: number; url: string }>;
+  overviewCards: Array<{ title: string; description: string; link: string; comingSoon?: boolean }>;
+  toolkits: ToolkitData[];
+}
+
+// ─── Toolkit → markdown ─────────────────────────────────────────────────────
+
+function buildToolkitMarkdown(toolkit: ToolkitData): string {
+  const parts: string[] = [];
+
+  parts.push(`# ${toolkit.title}`);
+  parts.push('');
+  parts.push(toolkit.description.trim());
+  parts.push('');
+
+  for (const sub of toolkit.subTopics) {
+    parts.push(`## ${sub.title}`);
+    parts.push('');
+    parts.push(sub.description);
+    parts.push('');
+
+    // "How It Works" steps
+    const howItWorks = sub.content.sections?.find(s => s.sectionTitle === 'How It Works');
+    if (howItWorks) {
+      parts.push(`### How It Works`);
+      parts.push('');
+      parts.push(howItWorks.sectionCopy);
+      parts.push('');
+      if (howItWorks.sectionItems?.length) {
+        for (const item of howItWorks.sectionItems) {
+          parts.push(`- ${item.name.trim()}`);
+        }
+        parts.push('');
+      }
+    }
+
+    // Workflow table
+    const workflows = sub.content.workflowList.workflows;
+    if (workflows.length) {
+      parts.push(`### ${sub.content.workflowList.workflowSectionTitle}`);
+      parts.push('');
+      parts.push('| Workflow | Platforms | Extension |');
+      parts.push('|----------|-----------|-----------|');
+      for (const wf of workflows) {
+        const platforms = wf.options?.join(', ') || '';
+        const links = (wf.slugNames || [])
+          .map(s => `[${s.options?.join('/') || 'Link'}](https://extensions.rapid7.com/extension/${s.slugName})`)
+          .join(', ');
+        parts.push(`| ${wf.name} | ${platforms} | ${links || 'N/A'} |`);
+      }
+      parts.push('');
+
+      // Extended descriptions for workflows that have them
+      const withDesc = workflows.filter(wf => wf.extendedDescription);
+      if (withDesc.length) {
+        parts.push('**Workflow Details:**');
+        parts.push('');
+        for (const wf of withDesc) {
+          parts.push(`- **${wf.name}:** ${wf.extendedDescription}`);
+        }
+        parts.push('');
+      }
+    }
+  }
+
+  return parts.join('\n');
+}
+
+function buildToolkitsIndexMarkdown(toolkits: ToolkitsJson): string {
+  const parts: string[] = [];
+  parts.push('# Rapid7 InsightConnect Toolkits');
+  parts.push('');
+  parts.push('Curated collections of InsightConnect workflow extensions, organized by security use case.');
+  parts.push('');
+
+  for (const tk of toolkits.toolkits) {
+    const overview = toolkits.overviewCards.find(o => o.link === tk.link);
+    const header = toolkits.headerCards.find(h => h.url.includes(tk.link));
+    const desc = overview?.description || tk.description;
+    const count = header?.totalNumber || tk.subTopics.reduce((n, s) => n + s.content.workflowList.workflows.length, 0);
+
+    parts.push(`## [${tk.title}](https://extensions.rapid7.com/wfh-playbook/${tk.link})`);
+    parts.push('');
+    parts.push(`${desc.trim()}`);
+    parts.push('');
+    parts.push(`**${count} workflows** across ${tk.subTopics.length} categories: ${tk.subTopics.map(s => s.title).join(', ')}`);
+    parts.push('');
+  }
+
+  // Coming soon
+  const comingSoon = toolkits.overviewCards.filter(o => o.comingSoon);
+  if (comingSoon.length) {
+    parts.push('## Coming Soon');
+    parts.push('');
+    for (const o of comingSoon) {
+      parts.push(`- **${o.title}:** ${o.description}`);
+    }
+    parts.push('');
+  }
+
+  return parts.join('\n');
+}
+
+async function crawlToolkits(): Promise<void> {
+  const toolkitsFile = path.join(process.cwd(), 'toolkits_complete.json');
+  if (!fs.existsSync(toolkitsFile)) {
+    console.log('\n⏭  No toolkits_complete.json found — skipping toolkit generation');
+    return;
+  }
+
+  console.log('\n🧰 Generating toolkit docs...');
+  const toolkits: ToolkitsJson = JSON.parse(fs.readFileSync(toolkitsFile, 'utf-8'));
+  const toolkitsDir = path.join(EXTENSIONS_DIR, 'toolkits');
+  fs.mkdirSync(toolkitsDir, { recursive: true });
+
+  const newEntries: IndexEntry[] = [];
+
+  // Index page
+  const indexMd = buildToolkitsIndexMarkdown(toolkits);
+  const indexPath = path.join(toolkitsDir, 'index.md');
+  const indexRelative = path.relative(DOCS_DIR, indexPath);
+  const indexHash = createHash('md5').update(indexMd).digest('hex');
+  const existingIndexHash = fs.existsSync(indexPath)
+    ? fs.readFileSync(indexPath, 'utf-8').match(/^hash: "([a-f0-9]+)"$/m)?.[1]
+    : undefined;
+
+  if (existingIndexHash !== indexHash) {
+    const content = [
+      '---',
+      `title: "Rapid7 InsightConnect Toolkits"`,
+      `url: "https://extensions.rapid7.com/wfh-playbook"`,
+      `crawled: "${new Date().toISOString()}"`,
+      `hash: "${indexHash}"`,
+      '---',
+      '',
+      indexMd,
+    ].join('\n');
+    fs.writeFileSync(indexPath, content, 'utf-8');
+    process.stdout.write('  toolkits/index.md ✓\n');
+  } else {
+    process.stdout.write('  toolkits/index.md ↩\n');
+  }
+  newEntries.push({ path: indexRelative, title: 'Rapid7 InsightConnect Toolkits', url: 'https://extensions.rapid7.com/wfh-playbook' });
+
+  // Individual toolkit pages
+  for (const tk of toolkits.toolkits) {
+    const markdown = buildToolkitMarkdown(tk);
+    const filePath = path.join(toolkitsDir, `${tk.link}.md`);
+    const relativePath = path.relative(DOCS_DIR, filePath);
+    const pageUrl = `https://extensions.rapid7.com/wfh-playbook/${tk.link}`;
+    const newHash = createHash('md5').update(markdown).digest('hex');
+    const existingHash = fs.existsSync(filePath)
+      ? fs.readFileSync(filePath, 'utf-8').match(/^hash: "([a-f0-9]+)"$/m)?.[1]
+      : undefined;
+
+    if (existingHash !== newHash) {
+      const content = [
+        '---',
+        `title: "${tk.title.replace(/"/g, '\\"')}"`,
+        `url: "${pageUrl}"`,
+        `crawled: "${new Date().toISOString()}"`,
+        `hash: "${newHash}"`,
+        '---',
+        '',
+        markdown,
+      ].join('\n');
+      fs.writeFileSync(filePath, content, 'utf-8');
+      process.stdout.write(`  toolkits/${tk.link}.md ✓\n`);
+    } else {
+      process.stdout.write(`  toolkits/${tk.link}.md ↩\n`);
+    }
+
+    newEntries.push({ path: relativePath, title: tk.title, url: pageUrl });
+  }
+
+  updateIndex(newEntries);
+  console.log(`✅ Generated ${newEntries.length} toolkit docs`);
+}
+
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
@@ -355,7 +574,10 @@ async function main(): Promise<void> {
     await crawlAllExtensions();
   }
 
-  // Rebuild search index with extensions included
+  // Generate toolkit docs from SPA-extracted data
+  await crawlToolkits();
+
+  // Rebuild search index with extensions + toolkits included
   buildSearchIndex();
 }
 
