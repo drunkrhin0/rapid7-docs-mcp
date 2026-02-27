@@ -549,9 +549,14 @@ Args:
   - limit (number, optional): Max results to return, 1-50 (default: 20)
 
 Returns:
-  Matching blog posts with title, date, category, and URL.`,
+  Matching blog posts with title, date, category, and URL.
+
+Examples:
+  - "latest ransomware research" -> query="ransomware", category="Threat Research"
+  - "most recent posts" -> query="" (omit or empty to get newest posts sorted by date)
+  - "recent MDR updates" -> query="MDR"`,
     inputSchema: z.object({
-      query: z.string().min(2).describe('Search terms'),
+      query: z.string().default('').describe('Search terms — leave empty to get most recent posts sorted by date'),
       category: z.string().optional().describe('Category filter e.g. "Threat Research"'),
       limit: z.number().int().min(1).max(50).default(20).describe('Max results'),
     }),
@@ -570,34 +575,47 @@ Returns:
       };
     }
 
-    const queryLower = query.toLowerCase();
-    const terms = queryLower.split(/\s+/).filter(Boolean);
+    const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
+    const hasQuery = terms.length > 0;
 
-    let scored = posts.map(p => {
-      const titleLower = p.title.toLowerCase();
-      const catLower = p.category.toLowerCase();
-      let score = 0;
-      for (const t of terms) {
-        if (titleLower.includes(t)) score += 10;
-        if (catLower.includes(t)) score += 3;
+    let candidates: BlogPost[];
+
+    if (hasQuery) {
+      // Keyword search: score then sort by score desc, date desc
+      let scored = posts.map(p => {
+        const titleLower = p.title.toLowerCase();
+        const catLower = p.category.toLowerCase();
+        let score = 0;
+        for (const t of terms) {
+          if (titleLower.includes(t)) score += 10;
+          if (catLower.includes(t)) score += 3;
+        }
+        return { post: p, score };
+      }).filter(s => s.score > 0);
+
+      if (category) {
+        const catFilter = category.toLowerCase();
+        scored = scored.filter(s => s.post.category.toLowerCase().includes(catFilter));
       }
-      return { post: p, score };
-    }).filter(s => s.score > 0);
 
-    if (category) {
-      const catFilter = category.toLowerCase();
-      scored = scored.filter(s => s.post.category.toLowerCase().includes(catFilter));
+      // Sort by score descending, then by date descending
+      scored.sort((a, b) => b.score - a.score || (b.post.date || '').localeCompare(a.post.date || ''));
+      candidates = scored.map(s => s.post);
+    } else {
+      // No query: return all posts sorted by date descending (most recent first)
+      candidates = [...posts];
+      if (category) {
+        const catFilter = category.toLowerCase();
+        candidates = candidates.filter(p => p.category.toLowerCase().includes(catFilter));
+      }
+      candidates.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     }
 
-    // Sort by score descending, then by date descending
-    scored.sort((a, b) => b.score - a.score || (b.post.date || '').localeCompare(a.post.date || ''));
-
-    const filtered = scored.map(s => s.post);
-    const results = filtered.slice(0, limit);
+    const results = candidates.slice(0, limit);
 
     if (results.length === 0) {
       return {
-        content: [{ type: 'text', text: `No blog posts found matching "${query}"${category ? ` in category "${category}"` : ''}. Total indexed: ${posts.length} posts.` }],
+        content: [{ type: 'text', text: `No blog posts found${hasQuery ? ` matching "${query}"` : ''}${category ? ` in category "${category}"` : ''}. Total indexed: ${posts.length} posts.` }],
       };
     }
 
@@ -606,8 +624,8 @@ Returns:
       .join('\n\n');
 
     return {
-      content: [{ type: 'text', text: `Found ${results.length} of ${filtered.length} matches (${posts.length} total posts):\n\n${text}` }],
-      structuredContent: { results, total: filtered.length, indexed: posts.length },
+      content: [{ type: 'text', text: `Found ${results.length} of ${candidates.length} matches (${posts.length} total posts):\n\n${text}` }],
+      structuredContent: { results, total: candidates.length, indexed: posts.length },
     };
   }
 );
