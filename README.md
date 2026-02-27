@@ -89,8 +89,8 @@ Restart Claude Desktop — you'll see the 🔌 icon indicating MCP tools are act
 Run the crawler on a schedule to keep docs current:
 
 ```bash
-# Add to crontab — recrawl InsightIDR every Sunday at 2am
-0 2 * * 0 cd /path/to/rapid7-docs-mcp && npm run crawl -- --section insightidr
+# Add to crontab — recrawl InsightIDR every night at 2AM
+0 2 * * * cd /path/to/rapid7-docs-mcp && npm run crawl -- --section insightidr
 ```
 
 Or just re-run manually before a big project.

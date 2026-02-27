@@ -39,6 +39,7 @@ const PRODUCT_SECTIONS: Record<string, string> = {
   insightops:       '/insightops/',
   'threat-command': '/threat-command/',
   'surface-command':'/surface-command/',
+  insight:          '/insight/',
 };
 
 // ─── Turndown setup ───────────────────────────────────────────────────────────
