@@ -1,55 +1,69 @@
 # Rapid7 Docs MCP Server
 
-Reference docs.rapid7.com directly from Claude. Crawls the docs site into local markdown files, then serves them via MCP so Claude can search and read them on demand.
+An MCP server that crawls Rapid7 documentation, extensions, product pages, blog, and resources — then exposes them as tools for any MCP-compatible AI client. This was created to improve my MCP knowledge and make searching public facing information easier.
+
+Use Claude if you're sensible, otherwise use the full stack deployment for privacy.
+
+Disclaimer: Vibe coded with Claude Code Opus 4.6. This was created in personal time and is not officially supported or associated with Rapid7 and only uses public resources. Use at your own risk.
 
 ## How it works
 
 ```
-docs.rapid7.com → crawl.ts → /docs/*.md → MCP server → Claude
+docs.rapid7.com        ──┐
+extensions.rapid7.com  ──┼── crawlers ──► docs/ & data/ ──► MCP server ──► Claude/Ollama
+rapid7.com/products    ──┘
 ```
 
-1. **Crawler** scrapes Rapid7 docs, converts HTML → markdown, preserves image URLs
-2. **MCP server** exposes three tools: `docs_search`, `docs_read`, `docs_list`
-3. **Claude Desktop** connects via stdio — Claude calls the tools naturally during conversation
+Three crawlers build a local knowledge base:
+- **`crawl.ts`** — [technical documentation](https://docs.rapid7.com)
+- **`crawl-extensions.ts`** — [extensions site](https://extensions.rapid7.com) (including toolkits)
+- **`crawl-site.ts`** — [base site](https://rapid7.com) (feature comparison tables, blog index, resources)
+
+The MCP server reads from `docs/` and `data/` at query time — no database required.
+
+---
+
+## Tools
+
+| Tool | Description |
+|------|-------------|
+| `docs_search` | Full-text search across all crawled documentation with ranked results |
+| `docs_read` | Read the full content of any indexed documentation page |
+| `docs_list` | List available sections and page counts |
+| `get_product_knowledge` | Marketing content, pricing tiers, and FAQs for a Rapid7 product |
+| `search_blog` | Search the Rapid7 blog index (3,600+ posts) by keyword and category |
+| `search_resources` | Search whitepapers, reports, and guides |
 
 ---
 
 ## Setup
 
-### 1. Install dependencies
+<details>
+<summary><b>Option 1: Claude Desktop / Claude Code (local, stdio)</b></summary>
+<br>
+
+**Prerequisites:** Node.js 18+
 
 ```bash
-cd rapid7-docs-mcp
 npm install
-```
 
-### 2. Crawl the docs
+# Crawl (pick what you need)
+npm run crawl                           # docs — all sections (~2000 pages)
+npm run crawl -- --section insightidr   # docs — single section
+npm run crawl:extensions                # extensions & toolkits
+npm run crawl:site                      # products, blog, resources
 
-```bash
-# Crawl a single product section (recommended for first run)
-npm run crawl -- --section insightidr
-
-# Crawl all sections (takes a while, ~2000 pages)
-npm run crawl
-
-# See available sections
-npm run crawl -- --list
-
-# Crawl a specific path
-npm run crawl -- --url /insightidr/docs/log-sources/
-```
-
-Available sections: `insightidr`, `insightvm`, `insightappsec`, `insightconnect`, `insightagent`, `metasploit`, `nexpose`, `appspider`, `tcell`, `velociraptor`
-
-### 3. Build the MCP server
-
-```bash
+# Build
 npm run build
 ```
 
-### 4. Connect to Claude Desktop
+Add the server to your MCP config:
 
-Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS):
+| Client | Config file |
+|--------|-------------|
+| Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
+| Claude Code (per-project) | `.mcp.json` in project root |
+| Claude Code (global) | `~/.claude.json` |
 
 ```json
 {
@@ -62,44 +76,144 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json` (macOS)
 }
 ```
 
-On Linux (homelab), the config is at `~/.config/Claude/claude_desktop_config.json`.
+Restart Claude Desktop or start a new Claude Code session — the tools will become available.
 
-Restart Claude Desktop — you'll see the 🔌 icon indicating MCP tools are active.
+</details>
 
----
+<details>
+<summary><b>Option 2: Docker + Open WebUI + Ollama (full stack)</b></summary>
+<br>
 
-## Tools exposed to Claude
+Self-contained AI assistant with a web UI, local LLM, and Rapid7 docs tools. Runs entirely on your machine — no data leaves your network.
 
-| Tool | Description |
-|------|-------------|
-| `docs_list` | See what's indexed and when it was last crawled |
-| `docs_search` | Full-text search with section filtering and ranked results |
-| `docs_read` | Read full content of any indexed page |
-
-### Example prompts that trigger the tools
-
-- *"Check the InsightIDR docs for how to set up a DHCP sensor"*
-- *"What does Rapid7 say about the InsightVM API authentication?"*
-- *"Find me the log aggregation configuration page for InsightIDR"*
-
----
-
-## Keeping docs fresh
-
-Run the crawler on a schedule to keep docs current:
-
-```bash
-# Add to crontab — recrawl InsightIDR every night at 2AM
-0 2 * * * cd /path/to/rapid7-docs-mcp && npm run crawl -- --section insightidr
+```
+Ollama (native, GPU) ◄── Open WebUI (:8080) ──► MCPO (:8300) ──► MCP Server (:7000)
+                          (chat UI)              (proxy)          (docs tools)
 ```
 
-Or just re-run manually before a big project.
+**Prerequisites:**
 
----
+```bash
+# Install Ollama natively (GPU-accelerated on Apple Silicon / NVIDIA)
+brew install ollama && ollama serve
 
-## Notes
+# Pull a model with tool-calling support
+ollama pull qwen2.5
+```
 
-- **Images**: Live absolute URLs are preserved in markdown. Claude can reference them directly.
-- **Rate limiting**: Crawler defaults to 500ms between requests to be polite.
-- **Storage**: Expect ~50-200MB for a full crawl depending on sections.
-- **No RAG needed**: Claude handles semantic understanding — local search just finds candidate pages.
+> Ollama must run natively (not in Docker) to use GPU acceleration on macOS. Docker on Mac is CPU-only.
+
+**Start the stack:**
+
+```bash
+docker compose -f docker-compose.ollama.yml up -d
+```
+
+Open `http://localhost:8080`, create an account, and select `qwen2.5` (or any tool-calling model). The Rapid7 docs tools are auto-registered via MCPO.
+
+The compose file bind-mounts `./docs` and `./data` from the repo. If you've already crawled data locally, it's available instantly — no re-crawl needed. If the directories are empty, the MCP server will crawl on first boot.
+
+**Tool-calling models:** `qwen2.5`, `llama3.1`, `mistral`, `command-r`
+
+If the tools don't auto-register, add them manually: **Settings > Tools > +** → `http://mcpo:8300` with OpenAPI path `openapi.json`.
+
+</details>
+
+<details>
+<summary><b>Option 3: Docker (standalone MCP server)</b></summary>
+<br>
+
+Runs the MCP server over HTTP/SSE. Useful for connecting from remote clients or shared environments. Crawls on first boot and on a cron schedule.
+
+```bash
+docker build -t rapid7-docs-mcp .
+docker compose up -d
+```
+
+SSE endpoint: `http://localhost:7000/mcp`
+
+If you've already crawled data locally, bind-mount it to skip the initial crawl — edit `docker-compose.yml` and replace the named volumes with:
+
+```yaml
+volumes:
+  - ./docs:/app/docs
+  - ./data:/app/data
+```
+
+</details>
+
+<details>
+<summary><b>Environment variables (Docker)</b></summary>
+<br>
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MCP_TRANSPORT` | `stdio` | Set to `http` for SSE transport |
+| `PORT` | `3000` | HTTP server port (when `MCP_TRANSPORT=http`) |
+| `CRAWL_SECTIONS` | *(empty = all)* | Space-separated list of doc sections to crawl |
+| `CRAWL_SCHEDULE` | `0 2 * * *` | Cron schedule for docs crawl |
+| `CRAWL_DELAY_MS` | `15` | Milliseconds between requests |
+| `CRAWL_EXTENSIONS` | `true` | Enable extensions crawl |
+| `EXTENSIONS_CRAWL_SCHEDULE` | `0 3 * * 0` | Cron schedule for extensions crawl |
+| `CRAWL_SITE` | `true` | Enable site crawl (products/blog/resources) |
+| `SITE_CRAWL_SCHEDULE` | `0 4 * * 0` | Cron schedule for site crawl |
+| `TZ` | `UTC` | Timezone for cron schedules |
+
+</details>
+
+<details>
+<summary><b>Crawling reference</b></summary>
+<br>
+
+All crawlers support incremental updates — unchanged pages are skipped using content hashing.
+
+**Documentation (docs.rapid7.com):**
+
+```bash
+npm run crawl                          # all sections
+npm run crawl -- --section insightidr  # single section
+npm run crawl -- --list                # list available sections
+```
+
+Available sections: `insightidr`, `insightvm`, `insightappsec`, `insightconnect`, `insightagent`, `insightcloudsec`, `metasploit`, `nexpose`, `appspider`, `insightops`, `threat-command`, `surface-command`
+
+**Extensions (extensions.rapid7.com):**
+
+```bash
+npm run crawl:extensions
+```
+
+**Site content (rapid7.com):**
+
+```bash
+npm run crawl:site                         # everything
+npm run crawl:site -- --products           # product pages only
+npm run crawl:site -- --blog               # blog index only
+npm run crawl:site -- --resources          # resources only
+npm run crawl:site -- --product command    # single product
+```
+
+Available products: `command`, `insightappsec`, `insightcloudsec`, `insightvm`, `metasploit`, `nexpose`, `siem`, `threat-command`, `velociraptor`
+
+</details>
+
+<details>
+<summary><b>Project structure</b></summary>
+<br>
+
+```
+rapid7-docs-mcp/
+  src/
+    index.ts          # MCP server (6 tools)
+    text.ts           # Shared stemmer, stop words, tokenizer
+    crawl-utils.ts    # Shared crawl utilities
+  crawl.ts            # Documentation crawler
+  crawl-extensions.ts # Extensions crawler
+  crawl-site.ts       # Site content crawler (products/blog/resources)
+  docs/               # Crawled documentation markdown + indexes (gitignored)
+  data/               # Crawled site content — products, blog, resources (gitignored)
+  docker-compose.yml          # Standalone MCP server
+  docker-compose.ollama.yml   # Full stack: MCP + MCPO + Open WebUI + Ollama
+```
+
+</details>

@@ -1,0 +1,64 @@
+# Rapid7 Docs AI Assistant — self-contained stack
+#
+# Prerequisites:
+#   1. Install Ollama natively (GPU-accelerated on Apple Silicon):
+#        brew install ollama && ollama serve
+#   2. Pull a model with tool-calling support:
+#        ollama pull qwen2.5
+#   3. Start the stack:
+#        docker compose -f docker-compose.ollama.yml up -d
+#   4. Open http://localhost:8080 and create an account
+#   5. Select "qwen2.5" as your model — Rapid7 docs tools are available automatically
+#
+# The MCP server crawls docs.rapid7.com, extensions.rapid7.com, and rapid7.com
+# on first run and weekly thereafter. All data is persisted in Docker volumes.
+#
+# Tool-calling models: qwen2.5, llama3.1, mistral, command-r
+
+services:
+  # ── Rapid7 Docs MCP Server (SSE on port 7000) ──────────────────────────────
+  rapid7-docs-mcp:
+    build: .
+    environment:
+      - MCP_TRANSPORT=http
+      - PORT=7000
+      - CRAWL_SCHEDULE=0 2 * * *
+      - CRAWL_DELAY_MS=15
+      - CRAWL_EXTENSIONS=true
+      - EXTENSIONS_CRAWL_SCHEDULE=0 3 * * 0
+      - CRAWL_SITE=true
+      - SITE_CRAWL_SCHEDULE=0 4 * * 0
+      - TZ=UTC
+    volumes:
+      - ./docs:/app/docs
+      - ./data:/app/data
+    restart: unless-stopped
+
+  # ── MCPO Proxy (bridges SSE MCP → OpenAPI for Open WebUI) ──────────────────
+  mcpo:
+    image: ghcr.io/open-webui/mcpo:latest
+    command: --port 8300 --server-type "sse" -- http://rapid7-docs-mcp:7000/mcp
+    ports:
+      - "8300:8300"
+    depends_on:
+      - rapid7-docs-mcp
+    restart: unless-stopped
+
+  # ── Open WebUI (chat interface) ─────────────────────────────────────────────
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    ports:
+      - "8080:8080"
+    environment:
+      # Connect to Ollama running natively on the host (GPU-accelerated)
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # Auto-register MCPO as a tool server on startup
+      - TOOL_SERVER_CONNECTIONS=[{"url":"http://mcpo:8300","path":"openapi.json","auth_type":"","key":"","config":{"enable":true},"info":{"name":"Rapid7 Docs","description":"Search Rapid7 documentation, product info, blog, and resources"}}]
+    volumes:
+      - open-webui-data:/app/backend/data
+    depends_on:
+      - mcpo
+    restart: unless-stopped
+
+volumes:
+  open-webui-data:

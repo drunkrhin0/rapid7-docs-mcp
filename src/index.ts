@@ -714,7 +714,16 @@ async function main(): Promise<void> {
 
             const transport = new SSEServerTransport('/mcp', res);
             transports.set(transport.sessionId, transport);
-            res.on('close', () => transports.delete(transport.sessionId));
+
+            // Send SSE keepalive comments every 30s to prevent proxy timeouts
+            const keepalive = setInterval(() => {
+              if (!res.destroyed) res.write(': keepalive\n\n');
+            }, 30_000);
+            res.on('close', () => {
+              clearInterval(keepalive);
+              transports.delete(transport.sessionId);
+            });
+
             await server.connect(transport);
           } else if (req.method === 'POST') {
             const sessionId = reqUrl.searchParams.get('sessionId') ?? '';
