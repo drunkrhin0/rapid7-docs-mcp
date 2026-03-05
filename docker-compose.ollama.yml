@@ -2,13 +2,15 @@
 #
 # Prerequisites:
 #   1. Install Ollama natively (GPU-accelerated on Apple Silicon):
-#        brew install ollama && ollama serve
-#   2. Pull a model with tool-calling support:
+#        brew install ollama
+#   2. Start ollama (required before strating docker compose stack each time):
+#        ollama serve
+#   3. Pull a model with tool-calling support:
 #        ollama pull qwen2.5
-#   3. Start the stack:
+#   4. Start the stack:
 #        docker compose -f docker-compose.ollama.yml up -d
-#   4. Open http://localhost:8080 and create an account
-#   5. Select "qwen2.5" as your model — Rapid7 docs tools are available automatically
+#   5. Open http://localhost:8080 and create an account
+#   6. Select "qwen2.5" as your model — Rapid7 docs tools are available automatically
 #
 # The MCP server crawls docs.rapid7.com, extensions.rapid7.com, and rapid7.com
 # on first run and weekly thereafter. All data is persisted in Docker volumes.

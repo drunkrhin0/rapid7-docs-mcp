@@ -106,6 +106,7 @@ ollama pull qwen2.5
 **Start the stack:**
 
 ```bash
+ollama serve #if not already done
 docker compose -f docker-compose.ollama.yml up -d
 ```
 
