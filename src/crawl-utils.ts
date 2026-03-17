@@ -66,6 +66,11 @@ export function updateIndex(entries: IndexEntry[]): void {
   const map = new Map(existing.map(e => [e.path, e]));
   for (const entry of entries) map.set(entry.path, entry);
 
+  // Remove entries whose files no longer exist on disk
+  for (const [entryPath] of map) {
+    if (!fs.existsSync(path.join(DOCS_DIR, entryPath))) map.delete(entryPath);
+  }
+
   fs.writeFileSync(indexPath, JSON.stringify(Array.from(map.values()), null, 2));
 }
 

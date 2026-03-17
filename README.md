@@ -166,7 +166,7 @@ volumes:
 <summary><b>Crawling reference</b></summary>
 <br>
 
-All crawlers support incremental updates — unchanged pages are skipped using content hashing.
+All crawlers support incremental updates — unchanged pages are skipped using content hashing. Pages not seen for 14 days are automatically removed.
 
 **Documentation (docs.rapid7.com):**
 
@@ -174,6 +174,7 @@ All crawlers support incremental updates — unchanged pages are skipped using c
 npm run crawl                          # all sections
 npm run crawl -- --section insightidr  # single section
 npm run crawl -- --list                # list available sections
+npm run crawl -- --verbose             # per-page output
 ```
 
 Available sections: `insightidr`, `insightvm`, `insightappsec`, `insightconnect`, `insightagent`, `insightcloudsec`, `metasploit`, `nexpose`, `appspider`, `insightops`, `threat-command`, `surface-command`

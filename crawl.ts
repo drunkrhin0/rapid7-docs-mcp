@@ -9,6 +9,7 @@
  *   npx tsx crawl.ts --section insightidr     # Crawl one product section
  *   npx tsx crawl.ts --url /insightidr/docs/  # Crawl a specific path
  *   npx tsx crawl.ts --list                   # List available product sections
+ *   npx tsx crawl.ts --verbose                 # Show per-page crawl output
  */
 
 import axios from 'axios';
@@ -22,7 +23,9 @@ import { DOCS_DIR, IndexEntry, ensureDir, updateIndex, buildSearchIndex, sleep }
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const BASE_URL = 'https://docs.rapid7.com';
-const DELAY_MS = parseInt(process.env.CRAWL_DELAY_MS || '15'); // ~60 req/s — fine for a CDN-backed docs site
+const DELAY_MS = parseInt(process.env.CRAWL_DELAY_MS || '0'); // Sequential but no artificial delay — CDN-backed site handles it fine
+const STALE_DAYS = 14; // Delete files not seen after this many days
+const VERBOSE = process.argv.includes('--verbose');
 
 // Known Rapid7 product sections on docs.rapid7.com
 const PRODUCT_SECTIONS: Record<string, string> = {
@@ -125,8 +128,10 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
 
     return { markdown, links, title };
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    console.error(`  ✗ Failed: ${pageUrl} — ${msg}`);
+    if (VERBOSE) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`  ✗ Failed: ${pageUrl} — ${msg}`);
+    }
     return null;
   }
 }
@@ -138,7 +143,10 @@ async function crawlSection(startPath: string): Promise<void> {
   const visited = new Set<string>();
   const queue: string[] = [startUrl];
   const newEntries: IndexEntry[] = [];
+  const visitedFiles = new Set<string>(); // track files we saw this crawl
   let count = 0;
+  let updated = 0;
+  let failed = 0;
 
   console.log(`\n🕷  Crawling: ${startUrl}`);
 
@@ -149,15 +157,17 @@ async function crawlSection(startPath: string): Promise<void> {
 
     // Only crawl within the starting section
     if (!pageUrl.startsWith(`${BASE_URL}${startPath}`)) continue;
+    count++;
 
-    process.stdout.write(`  [${++count}] ${pageUrl.replace(BASE_URL, '')} ... `);
+    if (VERBOSE) process.stdout.write(`  [${count}] ${pageUrl.replace(BASE_URL, '')} ... `);
 
     const result = await fetchPage(pageUrl);
-    if (!result) continue;
+    if (!result) { failed++; continue; }
 
     const { markdown, links, title } = result;
     const filePath = urlToFilePath(pageUrl);
     const relativePath = path.relative(DOCS_DIR, filePath);
+    visitedFiles.add(filePath);
 
     // Only write if content has changed
     const newHash = createHash('md5').update(markdown).digest('hex');
@@ -166,12 +176,13 @@ async function crawlSection(startPath: string): Promise<void> {
       : undefined;
 
     if (existingHash === newHash) {
-      console.log(`↩ (unchanged)`);
+      if (VERBOSE) console.log(`↩ (unchanged)`);
     } else {
+      updated++;
       ensureDir(filePath);
       const content = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n${markdown}`;
       fs.writeFileSync(filePath, content, 'utf-8');
-      console.log(`✓ ${title || '(untitled)'}`);
+      if (VERBOSE) console.log(`✓ ${title || '(untitled)'}`);
     }
 
     newEntries.push({ path: relativePath, title, url: pageUrl });
@@ -181,11 +192,55 @@ async function crawlSection(startPath: string): Promise<void> {
       if (!visited.has(link)) queue.push(link);
     }
 
+    // Progress indicator for non-verbose mode
+    if (!VERBOSE && count % 50 === 0) process.stdout.write(`\r  ${startPath} — ${count} pages crawled, ${updated} updated`);
+
     await sleep(DELAY_MS);
   }
 
+  // Clean up stale files not seen this crawl
+  const staleRemoved = cleanStaleFiles(startPath, visitedFiles);
+
   updateIndex(newEntries);
-  console.log(`\n✅ Crawled ${count} pages from ${startPath}`);
+
+  if (!VERBOSE) process.stdout.write('\r');
+  console.log(`✅ ${startPath} — ${count} pages (${updated} updated, ${failed} failed, ${staleRemoved} stale removed)`);
+}
+
+/**
+ * Delete files in a section directory that weren't visited this crawl
+ * and whose `crawled` timestamp is older than STALE_DAYS.
+ */
+function cleanStaleFiles(sectionPath: string, visitedFiles: Set<string>): number {
+  const sectionDir = path.join(DOCS_DIR, sectionPath);
+  if (!fs.existsSync(sectionDir)) return 0;
+
+  const cutoff = Date.now() - STALE_DAYS * 24 * 60 * 60 * 1000;
+  let removed = 0;
+
+  function walk(dir: string): void {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        walk(full);
+        // Remove empty directories
+        if (fs.readdirSync(full).length === 0) fs.rmdirSync(full);
+      } else if (entry.name.endsWith('.md') && !visitedFiles.has(full)) {
+        // Check crawled timestamp before deleting
+        const content = fs.readFileSync(full, 'utf-8');
+        const match = content.match(/^crawled: "([^"]+)"$/m);
+        const crawledAt = match ? new Date(match[1]).getTime() : 0;
+        if (crawledAt < cutoff) {
+          fs.unlinkSync(full);
+          removed++;
+          if (VERBOSE) console.log(`  🗑 Stale: ${path.relative(DOCS_DIR, full)}`);
+        }
+      }
+    }
+  }
+
+  walk(sectionDir);
+  return removed;
 }
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
