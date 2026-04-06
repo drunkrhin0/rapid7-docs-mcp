@@ -197,6 +197,21 @@ npm run crawl:site -- --product command    # single product
 
 Available products: `command`, `insightappsec`, `insightcloudsec`, `insightvm`, `metasploit`, `nexpose`, `siem`, `threat-command`, `velociraptor`
 
+**External docs (Metasploit Framework + Velociraptor):**
+
+```bash
+npm run crawl:external                     # both
+npm run crawl:external -- --metasploit     # Metasploit Framework docs only
+npm run crawl:external -- --velociraptor   # Velociraptor docs only (GitHub source)
+npm run crawl:external -- --verbose        # per-page output
+```
+
+Both sources are fetched directly as markdown from GitHub — no HTML conversion needed.
+- Metasploit: `rapid7/metasploit-framework` — `docs/metasploit-framework.wiki/`
+- Velociraptor: `Velocidex/velociraptor-docs` — `content/docs/`
+
+Set `GITHUB_TOKEN` env var for higher API rate limits (5000/hr vs 60/hr unauthenticated).
+
 </details>
 
 <details>
@@ -209,9 +224,10 @@ rapid7-docs-mcp/
     index.ts          # MCP server (6 tools)
     text.ts           # Shared stemmer, stop words, tokenizer
     crawl-utils.ts    # Shared crawl utilities
-  crawl.ts            # Documentation crawler
-  crawl-extensions.ts # Extensions crawler
+  crawl.ts            # Documentation crawler (docs.rapid7.com)
+  crawl-extensions.ts # Extensions crawler (extensions.rapid7.com)
   crawl-site.ts       # Site content crawler (products/blog/resources)
+  crawl-external.ts   # External docs crawler (Metasploit Framework, Velociraptor)
   docs/               # Crawled documentation markdown + indexes (gitignored)
   data/               # Crawled site content — products, blog, resources (gitignored)
   docker-compose.yml          # Standalone MCP server

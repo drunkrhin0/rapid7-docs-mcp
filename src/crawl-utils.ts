@@ -82,7 +82,7 @@ export function buildSearchIndex(): void {
 
   const entries: IndexEntry[] = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
   const paths: string[] = [];
-  const invertedIndex: Record<string, Set<number>> = {};
+  const invertedIndex: Record<string, Set<number>> = Object.create(null);
 
   for (const entry of entries) {
     const id = paths.length;

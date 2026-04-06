@@ -11,7 +11,8 @@
     "crawl": "tsx crawl.ts",
     "crawl:section": "tsx crawl.ts --section",
     "crawl:extensions": "tsx crawl-extensions.ts",
-    "crawl:site": "tsx crawl-site.ts"
+    "crawl:site": "tsx crawl-site.ts",
+    "crawl:external": "tsx crawl-external.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
