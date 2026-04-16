@@ -14,10 +14,11 @@ extensions.rapid7.com  ──┼── crawlers ──► docs/ & data/ ──�
 rapid7.com/products    ──┘
 ```
 
-Three crawlers build a local knowledge base:
+Four crawlers build a local knowledge base:
 - **`crawl.ts`** — [technical documentation](https://docs.rapid7.com)
 - **`crawl-extensions.ts`** — [extensions site](https://extensions.rapid7.com) (including toolkits)
 - **`crawl-site.ts`** — [base site](https://rapid7.com) (feature comparison tables, blog index, resources)
+- **`crawl-external.ts`** — GitHub docs + public OpenAPI/Swagger specs (Metasploit wiki, Velociraptor, all product APIs)
 
 The MCP server reads from `docs/` and `data/` at query time — no database required.
 
@@ -153,11 +154,13 @@ volumes:
 | `PORT` | `3000` | HTTP server port (when `MCP_TRANSPORT=http`) |
 | `CRAWL_SECTIONS` | *(empty = all)* | Space-separated list of doc sections to crawl |
 | `CRAWL_SCHEDULE` | `0 2 * * *` | Cron schedule for docs crawl |
-| `CRAWL_DELAY_MS` | `15` | Milliseconds between requests |
+| `CRAWL_DELAY_MS` | `0` | Milliseconds between requests |
 | `CRAWL_EXTENSIONS` | `true` | Enable extensions crawl |
 | `EXTENSIONS_CRAWL_SCHEDULE` | `0 3 * * 0` | Cron schedule for extensions crawl |
 | `CRAWL_SITE` | `true` | Enable site crawl (products/blog/resources) |
 | `SITE_CRAWL_SCHEDULE` | `0 4 * * 0` | Cron schedule for site crawl |
+| `CRAWL_EXTERNAL` | `false` | Enable external crawl (GitHub sources + OpenAPI specs) |
+| `EXTERNAL_CRAWL_SCHEDULE` | `0 5 * * 0` | Cron schedule for external crawl |
 | `TZ` | `UTC` | Timezone for cron schedules |
 
 </details>
@@ -197,20 +200,38 @@ npm run crawl:site -- --product command    # single product
 
 Available products: `command`, `insightappsec`, `insightcloudsec`, `insightvm`, `metasploit`, `nexpose`, `siem`, `threat-command`, `velociraptor`
 
-**External docs (Metasploit Framework + Velociraptor):**
+**External docs (GitHub + OpenAPI specs):**
 
 ```bash
-npm run crawl:external                     # both
-npm run crawl:external -- --metasploit     # Metasploit Framework docs only
-npm run crawl:external -- --velociraptor   # Velociraptor docs only (GitHub source)
-npm run crawl:external -- --verbose        # per-page output
+npm run crawl:external                              # everything below
+
+# GitHub sources
+npm run crawl:external -- --metasploit              # Metasploit Framework wiki
+npm run crawl:external -- --velociraptor            # Velociraptor docs (includes server API)
+
+# OpenAPI / Swagger sources (one markdown file per tag, searchable via docs_search)
+npm run crawl:external -- --insightvm-api           # InsightVM/Nexpose API v3 (207 endpoints)
+npm run crawl:external -- --insightvm-cloud-api     # InsightVM Cloud Integrations API v4
+npm run crawl:external -- --insightappsec-api       # InsightAppSec API v1
+npm run crawl:external -- --insightidr-api          # InsightIDR (SIEM) API v1
+npm run crawl:external -- --insight-account-api     # Insight Account API v1
+npm run crawl:external -- --credential-api          # Platform Credential Management API
+npm run crawl:external -- --insightconnect-api      # InsightConnect (SOAR) API v1
+
+npm run crawl:external -- --verbose                 # per-file output for any of the above
 ```
 
-Both sources are fetched directly as markdown from GitHub — no HTML conversion needed.
+**GitHub sources** (Metasploit, Velociraptor) — fetched directly as markdown from GitHub, no HTML conversion needed:
 - Metasploit: `rapid7/metasploit-framework` — `docs/metasploit-framework.wiki/`
-- Velociraptor: `Velocidex/velociraptor-docs` — `content/docs/`
+- Velociraptor: `Velocidex/velociraptor-docs` — `content/docs/` (includes server automation + API)
 
 Set `GITHUB_TOKEN` env var for higher API rate limits (5000/hr vs 60/hr unauthenticated).
+
+**OpenAPI sources** — each spec is fetched once and split into one markdown file per tag, stored under `docs/{section}/`. Searchable via `docs_search` with the matching `section` filter.
+
+> **Already covered by `crawl.ts`:** Metasploit PRO REST + RPC API and the Command Platform API overview are regular pages on `docs.rapid7.com` — run `npm run crawl -- --section metasploit` and `npm run crawl -- --section insight` to index them.
+>
+> **Cannot crawl:** Threat Command / DRP API requires authentication.
 
 </details>
 
@@ -227,7 +248,7 @@ rapid7-docs-mcp/
   crawl.ts            # Documentation crawler (docs.rapid7.com)
   crawl-extensions.ts # Extensions crawler (extensions.rapid7.com)
   crawl-site.ts       # Site content crawler (products/blog/resources)
-  crawl-external.ts   # External docs crawler (Metasploit Framework, Velociraptor)
+  crawl-external.ts   # External docs crawler (GitHub sources + OpenAPI specs for all product APIs)
   docs/               # Crawled documentation markdown + indexes (gitignored)
   data/               # Crawled site content — products, blog, resources (gitignored)
   docker-compose.yml          # Standalone MCP server

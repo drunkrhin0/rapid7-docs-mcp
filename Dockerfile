@@ -14,6 +14,7 @@ COPY --from=builder /app/dist/ ./dist/
 COPY crawl.ts ./
 COPY crawl-extensions.ts ./
 COPY crawl-site.ts ./
+COPY crawl-external.ts ./
 COPY toolkits_complete.json ./
 COPY src/text.ts ./src/text.ts
 COPY src/crawl-utils.ts ./src/crawl-utils.ts
