@@ -258,6 +258,13 @@ const API_SOURCES: ApiSource[] = [
     specUrl: 'https://docs.rapid7.com/_api/insightconnect-api-v1.yaml',
     pageBaseUrl: 'https://docs.rapid7.com/insightconnect/api/',
   },
+  {
+    flag: '--insightidr-detection-api',
+    label: 'InsightIDR Detection Rules API v1',
+    section: 'insightidr-detection-api',
+    specUrl: 'https://docs.rapid7.com/_api/bifrost-api-v1.yaml',
+    pageBaseUrl: 'https://docs.rapid7.com/insightidr/api/detection-rules/',
+  },
 ];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
