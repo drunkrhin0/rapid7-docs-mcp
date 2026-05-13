@@ -25,4 +25,5 @@ VOLUME /app/docs
 VOLUME /app/data
 EXPOSE 3000
 
+USER node
 ENTRYPOINT ["/docker-entrypoint.sh"]

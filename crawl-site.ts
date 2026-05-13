@@ -149,8 +149,8 @@ function extractJsonLdFaqs(html: string): FAQItem[] {
   let match;
   while ((match = faqRe.exec(html)) !== null) {
     try {
-      // The match is double-escaped JSON — unescape it
-      const entitiesStr = `[${match[1]}]`.replace(/\\"/g, '"').replace(/\\\\"/g, '\\"');
+      // The match is JSON embedded in a JS string — unescape \" → "
+      const entitiesStr = `[${match[1]}]`.replace(/\\"/g, '"');
       const entities = JSON.parse(entitiesStr);
       for (const item of entities) {
         if (item['@type'] === 'Question' && item.name) {

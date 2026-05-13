@@ -5,11 +5,14 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import { fileURLToPath } from 'url';
 import { STOP_WORDS, stem, tokenize } from './text.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
-export const DOCS_DIR = path.join(process.cwd(), 'docs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export const DOCS_DIR = path.resolve(__dirname, '..', 'docs');
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

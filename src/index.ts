@@ -21,11 +21,14 @@ import { z } from 'zod';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as http from 'http';
+import { fileURLToPath } from 'url';
 import { STOP_WORDS, stem } from './text.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
-const DOCS_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'docs');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const DOCS_DIR = path.join(__dirname, '..', 'docs');
 const INDEX_FILE = path.join(DOCS_DIR, 'index.json');
 const SEARCH_INDEX_FILE = path.join(DOCS_DIR, 'search-index.json');
 const MAX_RESULTS = 20;
@@ -298,8 +301,7 @@ Examples:
       .join('\n---\n\n');
 
     return {
-      content: [{ type: 'text', text }],
-      structuredContent: { results: output },
+      content: [{ type: 'text', text: text + '\n\n```json\n' + JSON.stringify({ results: output }, null, 2) + '\n```' }],
     };
   }
 );
@@ -406,9 +408,9 @@ Use this to understand what's available, then use docs_search or docs_read.`,
         };
       }
       const pageList = pages.map(p => `  ${p.path.padEnd(60)} ${p.title}`).join('\n');
+      const pageData = { section, pages: pages.map(p => ({ path: p.path, title: p.title, url: p.url })) };
       return {
-        content: [{ type: 'text', text: `**${section}** — ${pages.length} pages\n\n${pageList}` }],
-        structuredContent: { section, pages: pages.map(p => ({ path: p.path, title: p.title, url: p.url })) },
+        content: [{ type: 'text', text: `**${section}** — ${pages.length} pages\n\n${pageList}\n\n\`\`\`json\n${JSON.stringify(pageData, null, 2)}\n\`\`\`` }],
       };
     }
 
@@ -420,19 +422,19 @@ Use this to understand what's available, then use docs_search or docs_read.`,
       .map(([name, count]) => `  ${name.padEnd(25)} ${count} pages`)
       .join('\n');
 
+    const summary = { sections, total, lastCrawled };
     return {
       content: [{
         type: 'text',
-        text: `**Rapid7 Docs Index**\nLast crawled: ${lastCrawled}\nTotal pages: ${total}\n\n**Sections:**\n${sectionText}`,
+        text: `**Rapid7 Docs Index**\nLast crawled: ${lastCrawled}\nTotal pages: ${total}\n\n**Sections:**\n${sectionText}\n\n\`\`\`json\n${JSON.stringify(summary, null, 2)}\n\`\`\``,
       }],
-      structuredContent: { sections, total, lastCrawled },
     };
   }
 );
 
 // ─── Site data helpers ────────────────────────────────────────────────────────
 
-const DATA_DIR = path.join(path.dirname(new URL(import.meta.url).pathname), '..', 'data');
+const DATA_DIR = path.join(__dirname, '..', 'data');
 
 interface BlogPost {
   title: string;
@@ -623,9 +625,9 @@ Examples:
       .map((p, i) => `**[${i + 1}] ${p.title}**\n${p.date ? `Date: ${p.date}` : 'Date: N/A'}${p.category ? ` | Category: ${p.category}` : ''}\nURL: ${p.url}`)
       .join('\n\n');
 
+    const blogData = { results, total: candidates.length, indexed: posts.length };
     return {
-      content: [{ type: 'text', text: `Found ${results.length} of ${candidates.length} matches (${posts.length} total posts):\n\n${text}` }],
-      structuredContent: { results, total: candidates.length, indexed: posts.length },
+      content: [{ type: 'text', text: `Found ${results.length} of ${candidates.length} matches (${posts.length} total posts):\n\n${text}\n\n\`\`\`json\n${JSON.stringify(blogData, null, 2)}\n\`\`\`` }],
     };
   }
 );
@@ -689,9 +691,9 @@ Returns:
       .map((r, i) => `**[${i + 1}] ${r.title}**${r.type ? `\nType: ${r.type}` : ''}\n${r.description ? `${r.description}\n` : ''}URL: ${r.url}`)
       .join('\n\n');
 
+    const resourceData = { results, total: resources.length };
     return {
-      content: [{ type: 'text', text: `Found ${results.length} matches (${resources.length} total resources):\n\n${text}` }],
-      structuredContent: { results, total: resources.length },
+      content: [{ type: 'text', text: `Found ${results.length} matches (${resources.length} total resources):\n\n${text}\n\n\`\`\`json\n${JSON.stringify(resourceData, null, 2)}\n\`\`\`` }],
     };
   }
 );
@@ -709,9 +711,15 @@ async function main(): Promise<void> {
 
         if (reqUrl.pathname === '/mcp') {
           if (req.method === 'GET') {
-            // Close previous connection if any (supports reconnection)
-            try { await server.close(); } catch { /* not connected yet */ }
+            // Close previous transport to allow single-session reconnection
+            // without calling server.close() (which would disrupt all sessions)
+            for (const t of transports.values()) {
+              try { await t.close(); } catch { /* already closed */ }
+            }
+            transports.clear();
 
+            // DNS rebinding protection is disabled (default) — this server
+            // is intended for localhost/private network use only.
             const transport = new SSEServerTransport('/mcp', res);
             transports.set(transport.sessionId, transport);
 
@@ -740,8 +748,9 @@ async function main(): Promise<void> {
           res.writeHead(404).end();
         }
       } catch (err) {
-        console.error('Request error:', err);
-        if (!res.headersSent) res.writeHead(500).end(String(err));
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('Request error:', msg);
+        if (!res.headersSent) res.writeHead(500).end(msg);
       }
     });
 
