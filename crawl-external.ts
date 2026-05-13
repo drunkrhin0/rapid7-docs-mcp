@@ -269,15 +269,21 @@ const API_SOURCES: ApiSource[] = [
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchSpec(specUrl: string): Promise<any> {
-  const resp = await axios.get(specUrl, {
-    timeout: 30000,
-    headers: { 'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0' },
-    responseType: 'text',
-  });
-  const raw = resp.data as string;
-  // YAML if the URL ends in .yaml/.yml or the content starts with "openapi:" / "swagger:"
-  const isYaml = /\.(yaml|yml)$/i.test(specUrl) || /^(openapi|swagger):/m.test(raw.slice(0, 200));
-  return isYaml ? yaml.load(raw) : JSON.parse(raw);
+  try {
+    const resp = await axios.get(specUrl, {
+      timeout: 30000,
+      headers: { 'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0' },
+      responseType: 'text',
+    });
+    const raw = resp.data as string;
+    // YAML if the URL ends in .yaml/.yml or the content starts with "openapi:" / "swagger:"
+    const isYaml = /\.(yaml|yml)$/i.test(specUrl) || /^(openapi|swagger):/m.test(raw.slice(0, 200));
+    return isYaml ? yaml.load(raw) : JSON.parse(raw);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error(`  ✗ Failed to fetch spec: ${specUrl} — ${msg}`);
+    return null;
+  }
 }
 
 async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
@@ -286,6 +292,10 @@ async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const spec: any = await fetchSpec(specUrl);
+  if (!spec) {
+    console.error(`  ✗ Skipping ${label} — could not fetch spec`);
+    return;
+  }
   const totalPaths = Object.keys(spec.paths || {}).length;
 
   // Group operations by their first tag
