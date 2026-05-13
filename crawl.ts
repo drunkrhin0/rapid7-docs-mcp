@@ -215,7 +215,7 @@ async function crawlSection(startUrl: string): Promise<void> {
     } else {
       updated++;
       ensureDir(filePath);
-      const content = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n${markdown}`;
+      const content = `---\ntitle: "${title.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n${markdown}`;
       fs.writeFileSync(filePath, content, 'utf-8');
       if (VERBOSE) console.log(`✓ ${title || '(untitled)'}`);
     }

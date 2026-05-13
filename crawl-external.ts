@@ -175,7 +175,7 @@ async function crawlGitHubDocs(opts: {
       const { title, body } = extractFrontmatterTitle(resp.data as string);
       const displayTitle = title || path.basename(item.path, '.md').replace(/[-_]/g, ' ');
       const newHash = hashContent(body);
-      const fm = `---\ntitle: "${displayTitle.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n`;
+      const fm = `---\ntitle: "${displayTitle.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n`;
       const changed = writeIfChanged(localPath, fm + body, newHash);
 
       if (changed) { updated++; if (VERBOSE) console.log(`✓ ${displayTitle}`); }
@@ -372,7 +372,7 @@ async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
     }
 
     const newHash = hashContent(md);
-    const fm = `---\ntitle: "${title.replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n`;
+    const fm = `---\ntitle: "${title.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n`;
     const changed = writeIfChanged(filePath, fm + md, newHash);
 
     if (changed) updated++;
