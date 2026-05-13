@@ -293,9 +293,9 @@ async function scrapeProduct(product: ProductDef): Promise<void> {
   fs.mkdirSync(PRODUCTS_DIR, { recursive: true });
   const content = [
     '---',
-    `title: "${product.name.replace(/"/g, '\\"')}"`,
+    `title: "${product.name.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`,
     `url: "${BASE_URL}/products/${product.slug}/"`,
-    `description: "${metaDesc.replace(/"/g, '\\"')}"`,
+    `description: "${metaDesc.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`,
     `crawled: "${new Date().toISOString()}"`,
     `hash: "${newHash}"`,
     '---',

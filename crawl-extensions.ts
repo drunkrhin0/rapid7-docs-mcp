@@ -60,14 +60,16 @@ interface APIResponse {
 
 function stripHtml(html: string): string {
   // Lightweight HTML → text for version history entries
+  // Entity decode order matters: &amp; must be decoded last to prevent
+  // chained decoding (e.g. &amp;lt; → &lt; → < would be wrong).
   return html
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/?[^>]+>/g, '')
-    .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&')
     .trim();
 }
 
@@ -246,7 +248,7 @@ async function processExtension(ext: ExtensionResult): Promise<IndexEntry | null
   ensureDir(filePath);
   const content = [
     '---',
-    `title: "${ext.title.replace(/"/g, '\\"')}"`,
+    `title: "${ext.title.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`,
     `url: "${pageUrl}"`,
     `crawled: "${new Date().toISOString()}"`,
     `hash: "${newHash}"`,
@@ -524,7 +526,7 @@ async function crawlToolkits(): Promise<void> {
     if (existingHash !== newHash) {
       const content = [
         '---',
-        `title: "${tk.title.replace(/"/g, '\\"')}"`,
+        `title: "${tk.title.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`,
         `url: "${pageUrl}"`,
         `crawled: "${new Date().toISOString()}"`,
         `hash: "${newHash}"`,

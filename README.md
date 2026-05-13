@@ -217,6 +217,7 @@ npm run crawl:external -- --insightidr-api          # InsightIDR (SIEM) API v1
 npm run crawl:external -- --insight-account-api     # Insight Account API v1
 npm run crawl:external -- --credential-api          # Platform Credential Management API
 npm run crawl:external -- --insightconnect-api      # InsightConnect (SOAR) API v1
+npm run crawl:external -- --insightidr-detection-api # InsightIDR Detection Rules API v1
 
 npm run crawl:external -- --verbose                 # per-file output for any of the above
 ```

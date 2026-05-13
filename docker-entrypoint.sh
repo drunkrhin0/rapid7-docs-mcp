@@ -18,7 +18,7 @@ if [ -n "$CRAWL_SECTIONS" ]; then
   }
   CRON_ENTRIES() {
     for section in $CRAWL_SECTIONS; do
-      echo "${CRAWL_SCHEDULE} cd /app && npx tsx crawl.ts --section $section >> /proc/1/fd/1 2>&1"
+      echo "${CRAWL_SCHEDULE} cd /app && npx tsx crawl.ts --section \"$section\" >> /proc/1/fd/1 2>&1"
     done
   }
 else
