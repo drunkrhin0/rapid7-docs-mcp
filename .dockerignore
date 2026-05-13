@@ -1,5 +1,9 @@
 node_modules
 dist
 docs
+data
+rapid7_pdfs
+.claude
+.DS_Store
 .git
 *.md

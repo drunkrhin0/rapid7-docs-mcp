@@ -3,7 +3,7 @@
 # Prerequisites:
 #   1. Install Ollama natively (GPU-accelerated on Apple Silicon):
 #        brew install ollama
-#   2. Start ollama (required before strating docker compose stack each time):
+#   2. Start ollama (required before starting docker compose stack each time):
 #        ollama serve
 #   3. Pull a model with tool-calling support:
 #        ollama pull qwen2.5
