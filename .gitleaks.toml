@@ -1,0 +1,9 @@
+title = "Gitleaks config for rapid7-docs-mcp"
+
+[allowlist]
+  description = "Test-only keys and known safe patterns"
+  paths = [
+    '''tests/.*''',
+    '''server/tests/.*''',
+    '''\.gitallowed''',
+  ]

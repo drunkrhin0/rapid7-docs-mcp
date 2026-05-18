@@ -79,5 +79,5 @@ if [ "$CRAWL_EXTERNAL" = "true" ]; then
   echo "External crawl cron: ${EXTERNAL_CRAWL_SCHEDULE}"
 fi
 
-# Start MCP server as PID 1
-exec node dist/index.js
+# Keep crond running as PID 1 (no MCP server—separate container)
+exec crond -f

@@ -1,0 +1,38 @@
+name: Nightly
+on:
+  schedule:
+    - cron: '0 6 * * *'
+
+jobs:
+  deps-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm outdated || true
+
+      - uses: astral-sh/setup-uv@v5
+      - name: Install deps + pip-audit
+        run: uv pip install --system fastmcp pyyaml pip-audit
+      - run: pip-audit
+
+  smoke-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose up -d
+      - name: Wait for startup
+        run: sleep 30
+      - name: Health check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/health)
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "503" ]; then
+            echo "Health check failed with status $STATUS"
+            docker compose logs
+            exit 1
+          fi
+      - run: docker compose down

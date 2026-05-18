@@ -1,0 +1,28 @@
+[project]
+name = "rapid7-docs-mcp-server"
+version = "2.0.0"
+description = "FastMCP server for Rapid7 documentation — self-hostable, authenticated"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp>=2.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+rapid7-docs-mcp = "server.mcp_server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "SIM"]
+ignore = ["E501"]  # line length handled by formatter
+
+[tool.mypy]
+strict = true
+python_version = "3.11"

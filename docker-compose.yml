@@ -1,26 +1,43 @@
 services:
-  rapid7-docs-mcp:
-    image: rapid7-docs-mcp:latest
+  # ── Rapid7 Docs MCP Server (FastMCP/Python, Streamable HTTP) ──────────────
+  mcp-server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
     ports:
-      - "7000:7000"
+      - "${MCP_PORT:-8000}:8000"
+      - "${HEALTH_PORT:-8001}:8001"
     volumes:
-      - docs-data:/app/docs
-      - site-data:/app/data
+      - docs_data:/app/docs
+      - site_data:/app/data
     environment:
-      - MCP_TRANSPORT=http
-      - PORT=7000
-      # Leave empty to crawl all products (auto-discovered from homepage), or specify sections e.g. insightidr incident-command
-      - CRAWL_SECTIONS=
-      - CRAWL_SCHEDULE=0 2 * * *   # daily at 2am
-      - CRAWL_DELAY_MS=0            # ms between requests (0 = no artificial delay; CDN-backed)
-      - CRAWL_EXTENSIONS=true       # set to false to skip extensions
-      - EXTENSIONS_CRAWL_SCHEDULE=0 3 * * 0  # weekly at 3am Sunday
-      - CRAWL_SITE=true             # set to false to skip site crawl (products/blog/resources)
-      - SITE_CRAWL_SCHEDULE=0 4 * * 0  # weekly at 4am Sunday
-      - TZ=UTC
+      - MCP_PORT=8000
+      - HEALTH_PORT=8001
+      - MCP_API_KEYS=${MCP_API_KEYS:-}
+      - MCP_RATE_LIMIT=${MCP_RATE_LIMIT:-60}
+    restart: unless-stopped
 
+  # ── Crawler (Node.js, cron-scheduled) ────────────────────────────────────
+  crawler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - docs_data:/app/docs
+      - site_data:/app/data
+    environment:
+      - CRAWL_SECTIONS=${CRAWL_SECTIONS:-}
+      - CRAWL_SCHEDULE=${CRAWL_SCHEDULE:-0 2 * * *}
+      - CRAWL_DELAY_MS=${CRAWL_DELAY_MS:-0}
+      - CRAWL_EXTENSIONS=${CRAWL_EXTENSIONS:-true}
+      - EXTENSIONS_CRAWL_SCHEDULE=${EXTENSIONS_CRAWL_SCHEDULE:-0 3 * * 0}
+      - CRAWL_SITE=${CRAWL_SITE:-true}
+      - SITE_CRAWL_SCHEDULE=${SITE_CRAWL_SCHEDULE:-0 4 * * 0}
+      - CRAWL_EXTERNAL=${CRAWL_EXTERNAL:-false}
+      - EXTERNAL_CRAWL_SCHEDULE=${EXTERNAL_CRAWL_SCHEDULE:-0 5 * * 0}
+      - TZ=${TZ:-UTC}
     restart: unless-stopped
 
 volumes:
-  docs-data:
-  site-data:
+  docs_data:
+  site_data:

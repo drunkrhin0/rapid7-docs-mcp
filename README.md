@@ -1,27 +1,34 @@
 # Rapid7 Docs MCP Server
 
-An MCP server that crawls Rapid7 documentation, extensions, product pages, blog, and resources — then exposes them as tools for any MCP-compatible AI client. This was created to improve my MCP knowledge and make searching public facing information easier.
+An MCP server that crawls Rapid7 documentation, extensions, product pages, blog, and resources — then exposes them as tools for any MCP-compatible AI client.
 
-Use Claude if you're sensible, otherwise use the full stack deployment for privacy.
+Built on [FastMCP](https://gofastmcp.com) with authentication, rate limiting, and a health endpoint. The MCP server runs as a Streamable HTTP service; crawlers run as a companion container. Everything ships as a single `docker compose up`.
 
-Disclaimer: Vibe coded with Claude Code Opus 4.6. This was created in personal time and is not officially supported or associated with Rapid7 and only uses public resources. Use at your own risk.
+Disclaimers: Vibe coded with Claude Code. Created in personal time and is not officially supported or associated with Rapid7 and only uses public resources. Use at your own risk.
 
 ## How it works
 
 ```
 docs.rapid7.com              ──┐
 documentation.rapid7.com     ──┤
-extensions.rapid7.com        ──┼── crawlers ──► docs/ & data/ ──► MCP server ──► Claude/Ollama
-rapid7.com/products          ──┘
+extensions.rapid7.com        ──┼── crawlers (Node.js) ──► docs/ & data/ ──► FastMCP server (Python) ──► MCP clients
+rapid7.com/products          ──┘                                                     │
+                                                                                    ├── API key auth
+                                                                                    ├── Rate limiting
+                                                                                    └── /health
 ```
 
+Two services in `docker-compose.yml`:
+
+- **crawler** — Node.js container running four crawlers on a cron schedule and on first boot. Writes markdown files and JSON indexes to shared Docker volumes.
+- **mcp-server** — Python/FastMCP container exposing 6 MCP tools via Streamable HTTP. Reads the crawl output from the same volumes.
+
 Four crawlers build a local knowledge base:
+
 - **`crawl.ts`** — [technical documentation](https://docs.rapid7.com) on both docs.rapid7.com and documentation.rapid7.com (auto-discovers products via homepage)
 - **`crawl-extensions.ts`** — [extensions site](https://extensions.rapid7.com) (including toolkits)
 - **`crawl-site.ts`** — [base site](https://rapid7.com) (feature comparison tables, blog index, resources)
 - **`crawl-external.ts`** — GitHub docs + public OpenAPI/Swagger specs (Metasploit wiki, Velociraptor, all product APIs)
-
-The MCP server reads from `docs/` and `data/` at query time — no database required.
 
 ---
 
@@ -40,119 +47,98 @@ The MCP server reads from `docs/` and `data/` at query time — no database requ
 
 ## Setup
 
-<details>
-<summary><b>Option 1: Claude Desktop / Claude Code (local, stdio)</b></summary>
-<br>
+### Quick Start (Docker Compose)
 
-**Prerequisites:** Node.js 18+
+**Prerequisites:** Docker + Docker Compose.
 
 ```bash
-npm install
+git clone https://github.com/<user>/rapid7-docs-mcp
+cd rapid7-docs-mcp
 
-# Crawl (pick what you need)
-npm run crawl                           # docs — all sections (~2000 pages)
-npm run crawl -- --section insightidr   # docs — single section
-npm run crawl:extensions                # extensions & toolkits
-npm run crawl:site                      # products, blog, resources
-
-# Build
-npm run build
-```
-
-Add the server to your MCP config:
-
-| Client | Config file |
-|--------|-------------|
-| Claude Desktop (macOS) | `~/Library/Application Support/Claude/claude_desktop_config.json` |
-| Claude Code (per-project) | `.mcp.json` in project root |
-| Claude Code (global) | `~/.claude.json` |
-
-```json
-{
-  "mcpServers": {
-    "rapid7-docs": {
-      "command": "node",
-      "args": ["/absolute/path/to/rapid7-docs-mcp/dist/index.js"]
-    }
-  }
-}
-```
-
-Restart Claude Desktop or start a new Claude Code session — the tools will become available.
-
-</details>
-
-<details>
-<summary><b>Option 2: Docker + Open WebUI + Ollama (full stack)</b></summary>
-<br>
-
-Self-contained AI assistant with a web UI, local LLM, and Rapid7 docs tools. Runs entirely on your machine — no data leaves your network.
-
-```
-Ollama (native, GPU) ◄── Open WebUI (:8080) ──► MCPO (:8300) ──► MCP Server (:7000)
-                          (chat UI)              (proxy)          (docs tools)
-```
-
-**Prerequisites:**
-
-```bash
-# Install Ollama natively (GPU-accelerated on Apple Silicon / NVIDIA)
-brew install ollama && ollama serve
-
-# Pull a model with tool-calling support
-ollama pull qwen2.5
-```
-
-> Ollama must run natively (not in Docker) to use GPU acceleration on macOS. Docker on Mac is CPU-only.
-
-**Start the stack:**
-
-```bash
-ollama serve #if not already done
-docker compose -f docker-compose.ollama.yml up -d
-```
-
-Open `http://localhost:8080`, create an account, and select `qwen2.5` (or any tool-calling model). The Rapid7 docs tools are auto-registered via MCPO.
-
-The compose file bind-mounts `./docs` and `./data` from the repo. If you've already crawled data locally, it's available instantly — no re-crawl needed. If the directories are empty, the MCP server will crawl on first boot.
-
-**Tool-calling models:** `qwen2.5`, `llama3.1`, `mistral`, `command-r`
-
-If the tools don't auto-register, add them manually: **Settings > Tools > +** → `http://mcpo:8300` with OpenAPI path `openapi.json`.
-
-</details>
-
-<details>
-<summary><b>Option 3: Docker (standalone MCP server)</b></summary>
-<br>
-
-Runs the MCP server over HTTP/SSE. Useful for connecting from remote clients or shared environments. Crawls on first boot and on a cron schedule.
-
-```bash
-docker build -t rapid7-docs-mcp .
+# Start the stack (crawler + MCP server)
 docker compose up -d
 ```
 
-SSE endpoint: `http://localhost:7000/mcp`
+On first boot, the crawler indexes all Rapid7 documentation sections automatically (may take 10–30 minutes). Subsequent starts are instant — data persists in Docker volumes.
 
-If you've already crawled data locally, bind-mount it to skip the initial crawl — edit `docker-compose.yml` and replace the named volumes with:
+The MCP server is available at `http://localhost:8000/mcp`.
 
-```yaml
-volumes:
-  - ./docs:/app/docs
-  - ./data:/app/data
+### Configure an MCP Client
+
+Point your MCP client to the Streamable HTTP endpoint:
+
+| Client | URL |
+|--------|-----|
+| Claude Desktop | `http://localhost:8000/mcp` |
+| Claude Code | `http://localhost:8000/mcp` |
+| Cursor | `http://localhost:8000/mcp` |
+| Any MCP-compatible client | `http://<host>:8000/mcp` |
+
+If you've set `MCP_API_KEYS`, add the API key to your client's transport config.
+
+### Authentication
+
+API key auth is optional. Set the `MCP_API_KEYS` environment variable to a comma-separated list of keys:
+
+```bash
+MCP_API_KEYS=key1,key2,key3 docker compose up -d
 ```
 
-</details>
+If unset, the server runs open (no auth) — useful for local development or trusted networks.
 
-<details>
-<summary><b>Environment variables (Docker)</b></summary>
-<br>
+For OAuth (Auth0, Azure, Google, GitHub, etc.), FastMCP supports 15+ identity providers natively. Configure via `fastmcp.json` or environment variables — see the [FastMCP auth docs](https://gofastmcp.com).
+
+### Health & Metrics
+
+| Endpoint | Description |
+|----------|-------------|
+| `http://localhost:8001/health` | JSON status: `{"status":"healthy","pages_indexed":2048,"last_crawled":"..."}` |
+| `http://localhost:8001/metrics` | Prometheus metrics (placeholder — add `prometheus_client` for full metrics) |
+
+Returns HTTP 503 if no docs are indexed yet.
+
+---
+
+## Manual Crawl Triggers
+
+Crawlers run on a cron schedule by default, but you can trigger them manually:
+
+```bash
+# Crawl all documentation sections
+docker compose run --rm crawler npm run crawl
+
+# Crawl a single section
+docker compose run --rm crawler npm run crawl -- --section insightidr
+
+# Crawl extensions
+docker compose run --rm crawler npm run crawl:extensions
+
+# Crawl site content (products, blog, resources)
+docker compose run --rm crawler npm run crawl:site
+
+# Crawl external docs (GitHub + OpenAPI specs)
+docker compose run --rm crawler npm run crawl:external -- --insightvm-api
+```
+
+See the [crawling reference](#crawling-reference) below for full CLI options.
+
+---
+
+## Environment Variables
+
+### MCP Server
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MCP_TRANSPORT` | `stdio` | Set to `http` for SSE transport |
-| `PORT` | `3000` | HTTP server port (when `MCP_TRANSPORT=http`) |
+| `MCP_PORT` | `8000` | MCP server port (Streamable HTTP) |
+| `HEALTH_PORT` | `8001` | Health/metrics endpoint port |
+| `MCP_API_KEYS` | *(empty = open)* | Comma-separated API keys for authentication |
+| `MCP_RATE_LIMIT` | `60` | Max requests per minute per API key |
+
+### Crawler
+
+| Variable | Default | Description |
+|----------|---------|-------------|
 | `CRAWL_SECTIONS` | *(empty = all)* | Space-separated list of doc sections to crawl |
 | `CRAWL_SCHEDULE` | `0 2 * * *` | Cron schedule for docs crawl |
 | `CRAWL_DELAY_MS` | `0` | Milliseconds between requests |
@@ -164,15 +150,13 @@ volumes:
 | `EXTERNAL_CRAWL_SCHEDULE` | `0 5 * * 0` | Cron schedule for external crawl |
 | `TZ` | `UTC` | Timezone for cron schedules |
 
-</details>
+---
 
-<details>
-<summary><b>Crawling reference</b></summary>
-<br>
+## Crawling Reference
 
 All crawlers support incremental updates — unchanged pages are skipped using content hashing. Pages not seen for 14 days are automatically removed.
 
-**Documentation (docs.rapid7.com + documentation.rapid7.com):**
+### Documentation (docs.rapid7.com + documentation.rapid7.com)
 
 ```bash
 npm run crawl                          # all sections (auto-discovered from homepage)
@@ -184,13 +168,13 @@ npm run crawl -- --verbose             # per-page output
 
 Run `npm run crawl -- --list` to see all available sections — products are auto-discovered from the `documentation.rapid7.com` homepage at runtime.
 
-**Extensions (extensions.rapid7.com):**
+### Extensions (extensions.rapid7.com)
 
 ```bash
 npm run crawl:extensions
 ```
 
-**Site content (rapid7.com):**
+### Site content (rapid7.com)
 
 ```bash
 npm run crawl:site                         # everything
@@ -202,7 +186,7 @@ npm run crawl:site -- --product command    # single product
 
 Available products: `command`, `insightappsec`, `insightcloudsec`, `insightvm`, `metasploit`, `nexpose`, `siem`, `threat-command`, `velociraptor`
 
-**External docs (GitHub + OpenAPI specs):**
+### External docs (GitHub + OpenAPI specs)
 
 ```bash
 npm run crawl:external                              # everything below
@@ -236,26 +220,50 @@ Set `GITHUB_TOKEN` env var for higher API rate limits (5000/hr vs 60/hr unauthen
 >
 > **Cannot crawl:** Threat Command / DRP API requires authentication.
 
-</details>
+---
 
-<details>
-<summary><b>Project structure</b></summary>
-<br>
+## Project Structure
 
 ```
 rapid7-docs-mcp/
+  server/                        # FastMCP server (Python)
+    __init__.py
+    mcp_server.py                # 6 MCP tools + auth + health endpoint
+    search.py                    # Search engine (inverted index)
+    text.py                      # Stemmer + tokenizer (identical to TypeScript)
+    middleware.py                 # Rate limiter
+    pyproject.toml               # Python dependencies
+    Dockerfile
+    tests/
+      test_text.py               # Stemmer parity tests
+      test_search.py             # Search engine tests
+  crawl.ts                       # Documentation crawler
+  crawl-extensions.ts            # Extensions crawler
+  crawl-site.ts                  # Site content crawler
+  crawl-external.ts              # External docs crawler
   src/
-    index.ts          # MCP server (6 tools)
-    text.ts           # Shared stemmer, stop words, tokenizer
-    crawl-utils.ts    # Shared crawl utilities
-  crawl.ts            # Documentation crawler (docs.rapid7.com + documentation.rapid7.com)
-  crawl-extensions.ts # Extensions crawler (extensions.rapid7.com)
-  crawl-site.ts       # Site content crawler (products/blog/resources)
-  crawl-external.ts   # External docs crawler (GitHub sources + OpenAPI specs for all product APIs)
-  docs/               # Crawled documentation markdown + indexes (gitignored)
-  data/               # Crawled site content — products, blog, resources (gitignored)
-  docker-compose.yml          # Standalone MCP server
-  docker-compose.ollama.yml   # Full stack: MCP + MCPO + Open WebUI + Ollama
+    text.ts                      # Stemmer (source of truth — used by crawlers)
+    crawl-utils.ts               # Shared crawl utilities + search index builder
+  tests/
+    crawl.test.ts                # Crawler tests
+  docker-compose.yml             # 2-service orchestration
+  Dockerfile                     # Crawler container (Node.js)
+  docker-entrypoint.sh           # Crawler entrypoint (cron)
+  docs/                          # Crawled documentation (gitignored)
+  data/                          # Crawled site content (gitignored)
 ```
 
-</details>
+---
+
+## Security
+
+- **API key authentication** — configurable via `MCP_API_KEYS`
+- **Rate limiting** — configurable per API key via `MCP_RATE_LIMIT`
+- **Path traversal protection** — `docs_read` cannot escape the docs directory
+- **CodeQL** — static analysis on every PR (Python + TypeScript)
+- **Trivy** — container image scanning for HIGH/CRITICAL CVEs
+- **pip-audit + npm audit** — dependency vulnerability scanning on every PR
+- **gitleaks** — pre-commit secret scanning
+- **Dependabot** — weekly dependency updates for npm, pip, Docker, and GitHub Actions
+
+CI/CD workflows: `.github/workflows/pr.yml` (lint, test, SAST, vuln scan), `.github/workflows/main.yml` (build & push), `.github/workflows/nightly.yml` (smoke test, CVE rescan).
