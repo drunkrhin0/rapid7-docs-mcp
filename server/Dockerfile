@@ -6,7 +6,7 @@ WORKDIR /app
 RUN addgroup -S app && adduser -S app -G app
 
 # Install deps as root
-RUN pip install --no-cache-dir fastmcp pyyaml
+RUN pip install --no-cache-dir 'fastmcp==3.2.4' pyyaml
 
 COPY server/mcp_server.py ./server/
 COPY server/search.py ./server/

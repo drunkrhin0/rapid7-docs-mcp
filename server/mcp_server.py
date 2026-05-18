@@ -9,7 +9,7 @@ Tools:
   search_blog            — Search the Rapid7 blog index by keyword
   search_resources       — Search Rapid7 resources (whitepapers, reports, guides)
 
-Transport: Streamable HTTP (default), stdio fallback.
+Transport: Streamable HTTP or SSE (set MCP_TRANSPORT env var, default: http).
 Auth: API key (MCP_API_KEYS env var, comma-separated).
 """
 
@@ -20,6 +20,7 @@ import sys
 from pathlib import Path
 
 from fastmcp import FastMCP
+from fastmcp.server.middleware import CallNext, Middleware, MiddlewareContext
 
 from .middleware import RateLimitMiddleware
 from .search import (
@@ -38,6 +39,7 @@ from .search import (
 # ─── Config ──────────────────────────────────────────────────────────────────
 
 PORT = int(os.environ.get("MCP_PORT", "8000"))
+TRANSPORT = os.environ.get("MCP_TRANSPORT", "streamable-http")
 API_KEYS: set[str] = set(
     k.strip()
     for k in os.environ.get("MCP_API_KEYS", "").split(",")
@@ -51,10 +53,11 @@ INDEX_FILE = Path(__file__).resolve().parent.parent / "docs" / "index.json"
 
 # ─── Auth middleware ──────────────────────────────────────────────────────────
 
-class AuthMiddleware:
+
+class AuthMiddleware(Middleware):
     """Simple API key middleware for FastMCP."""
 
-    async def on_call_tool(self, context, call_next):
+    async def on_call_tool(self, context: MiddlewareContext, call_next: CallNext):
         if AUTH_ENABLED:
             meta = getattr(context.message, "meta", None) or {}
             key = meta.get("api_key", "")
@@ -479,7 +482,7 @@ def main() -> None:
     print(f"Health endpoint on :{health_port}", file=sys.stderr)
 
     mcp.run(
-        transport="http",
+        transport=TRANSPORT,
         host="0.0.0.0",
         port=PORT,
     )

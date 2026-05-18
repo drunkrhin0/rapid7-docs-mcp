@@ -2,7 +2,7 @@
 
 Search Rapid7 documentation, product info, blog posts, and resources from any MCP-compatible AI client. Self-hostable, authenticated, runs in Docker.
 
-Built on [FastMCP](https://gofastmcp.com). Uses **Streamable HTTP** — the modern MCP transport. No long-lived SSE connections required.
+Built on [FastMCP](https://gofastmcp.com). Serves both **Streamable HTTP** and **SSE** — works with Claude Desktop, OpenChamber, Bifrost, and any MCP-compatible client.
 
 > Disclaimer: Vibe coded with Claude Code and Opencode. Created in personal time and is not officially supported or associated with Rapid7 and only uses public resources. Use at your own risk. Do not approach Rapid7 for support or issues regarding this project. Please open an issue instead.
 
@@ -27,16 +27,19 @@ docker compose up -d
 
 On first boot, the crawler indexes ~2,000 docs pages (10–30 min). After that, starts instantly. Data persists in Docker volumes. Cron keeps it fresh.
 
-Connect any MCP client to: **`http://localhost:8000/mcp`**
+Connect any MCP client to: **`http://localhost:8002/mcp`** (Streamable HTTP)
+
+SSE for OpenChamber/Bifrost: `docker compose --profile sse up`, then **`http://localhost:8004/mcp`**
 
 ## How it works
 
-Two containers sharing two volumes:
+Two services by default. SSE is opt-in (`--profile sse`):
 
 | Container | What it does |
 |-----------|-------------|
 | **crawler** (Node.js) | Scrapes docs.rapid7.com, documentation.rapid7.com, extensions.rapid7.com, rapid7.com → markdown + JSON indexes |
 | **mcp-server** (Python/FastMCP) | Serves 6 search tools via Streamable HTTP with optional API key auth |
+| **mcp-server-sse** *(opt-in)* | SSE endpoint for clients that don't support Streamable HTTP |
 
 ## Tools
 
@@ -63,9 +66,14 @@ OAuth providers (Auth0, Google, GitHub, etc.) supported via [FastMCP auth docs](
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MCP_PORT` | `8000` | Server port |
+| `MCP_PORT` | `8002` | Streamable HTTP port |
+| `SSE_PORT` | `8004` | SSE port (requires `--profile sse`) |
+| `HEALTH_PORT` | `8001` | Health endpoint port |
 | `MCP_API_KEYS` | *(open)* | Comma-separated API keys |
 | `MCP_RATE_LIMIT` | `60` | Requests/min per key |
+| `IMAGE_REGISTRY` | *(empty)* | GHCR prefix, e.g. `ghcr.io/user/` |
+| `GIT_SOURCE` | GitHub URL | Git repo for `docker compose build` |
+| `GITHUB_TOKEN` | *(empty)* | GitHub PAT for higher API rate limits |
 | `CRAWL_SECTIONS` | *(all)* | Space-separated section list |
 | `CRAWL_SCHEDULE` | `0 2 * * *` | Docs crawl cron |
 | `CRAWL_EXTENSIONS` | `true` | Crawl extensions site |

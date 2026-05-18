@@ -2,18 +2,41 @@ services:
   # ── Rapid7 Docs MCP Server (FastMCP/Python, Streamable HTTP) ──────────────
   mcp-server:
     image: ${IMAGE_REGISTRY:-}rapid7-docs-mcp-server:${IMAGE_TAG:-latest}
+    pull_policy: build
     build:
-      context: .
+      context: ${GIT_SOURCE:-https://github.com/drunkrhin0/rapid7-docs-mcp.git}#${GIT_REF:-main}
       dockerfile: server/Dockerfile
     ports:
-      - "${MCP_PORT:-8000}:8000"
+      - "${MCP_PORT:-8002}:8000"
       - "${HEALTH_PORT:-8001}:8001"
     volumes:
       - docs_data:/app/docs
       - site_data:/app/data
     environment:
+      - MCP_TRANSPORT=streamable-http
       - MCP_PORT=8000
       - HEALTH_PORT=8001
+      - MCP_API_KEYS=${MCP_API_KEYS:-}
+      - MCP_RATE_LIMIT=${MCP_RATE_LIMIT:-60}
+    restart: unless-stopped
+
+  # ── SSE endpoint for legacy clients (OpenChamber, Bifrost) ────────────────
+  # Enable with: docker compose --profile sse up
+  mcp-server-sse:
+    profiles: [sse]
+    image: ${IMAGE_REGISTRY:-}rapid7-docs-mcp-server:${IMAGE_TAG:-latest}
+    pull_policy: build
+    build:
+      context: ${GIT_SOURCE:-https://github.com/drunkrhin0/rapid7-docs-mcp.git}#${GIT_REF:-main}
+      dockerfile: server/Dockerfile
+    ports:
+      - "${SSE_PORT:-8004}:8000"
+    volumes:
+      - docs_data:/app/docs
+      - site_data:/app/data
+    environment:
+      - MCP_TRANSPORT=sse
+      - MCP_PORT=8000
       - MCP_API_KEYS=${MCP_API_KEYS:-}
       - MCP_RATE_LIMIT=${MCP_RATE_LIMIT:-60}
     restart: unless-stopped
@@ -21,8 +44,9 @@ services:
   # ── Crawler (Node.js, cron-scheduled) ────────────────────────────────────
   crawler:
     image: ${IMAGE_REGISTRY:-}rapid7-docs-mcp-crawler:${IMAGE_TAG:-latest}
+    pull_policy: build
     build:
-      context: .
+      context: ${GIT_SOURCE:-https://github.com/drunkrhin0/rapid7-docs-mcp.git}#${GIT_REF:-main}
       dockerfile: Dockerfile
     volumes:
       - docs_data:/app/docs
@@ -37,6 +61,7 @@ services:
       - SITE_CRAWL_SCHEDULE=${SITE_CRAWL_SCHEDULE:-0 4 * * 0}
       - CRAWL_EXTERNAL=${CRAWL_EXTERNAL:-false}
       - EXTERNAL_CRAWL_SCHEDULE=${EXTERNAL_CRAWL_SCHEDULE:-0 5 * * 0}
+      - GITHUB_TOKEN=${GITHUB_TOKEN:-}
       - TZ=${TZ:-UTC}
     restart: unless-stopped
 

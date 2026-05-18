@@ -156,7 +156,7 @@ function extractJsonLdFaqs(html: string): FAQItem[] {
         if (item['@type'] === 'Question' && item.name) {
           faqs.push({
             question: item.name,
-            answer: (item.acceptedAnswer?.text || '').replace(/<[^>]+>/g, ''),
+            answer: cheerio.load(item.acceptedAnswer?.text || '')('body').text(),
           });
         }
       }
@@ -176,7 +176,7 @@ function extractJsonLdFaqs(html: string): FAQItem[] {
             if (item['@type'] === 'Question') {
               faqs.push({
                 question: item.name || '',
-                answer: (item.acceptedAnswer?.text || '').replace(/<[^>]+>/g, ''),
+                answer: cheerio.load(item.acceptedAnswer?.text || '')('body').text(),
               });
             }
           }

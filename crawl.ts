@@ -341,7 +341,15 @@ export async function discoverProducts(save = true): Promise<Array<{ name: strin
     console.warn(`⚠  Product discovery failed (${msg}), falling back to hardcoded list`);
     // Fallback: return PRODUCT_SECTIONS entries, excluding raw JSON specs
     return Object.entries(PRODUCT_SECTIONS)
-      .filter(([, url]) => !url.endsWith('.json') && !url.startsWith(HELP_URL))
+      .filter(([, url]) => {
+        const isJson = url.endsWith('.json');
+        if (isJson) return false;
+        try {
+          return new URL(url).hostname !== new URL(HELP_URL).hostname;
+        } catch {
+          return false;
+        }
+      })
       .map(([name, url]) => ({ name, url }));
   }
 }
@@ -454,7 +462,14 @@ async function main(): Promise<void> {
     }
     // Also crawl API reference docs (not in homepage tiles)
     for (const [, url] of Object.entries(PRODUCT_SECTIONS)) {
-      if (url.startsWith(HELP_URL) || url.endsWith('.json')) {
+      const isJson = url.endsWith('.json');
+      let isHelpUrl = false;
+      try {
+        isHelpUrl = new URL(url).hostname === new URL(HELP_URL).hostname;
+      } catch {
+        continue;
+      }
+      if (isHelpUrl || isJson) {
         await crawlSection(url);
       }
     }
