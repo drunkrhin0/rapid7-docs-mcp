@@ -1,5 +1,7 @@
 name: PR Checks
 on:
+  push:
+    branches-ignore: [main]
   pull_request:
     branches: [main]
 
@@ -8,12 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Dockerfile lint
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: server/Dockerfile
+
+      # Python lint
       - uses: astral-sh/setup-uv@v5
       - name: Install Python lint tools
         run: uv pip install --system ruff mypy
       - run: ruff check server/
       - run: mypy server/ --config-file server/pyproject.toml
 
+      # TypeScript lint
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -25,11 +38,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      # Python tests
       - uses: astral-sh/setup-uv@v5
       - name: Install Python test deps
         run: uv pip install --system pytest fastmcp pyyaml
       - run: pytest server/tests/ -v
 
+      # TypeScript tests
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -39,8 +55,7 @@ jobs:
 
   sast:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
+    continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v3
@@ -52,6 +67,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -66,8 +82,7 @@ jobs:
 
   docker-scan:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
+    continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
     steps:
       - uses: actions/checkout@v4
       - uses: aquasecurity/trivy-action@master
@@ -77,6 +92,3 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
-      - uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: trivy-results.sarif

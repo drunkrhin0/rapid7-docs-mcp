@@ -8,7 +8,11 @@ RUN addgroup -S app && adduser -S app -G app
 # Install deps as root
 RUN pip install --no-cache-dir fastmcp pyyaml
 
-COPY server/ ./server/
+COPY server/mcp_server.py ./server/
+COPY server/search.py ./server/
+COPY server/text.py ./server/
+COPY server/middleware.py ./server/
+COPY server/__init__.py ./server/
 COPY pyproject.toml .
 
 ENV PYTHONUNBUFFERED=1

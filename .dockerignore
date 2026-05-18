@@ -3,8 +3,14 @@ dist
 docs
 data
 tests
+server/tests
 rapid7_pdfs
 .claude
 .DS_Store
 .git
+.github
+__pycache__
+*.pyc
+.pytest_cache
+.env
 *.md

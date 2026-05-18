@@ -16,12 +16,12 @@ COPY toolkits_complete.json ./
 COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
+# Ensure volume directories exist with correct ownership
+RUN mkdir -p /app/docs /app/data && chown -R app:app /app/docs /app/data
+
 VOLUME /app/docs
 VOLUME /app/data
 
-# Ensure volumes are writable by app user
-USER root
-RUN mkdir -p /app/docs /app/data && chown -R app:app /app/docs /app/data
 USER app
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -1,6 +1,7 @@
 services:
   # ── Rapid7 Docs MCP Server (FastMCP/Python, Streamable HTTP) ──────────────
   mcp-server:
+    image: ${IMAGE_REGISTRY:-}rapid7-docs-mcp-server:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: server/Dockerfile
@@ -19,6 +20,7 @@ services:
 
   # ── Crawler (Node.js, cron-scheduled) ────────────────────────────────────
   crawler:
+    image: ${IMAGE_REGISTRY:-}rapid7-docs-mcp-crawler:${IMAGE_TAG:-latest}
     build:
       context: .
       dockerfile: Dockerfile

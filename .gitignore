@@ -4,3 +4,8 @@ docs/
 data/
 .DS_Store
 .claude/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+.env
