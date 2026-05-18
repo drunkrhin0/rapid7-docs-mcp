@@ -11,6 +11,7 @@
  */
 
 import axios from 'axios';
+import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
@@ -59,18 +60,7 @@ interface APIResponse {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function stripHtml(html: string): string {
-  // Lightweight HTML → text for version history entries
-  // Entity decode order matters: &amp; must be decoded last to prevent
-  // chained decoding (e.g. &amp;lt; → &lt; → < would be wrong).
-  return html
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/?[^>]+>/g, '')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&amp;/g, '&')
-    .trim();
+  return cheerio.load(html).text().trim();
 }
 
 // ─── API fetcher ─────────────────────────────────────────────────────────────
