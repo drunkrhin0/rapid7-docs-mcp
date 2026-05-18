@@ -7,6 +7,8 @@ env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
+permissions: read-all
+
 jobs:
   build:
     runs-on: docker

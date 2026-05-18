@@ -5,9 +5,13 @@ on:
   pull_request:
     branches: [main]
 
+permissions: read-all
+
 jobs:
   lint:
     runs-on: docker
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -36,6 +40,8 @@ jobs:
 
   test:
     runs-on: docker
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -56,6 +62,9 @@ jobs:
   sast:
     runs-on: docker
     continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
       - uses: github/codeql-action/init@v3
@@ -65,6 +74,8 @@ jobs:
 
   dep-vulns:
     runs-on: docker
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -83,9 +94,12 @@ jobs:
   docker-scan:
     runs-on: docker
     continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
+    permissions:
+      contents: read
+      security-events: write
     steps:
       - uses: actions/checkout@v4
-      - uses: aquasecurity/trivy-action@master
+      - uses: aquasecurity/trivy-action@0.28.0
         with:
           scan-type: fs
           scan-ref: .
