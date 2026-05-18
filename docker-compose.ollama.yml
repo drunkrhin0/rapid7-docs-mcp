@@ -12,7 +12,7 @@
 #   5. Open http://localhost:8080 and create an account
 #   6. Select "qwen2.5" as your model — Rapid7 docs tools are available automatically
 #
-# The MCP server crawls docs.rapid7.com, extensions.rapid7.com, and rapid7.com
+# The MCP server crawls docs.rapid7.com, documentation.rapid7.com, extensions.rapid7.com, and rapid7.com
 # on first run and weekly thereafter. All data is persisted in Docker volumes.
 #
 # Tool-calling models: qwen2.5, llama3.1, mistral, command-r

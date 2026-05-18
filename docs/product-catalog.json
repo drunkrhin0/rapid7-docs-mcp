@@ -1,0 +1,90 @@
+[
+  {
+    "name": "incident-command",
+    "url": "https://documentation.rapid7.com/incident-command/"
+  },
+  {
+    "name": "exposure-command",
+    "url": "https://documentation.rapid7.com/exposure-command/"
+  },
+  {
+    "name": "surface-command-offering",
+    "url": "https://docs.rapid7.com/surface-command-offering/"
+  },
+  {
+    "name": "insightgovcloud/insightgovcloud-overview",
+    "url": "https://docs.rapid7.com/insightgovcloud/insightgovcloud-overview/"
+  },
+  {
+    "name": "insight",
+    "url": "https://docs.rapid7.com/insight/"
+  },
+  {
+    "name": "surface-command",
+    "url": "https://docs.rapid7.com/surface-command/"
+  },
+  {
+    "name": "insightvm",
+    "url": "https://docs.rapid7.com/insightvm/"
+  },
+  {
+    "name": "insightcloudsec",
+    "url": "https://docs.rapid7.com/insightcloudsec/"
+  },
+  {
+    "name": "insightappsec",
+    "url": "https://docs.rapid7.com/insightappsec/"
+  },
+  {
+    "name": "insightidr",
+    "url": "https://docs.rapid7.com/insightidr/"
+  },
+  {
+    "name": "threat-command",
+    "url": "https://docs.rapid7.com/threat-command/"
+  },
+  {
+    "name": "intelligence-hub",
+    "url": "https://docs.rapid7.com/intelligence-hub/"
+  },
+  {
+    "name": "insightconnect",
+    "url": "https://docs.rapid7.com/insightconnect/"
+  },
+  {
+    "name": "insight-agent",
+    "url": "https://docs.rapid7.com/insight-agent/"
+  },
+  {
+    "name": "sensor",
+    "url": "https://docs.rapid7.com/sensor/"
+  },
+  {
+    "name": "services/mtc-welcome",
+    "url": "https://docs.rapid7.com/services/mtc-welcome/"
+  },
+  {
+    "name": "services",
+    "url": "https://docs.rapid7.com/services/"
+  },
+  {
+    "name": "cloud-risk-complete",
+    "url": "https://docs.rapid7.com/cloud-risk-complete/"
+  },
+  {
+    "name": "metasploit",
+    "url": "https://docs.rapid7.com/metasploit/"
+  },
+  {
+    "name": "nexpose",
+    "url": "https://docs.rapid7.com/nexpose/"
+  },
+  {
+    "name": "insightops",
+    "url": "https://docs.rapid7.com/insightops/"
+  },
+  {
+    "name": "appspider",
+    "url": "https://docs.rapid7.com/appspider/"
+  }
+]

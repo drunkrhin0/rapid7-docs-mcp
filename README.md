@@ -9,13 +9,14 @@ Disclaimer: Vibe coded with Claude Code Opus 4.6. This was created in personal t
 ## How it works
 
 ```
-docs.rapid7.com        ──┐
-extensions.rapid7.com  ──┼── crawlers ──► docs/ & data/ ──► MCP server ──► Claude/Ollama
-rapid7.com/products    ──┘
+docs.rapid7.com              ──┐
+documentation.rapid7.com     ──┤
+extensions.rapid7.com        ──┼── crawlers ──► docs/ & data/ ──► MCP server ──► Claude/Ollama
+rapid7.com/products          ──┘
 ```
 
 Four crawlers build a local knowledge base:
-- **`crawl.ts`** — [technical documentation](https://docs.rapid7.com)
+- **`crawl.ts`** — [technical documentation](https://docs.rapid7.com) on both docs.rapid7.com and documentation.rapid7.com (auto-discovers products via homepage)
 - **`crawl-extensions.ts`** — [extensions site](https://extensions.rapid7.com) (including toolkits)
 - **`crawl-site.ts`** — [base site](https://rapid7.com) (feature comparison tables, blog index, resources)
 - **`crawl-external.ts`** — GitHub docs + public OpenAPI/Swagger specs (Metasploit wiki, Velociraptor, all product APIs)
@@ -171,16 +172,17 @@ volumes:
 
 All crawlers support incremental updates — unchanged pages are skipped using content hashing. Pages not seen for 14 days are automatically removed.
 
-**Documentation (docs.rapid7.com):**
+**Documentation (docs.rapid7.com + documentation.rapid7.com):**
 
 ```bash
-npm run crawl                          # all sections
+npm run crawl                          # all sections (auto-discovered from homepage)
 npm run crawl -- --section insightidr  # single section
-npm run crawl -- --list                # list available sections
+npm run crawl -- --url https://documentation.rapid7.com/incident-command/  # specific URL
+npm run crawl -- --list                # list available sections (live from homepage)
 npm run crawl -- --verbose             # per-page output
 ```
 
-Available sections: `insightidr`, `insightvm`, `insightappsec`, `insightconnect`, `insightagent`, `insightcloudsec`, `metasploit`, `nexpose`, `appspider`, `insightops`, `threat-command`, `surface-command`
+Run `npm run crawl -- --list` to see all available sections — products are auto-discovered from the `documentation.rapid7.com` homepage at runtime.
 
 **Extensions (extensions.rapid7.com):**
 
@@ -246,7 +248,7 @@ rapid7-docs-mcp/
     index.ts          # MCP server (6 tools)
     text.ts           # Shared stemmer, stop words, tokenizer
     crawl-utils.ts    # Shared crawl utilities
-  crawl.ts            # Documentation crawler (docs.rapid7.com)
+  crawl.ts            # Documentation crawler (docs.rapid7.com + documentation.rapid7.com)
   crawl-extensions.ts # Extensions crawler (extensions.rapid7.com)
   crawl-site.ts       # Site content crawler (products/blog/resources)
   crawl-external.ts   # External docs crawler (GitHub sources + OpenAPI specs for all product APIs)

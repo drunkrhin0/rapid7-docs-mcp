@@ -314,16 +314,16 @@ server.registerTool(
     description: `Read the full markdown content of a specific Rapid7 documentation page.
 
 Use this after docs_search to get complete content of a result.
-Images are preserved as absolute URLs pointing to docs.rapid7.com.
+Images are preserved as absolute URLs.
 
 Args:
   - path (string): Relative file path from docs_search results e.g. "insightidr/docs/log-sources.md"
-                   OR a docs.rapid7.com URL
+                   OR a full URL from docs.rapid7.com or documentation.rapid7.com
 
 Returns:
   Full markdown content of the page including frontmatter with source URL.`,
     inputSchema: z.object({
-      path: z.string().describe('Relative file path from search results, or a docs.rapid7.com URL'),
+      path: z.string().describe('Relative file path from search results, or a docs.rapid7.com / documentation.rapid7.com URL'),
     }),
     annotations: {
       readOnlyHint: true,

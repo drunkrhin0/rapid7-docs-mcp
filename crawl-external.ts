@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * External Docs Crawler
- * Fetches docs from sources outside docs.rapid7.com:
+ * Fetches docs from sources outside docs.rapid7.com and documentation.rapid7.com:
  *
  * GitHub sources (markdown fetched directly, no HTML conversion):
  *   - Metasploit Framework wiki  (rapid7/metasploit-framework — docs/metasploit-framework.wiki/)

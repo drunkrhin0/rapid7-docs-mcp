@@ -12,7 +12,8 @@
     "crawl:section": "tsx crawl.ts --section",
     "crawl:extensions": "tsx crawl-extensions.ts",
     "crawl:site": "tsx crawl-site.ts",
-    "crawl:external": "tsx crawl-external.ts"
+    "crawl:external": "tsx crawl-external.ts",
+    "test": "vitest run"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
@@ -27,6 +28,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.0.0",
     "@types/turndown": "^5.0.4",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^4.1.6"
   }
 }

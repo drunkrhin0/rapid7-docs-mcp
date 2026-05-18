@@ -9,7 +9,7 @@ services:
     environment:
       - MCP_TRANSPORT=http
       - PORT=7000
-      # Leave empty to crawl all sections, or specify: insightidr insightvm insightappsec insightconnect insightagent insightcloudsec metasploit nexpose appspider insightops threat-command surface-command
+      # Leave empty to crawl all products (auto-discovered from homepage), or specify sections e.g. insightidr incident-command
       - CRAWL_SECTIONS=
       - CRAWL_SCHEDULE=0 2 * * *   # daily at 2am
       - CRAWL_DELAY_MS=0            # ms between requests (0 = no artificial delay; CDN-backed)

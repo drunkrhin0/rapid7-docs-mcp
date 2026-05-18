@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
 /**
  * Rapid7 Docs Crawler
- * Crawls docs.rapid7.com and converts pages to markdown files.
+ * Crawls docs.rapid7.com and documentation.rapid7.com, converting pages to markdown.
  * Preserves absolute image URLs so Claude can reference them live.
  *
  * Usage:
@@ -18,15 +18,30 @@ import TurndownService from 'turndown';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
+import { fileURLToPath } from 'url';
 import { DOCS_DIR, IndexEntry, ensureDir, updateIndex, buildSearchIndex, sleep } from './src/crawl-utils.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
 const BASE_URL = 'https://docs.rapid7.com';
 const HELP_URL = 'https://help.rapid7.com';
+const DOCUMENTATION_BASE_URL = 'https://documentation.rapid7.com';
+const USER_AGENT = 'Rapid7-Docs-MCP-Crawler/1.0 (personal homelab indexer)';
 const DELAY_MS = parseInt(process.env.CRAWL_DELAY_MS || '0'); // Sequential but no artificial delay — CDN-backed site handles it fine
 const STALE_DAYS = 14; // Delete files not seen after this many days
 const VERBOSE = process.argv.includes('--verbose');
+
+const VALID_CRAWL_DOMAINS = new Set(['docs.rapid7.com', 'documentation.rapid7.com', 'help.rapid7.com']);
+
+export function isValidProductUrl(href: string): boolean {
+  if (!href || href === '#' || !href.startsWith('https://')) return false;
+  try {
+    const url = new URL(href);
+    return VALID_CRAWL_DOMAINS.has(url.hostname);
+  } catch {
+    return false;
+  }
+}
 
 // Known Rapid7 product sections — full URLs so crawlSection works across hostnames
 const PRODUCT_SECTIONS: Record<string, string> = {
@@ -79,7 +94,7 @@ td.addRule('images', {
 
 function urlToFilePath(pageUrl: string): string {
   const parsed = new URL(pageUrl);
-  let pathname = parsed.pathname.replace(/\/$/, '') || '/index';
+  let pathname = parsed.pathname.replace(/\/$/, '').replace(/\.html?$/, '') || '/index';
   if (!pathname.endsWith('.md')) pathname += '.md';
   // Namespace non-docs.rapid7.com pages under their hostname to avoid collisions
   const prefix = parsed.hostname !== 'docs.rapid7.com' ? parsed.hostname : '';
@@ -107,7 +122,7 @@ async function fetchJsonSpec(pageUrl: string): Promise<{ markdown: string; links
   try {
     const resp = await axios.get(pageUrl, {
       timeout: 30000,
-      headers: { 'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0 (personal homelab indexer)' },
+      headers: { 'User-Agent': USER_AGENT },
       responseType: 'text',
     });
     const raw = typeof resp.data === 'string' ? resp.data : JSON.stringify(resp.data, null, 2);
@@ -133,7 +148,7 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
   try {
     const resp = await axios.get(pageUrl, {
       timeout: 15000,
-      headers: { 'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0 (personal homelab indexer)' },
+      headers: { 'User-Agent': USER_AGENT },
     });
 
     const $ = cheerio.load(resp.data);
@@ -141,7 +156,7 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
     const title = $('h1').first().text().trim() || $('title').text().trim();
 
     // Extract main content — try selectors in priority order, fall back to body
-    const CONTENT_SELECTORS = ['main article', 'main .content', '[role="main"]', 'main', 'article'];
+    const CONTENT_SELECTORS = ['#mc-main-content', 'main article', 'main .content', '[role="main"]', 'main', 'article'];
     let contentEl = $('body'); // fallback
     for (const sel of CONTENT_SELECTORS) {
       const el = $(sel).first();
@@ -172,11 +187,41 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
   }
 }
 
+export async function fetchSitemapUrls(productUrl: string): Promise<string[]> {
+  const base = productUrl.replace(/\/$/, '');
+  const sitemapUrl = `${base}/Sitemap.xml`;
+  try {
+    const resp = await axios.get<string>(sitemapUrl, {
+      timeout: 10000,
+      headers: { 'User-Agent': USER_AGENT },
+      responseType: 'text',
+    });
+    const $ = cheerio.load(resp.data, { xmlMode: true });
+    const urls: string[] = [];
+    $('loc').each((_, el) => {
+      const loc = $(el).text().trim();
+      // Keep only .htm content pages; skip shell pages, assets, and MicroContent
+      if (
+        loc.endsWith('.htm') &&
+        !loc.endsWith('/Default.htm') &&
+        !loc.endsWith('/Search.htm') &&
+        !loc.includes('/Resources/') &&
+        !loc.includes('/MicroContent/')
+      ) {
+        urls.push(loc);
+      }
+    });
+    return urls;
+  } catch {
+    return [];
+  }
+}
+
 // ─── Main crawl ───────────────────────────────────────────────────────────────
 
-async function crawlSection(startUrl: string): Promise<void> {
+async function crawlSection(startUrl: string, seeds?: string[]): Promise<void> {
   const visited = new Set<string>();
-  const queue: string[] = [startUrl];
+  const queue: string[] = seeds ? [...seeds] : [startUrl];
   const newEntries: IndexEntry[] = [];
   const visitedFiles = new Set<string>(); // track files we saw this crawl
   let count = 0;
@@ -246,6 +291,61 @@ async function crawlSection(startUrl: string): Promise<void> {
   console.log(`✅ ${startUrl} — ${count} pages (${updated} updated, ${failed} failed, ${staleRemoved} stale removed)`);
 }
 
+async function crawlMadCapSection(productUrl: string): Promise<void> {
+  let seeds = await fetchSitemapUrls(productUrl);
+  if (seeds.length === 0) {
+    // Sitemap empty or missing — try common MadCap first-page filenames as seeds
+    const base = productUrl.replace(/\/$/, '');
+    seeds = ['overview.htm', 'getting-started.htm', 'introduction.htm', 'index.htm'].map(
+      s => `${base}/${s}`
+    );
+  }
+  await crawlSection(productUrl, seeds);
+}
+
+export async function discoverProducts(save = true): Promise<Array<{ name: string; url: string }>> {
+  try {
+    const resp = await axios.get(`${DOCUMENTATION_BASE_URL}/home/home.htm`, {
+      timeout: 15000,
+      headers: { 'User-Agent': USER_AGENT },
+    });
+    const $ = cheerio.load(resp.data);
+    const products: Array<{ name: string; url: string }> = [];
+    const seen = new Set<string>();
+
+    $('.home-tiles a[href]').each((_, el) => {
+      const href = $(el).attr('href') || '';
+      if (!isValidProductUrl(href)) return;
+      // Normalize: ensure trailing slash for section boundary matching
+      const url = href.endsWith('/') ? href : href + '/';
+      if (seen.has(url)) return;
+      seen.add(url);
+      const name = new URL(url).pathname.replace(/^\//, '').replace(/\/$/, '') || 'unknown';
+      products.push({ name, url });
+    });
+
+    if (products.length === 0) throw new Error('No valid product URLs found on homepage');
+
+    if (save) {
+      fs.mkdirSync(DOCS_DIR, { recursive: true });
+      fs.writeFileSync(
+        path.join(DOCS_DIR, 'product-catalog.json'),
+        JSON.stringify(products, null, 2),
+        'utf-8'
+      );
+    }
+    console.log(`📋 Discovered ${products.length} products from homepage`);
+    return products;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.warn(`⚠  Product discovery failed (${msg}), falling back to hardcoded list`);
+    // Fallback: return PRODUCT_SECTIONS entries, excluding raw JSON specs
+    return Object.entries(PRODUCT_SECTIONS)
+      .filter(([, url]) => !url.endsWith('.json') && !url.startsWith(HELP_URL))
+      .map(([name, url]) => ({ name, url }));
+  }
+}
+
 /**
  * Delete files in a section directory that weren't visited this crawl
  * and whose `crawled` timestamp is older than STALE_DAYS.
@@ -284,13 +384,35 @@ function cleanStaleFiles(sectionPath: string, visitedFiles: Set<string>): number
 
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
+export async function crawlByUrl(url: string): Promise<void> {
+  let hostname: string;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    console.error(`Invalid URL: ${url}`);
+    return;
+  }
+  if (hostname === 'documentation.rapid7.com') {
+    await crawlMadCapSection(url);
+  } else {
+    await crawlSection(url);
+  }
+}
+
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
 
   if (args.includes('--list')) {
     console.log('\nAvailable product sections:\n');
-    for (const [name, sectionUrl] of Object.entries(PRODUCT_SECTIONS)) {
-      console.log(`  ${name.padEnd(25)} ${sectionUrl}`);
+    const products = await discoverProducts(false);
+    for (const { name, url } of products) {
+      console.log(`  ${name.padEnd(35)} ${url}`);
+    }
+    // Show API/JSON specs separately (not in homepage tiles)
+    for (const [name, url] of Object.entries(PRODUCT_SECTIONS)) {
+      if (url.endsWith('.json')) {
+        console.log(`  ${name.padEnd(35)} ${url}`);
+      }
     }
     return;
   }
@@ -302,27 +424,48 @@ async function main(): Promise<void> {
 
   if (sectionIdx !== -1) {
     const sectionName = args[sectionIdx + 1];
-    const sectionUrl = PRODUCT_SECTIONS[sectionName];
+    // 1. Check hardcoded sections (includes API specs on help.rapid7.com)
+    let sectionUrl: string | undefined = PRODUCT_SECTIONS[sectionName];
+    // 2. Fall back to product-catalog.json (populated by prior discoverProducts() run)
+    if (!sectionUrl) {
+      const catalogFile = path.join(DOCS_DIR, 'product-catalog.json');
+      if (fs.existsSync(catalogFile)) {
+        const catalog = JSON.parse(fs.readFileSync(catalogFile, 'utf-8')) as Array<{ name: string; url: string }>;
+        sectionUrl = catalog.find(p => p.name === sectionName)?.url;
+      }
+    }
     if (!sectionUrl) {
       console.error(`Unknown section: ${sectionName}. Run with --list to see options.`);
       process.exit(1);
     }
-    await crawlSection(sectionUrl);
+    await crawlByUrl(sectionUrl);
   } else if (urlIdx !== -1) {
     const customUrl = args[urlIdx + 1];
-    await crawlSection(customUrl);
+    if (!isValidProductUrl(customUrl)) {
+      console.error(`Invalid URL: ${customUrl}. Must be an https:// URL on docs.rapid7.com, documentation.rapid7.com, or help.rapid7.com`);
+      process.exit(1);
+    }
+    await crawlByUrl(customUrl);
   } else {
-    // Crawl all sections
-    for (const sectionUrl of Object.values(PRODUCT_SECTIONS)) {
-      await crawlSection(sectionUrl);
+    // Full crawl: auto-discover all products from homepage
+    const products = await discoverProducts();
+    for (const { url } of products) {
+      await crawlByUrl(url);
+    }
+    // Also crawl API reference docs (not in homepage tiles)
+    for (const [, url] of Object.entries(PRODUCT_SECTIONS)) {
+      if (url.startsWith(HELP_URL) || url.endsWith('.json')) {
+        await crawlSection(url);
+      }
     }
   }
 
-  // Build inverted search index from all crawled docs
   buildSearchIndex();
 }
 
-main().catch(err => {
-  console.error('Crawl failed:', err);
-  process.exit(1);
-});
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  main().catch(err => {
+    console.error('Crawl failed:', err);
+    process.exit(1);
+  });
+}
