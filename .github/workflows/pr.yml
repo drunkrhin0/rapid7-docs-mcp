@@ -7,7 +7,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-latest
+    runs-on: docker
     steps:
       - uses: actions/checkout@v4
 
@@ -35,7 +35,7 @@ jobs:
       - run: npx tsc --noEmit
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: docker
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +54,7 @@ jobs:
       - run: npx vitest run
 
   sast:
-    runs-on: ubuntu-latest
+    runs-on: docker
     continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
       - uses: github/codeql-action/analyze@v3
 
   dep-vulns:
-    runs-on: ubuntu-latest
+    runs-on: docker
     steps:
       - uses: actions/checkout@v4
 
@@ -81,7 +81,7 @@ jobs:
       - run: pip-audit
 
   docker-scan:
-    runs-on: ubuntu-latest
+    runs-on: docker
     continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
     steps:
       - uses: actions/checkout@v4

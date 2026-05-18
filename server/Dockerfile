@@ -13,7 +13,7 @@ COPY server/search.py ./server/
 COPY server/text.py ./server/
 COPY server/middleware.py ./server/
 COPY server/__init__.py ./server/
-COPY pyproject.toml .
+COPY server/pyproject.toml .
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/app

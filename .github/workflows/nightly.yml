@@ -5,7 +5,7 @@ on:
 
 jobs:
   deps-check:
-    runs-on: ubuntu-latest
+    runs-on: docker
     steps:
       - uses: actions/checkout@v4
 
@@ -22,7 +22,9 @@ jobs:
       - run: pip-audit
 
   smoke-test:
-    runs-on: ubuntu-latest
+    runs-on: docker
+    env:
+      DOCKER_HOST: tcp://172.26.0.10:2375
     steps:
       - uses: actions/checkout@v4
       - run: docker compose up -d
