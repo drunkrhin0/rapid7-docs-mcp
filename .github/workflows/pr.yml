@@ -106,3 +106,19 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
+
+  graph-check:
+    runs-on: docker
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - name: Install graphify
+        run: uv pip install --system graphifyy
+      - name: Build knowledge graph (AST-only, no API key needed)
+        run: graphify . --update
+      - name: Verify graph output
+        run: |
+          test -f graphify-out/graph.json || { echo "graph.json missing"; exit 1; }
+          echo "Graph OK: $(python3 -c "import json; g=json.load(open('graphify-out/graph.json')); print(f'{len(g[\"nodes\"])} nodes, {len(g[\"edges\"])} edges')")"
