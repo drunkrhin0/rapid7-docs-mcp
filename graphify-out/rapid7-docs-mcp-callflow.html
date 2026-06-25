@@ -60,23 +60,24 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>rapid7-docs-mcp — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 325 nodes, 503 edges, 20 communities. Commit: 88894ce</p>
+<p class="subtitle">Generated from graphify knowledge graph: 302 nodes, 471 edges, 21 communities. Commit: b28b207</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
-    <a href="#extract-pipeline">Extraction Pipeline</a>
     <a href="#build-graph">Graph Build</a>
     <a href="#cli-skills">CLI &amp; Skill Installers</a>
-    <a href="#ingest-cache-update">Ingestion &amp; Updates</a>
     <a href="#serve-api">Serving API</a>
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
     <a href="#site-crawler">Site Crawler</a>
     <a href="#community-18">Community 18</a>
     <a href="#community-19">Community 19</a>
     <a href="#docker-entrypoint">Docker Entrypoint</a>
+    <a href="#ci-cd-code-quality">CI/CD &amp; Code Quality</a>
+    <a href="#document-conventions">Document Conventions</a>
     <a href="#image-tags">Image Tags</a>
     <a href="#package-init">Package Init</a>
     <a href="#vitest-config">Vitest Config</a>
+    <a href="#community-20">Community 20</a>
 </div>
 
 <!-- ====== Architecture Overview ====== -->
@@ -86,15 +87,11 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    EXTRACT_PIPELINE_5F350230("Extraction Pipeline<br/><small>9 nodes</small>")
-    class EXTRACT_PIPELINE_5F350230 module;
     BUILD_GRAPH_321CBB04("Graph Build<br/><small>42 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
     CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>52 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
-    INGEST_CACHE_UPDATE_FF457338("Ingestion &amp; Updates<br/><small>2 nodes</small>")
-    class INGEST_CACHE_UPDATE_FF457338 module;
-    SERVE_API_35EC8E86("Serving API<br/><small>95 nodes</small>")
+    SERVE_API_35EC8E86("Serving API<br/><small>80 nodes</small>")
     class SERVE_API_35EC8E86 module;
     TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>79 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
@@ -106,12 +103,18 @@ flowchart LR
     class COMMUNITY_19_9462A0B9 module;
     DOCKER_ENTRYPOINT_F85EB730("Docker Entrypoint<br/><small>4 nodes</small>")
     class DOCKER_ENTRYPOINT_F85EB730 module;
+    CI_CD_CODE_QUALITY_534BEE32("CI/CD &amp; Code Quality<br/><small>1 nodes</small>")
+    class CI_CD_CODE_QUALITY_534BEE32 module;
+    DOCUMENT_CONVENTIONS_60520C88("Document Conventions<br/><small>1 nodes</small>")
+    class DOCUMENT_CONVENTIONS_60520C88 module;
     IMAGE_TAGS_BA120A79("Image Tags<br/><small>1 nodes</small>")
     class IMAGE_TAGS_BA120A79 module;
     PACKAGE_INIT_4DC30DF4("Package Init<br/><small>1 nodes</small>")
     class PACKAGE_INIT_4DC30DF4 module;
     VITEST_CONFIG_A2CCEA97("Vitest Config<br/><small>1 nodes</small>")
     class VITEST_CONFIG_A2CCEA97 module;
+    COMMUNITY_20_C86C0F59("Community 20<br/><small>1 nodes</small>")
+    class COMMUNITY_20_C86C0F59 module;
     TESTS_FIXTURES_B84B1DCC -->|imports x10| CLI_SKILLS_9964CBB8
     SERVE_API_35EC8E86 -->|imports x4| TESTS_FIXTURES_B84B1DCC
     CLI_SKILLS_9964CBB8 -->|imports x3| SITE_CRAWLER_DB080D00
@@ -119,7 +122,6 @@ flowchart LR
     TESTS_FIXTURES_B84B1DCC -->|imports x2| SITE_CRAWLER_DB080D00
     SITE_CRAWLER_DB080D00 -->|imports| TESTS_FIXTURES_B84B1DCC
     SITE_CRAWLER_DB080D00 -->|imports| CLI_SKILLS_9964CBB8
-    SERVE_API_35EC8E86 -->|references| EXTRACT_PIPELINE_5F350230
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -136,20 +138,20 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Extraction Pipeline</td><td>9</td><td><code>10</code></td></tr><tr><td>Graph Build</td><td>42</td><td><code>4, 9, 11</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>52</td><td><code>0</code></td></tr><tr><td>Ingestion &amp; Updates</td><td>2</td><td><code>13</code></td></tr><tr><td>Serving API</td><td>95</td><td><code>1, 2, 7</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>79</td><td><code>3, 6, 8, 15</code></td></tr><tr><td>Site Crawler</td><td>23</td><td><code>5</code></td></tr><tr><td>Community 18</td><td>8</td><td><code>18</code></td></tr><tr><td>Community 19</td><td>8</td><td><code>19</code></td></tr><tr><td>Docker Entrypoint</td><td>4</td><td><code>12</code></td></tr><tr><td>Image Tags</td><td>1</td><td><code>14</code></td></tr><tr><td>Package Init</td><td>1</td><td><code>16</code></td></tr><tr><td>Vitest Config</td><td>1</td><td><code>17</code></td></tr>
+      <tr><td>Graph Build</td><td>42</td><td><code>4, 9, 11</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>52</td><td><code>0</code></td></tr><tr><td>Serving API</td><td>80</td><td><code>1, 2, 7</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>79</td><td><code>3, 6, 8, 15</code></td></tr><tr><td>Site Crawler</td><td>23</td><td><code>5</code></td></tr><tr><td>Community 18</td><td>8</td><td><code>18</code></td></tr><tr><td>Community 19</td><td>8</td><td><code>19</code></td></tr><tr><td>Docker Entrypoint</td><td>4</td><td><code>12</code></td></tr><tr><td>CI/CD &amp; Code Quality</td><td>1</td><td><code>10</code></td></tr><tr><td>Document Conventions</td><td>1</td><td><code>13</code></td></tr><tr><td>Image Tags</td><td>1</td><td><code>14</code></td></tr><tr><td>Package Init</td><td>1</td><td><code>16</code></td></tr><tr><td>Vitest Config</td><td>1</td><td><code>17</code></td></tr><tr><td>Community 20</td><td>1</td><td><code>20</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Graph Build -&gt; Extraction Pipeline -&gt; CLI &amp; Skill Installers -&gt; Site Crawler -&gt; Tests &amp; Fixtures -&gt; Ingestion &amp; Updates -&gt; Serving API</div>
+    <div class="arrow-chain">Graph Build -&gt; CLI &amp; Skill Installers -&gt; Site Crawler -&gt; Tests &amp; Fixtures -&gt; Serving API -&gt; Community 18 -&gt; Community 19</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>325 nodes · 503 edges · 20 communities (18 shown, 2 thin omitted)</li>
-      <li>Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 37 edges (avg confidence: 0.61)</li>
+      <li>302 nodes · 471 edges · 21 communities (17 shown, 4 thin omitted)</li>
+      <li>Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 24 edges (avg confidence: 0.51)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `stem()` - 20 edges</li>
       <li>2. `TestStem` - 16 edges</li>
@@ -158,155 +160,8 @@ flowchart LR
   </div>
 </div>
 <hr>
-<!-- ====== 2. Extraction Pipeline ====== -->
-<h2 id="extract-pipeline">2. Extraction Pipeline</h2>
-<p>Extraction Pipeline groups implementation around github, workflows, pryml, typescript, mostly in .github/workflows/pr.yml, AGENTS.md. This section covers 9 nodes and 8 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Extraction Pipeline (9 nodes, 8 edges)
-    subgraph extract_pipeline_github_workflows_pr_yml_83d5ea7f[".github/workflows/pr.yml"]
-        pr_yml_pr_checks_workflow_321b40d7("PR Checks Workflow<br/><small>.github/workflows/pr.yml</small>")
-        pr_yml_dep_vulns_job_2e756d31("Dependency Vulnerability Job<br/><small>.github/workflows/pr.yml</small>")
-        pr_yml_docker_scan_job_84965d6e("Trivy Docker Scan Job<br/><small>.github/workflows/pr.yml</small>")
-        pr_yml_lint_jobs_f01307d1("Lint Jobs (Dockerfile, Python, TypeScript)<br/><small>.github/workflows/pr.yml</small>")
-        pr_yml_sast_job_dfeee17e("CodeQL SAST Job<br/><small>.github/workflows/pr.yml</small>")
-        pr_yml_test_jobs_c1418609("Test Jobs (Python pytest, TypeScript vi...<br/><small>.github/workflows/pr.yml</small>")
-    end
-    subgraph extract_pipeline_AGENTS_md_66bc13a5["AGENTS.md"]
-        agents_md_stemmer_parity_158e5420("Stemmer/Stop-Word Parity Between TypeSc...<br/><small>AGENTS.md</small>")
-        agents_md_python_imports_fc30bb78("Python Package Import Convention<br/><small>AGENTS.md</small>")
-        agents_md_esm_imports_7ca98d13("TypeScript ESM Import Convention (.js e...<br/><small>AGENTS.md</small>")
-    end
-    pr_yml_pr_checks_workflow_321b40d7 -->|references| pr_yml_dep_vulns_job_2e756d31
-    pr_yml_pr_checks_workflow_321b40d7 -->|references| pr_yml_docker_scan_job_84965d6e
-    pr_yml_pr_checks_workflow_321b40d7 -->|references| pr_yml_lint_jobs_f01307d1
-    pr_yml_pr_checks_workflow_321b40d7 -->|references| pr_yml_sast_job_dfeee17e
-    pr_yml_pr_checks_workflow_321b40d7 -->|references| pr_yml_test_jobs_c1418609
-    agents_md_stemmer_parity_158e5420 -->|relates| pr_yml_test_jobs_c1418609
-    class pr_yml_pr_checks_workflow_321b40d7 concept;
-    class pr_yml_dep_vulns_job_2e756d31 klass;
-    class pr_yml_docker_scan_job_84965d6e klass;
-    class pr_yml_lint_jobs_f01307d1 klass;
-    class pr_yml_sast_job_dfeee17e klass;
-    class pr_yml_test_jobs_c1418609 klass;
-    class agents_md_stemmer_parity_158e5420 concept;
-    class agents_md_python_imports_fc30bb78 concept;
-    class agents_md_esm_imports_7ca98d13 concept;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>Stemmer/Stop-Word Parity Between TypeScript and Python</code><br><small style="color:var(--muted)">AGENTS.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Design note for Stemmer/Stop-Word Parity Between TypeScript and Python.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>TypeScript ESM Import Convention (.js extension)</code><br><small style="color:var(--muted)">AGENTS.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Design note for TypeScript ESM Import Convention (.js extension).</td>
-</tr>
-<tr>
-  <td>3</td>
-  <td><code>Python Package Import Convention</code><br><small style="color:var(--muted)">AGENTS.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Design note for Python Package Import Convention.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>PR Checks Workflow</code><br><small style="color:var(--muted)">.github/workflows/pr.yml</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Documentation node describing PR Checks Workflow.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>Lint Jobs (Dockerfile, Python, TypeScript)</code><br><small style="color:var(--muted)">.github/workflows/pr.yml</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Lint Jobs (Dockerfile, Python, TypeScript) node in .github/workflows/pr.yml.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>Test Jobs (Python pytest, TypeScript vitest)</code><br><small style="color:var(--muted)">.github/workflows/pr.yml</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>CodeQL SAST Job</code><br><small style="color:var(--muted)">.github/workflows/pr.yml</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>CodeQL SAST Job node in .github/workflows/pr.yml.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>Dependency Vulnerability Job</code><br><small style="color:var(--muted)">.github/workflows/pr.yml</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Builds dependency relationships and graph data.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>Trivy Docker Scan Job</code><br><small style="color:var(--muted)">.github/workflows/pr.yml</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Starts scanning or handles scan status.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>.github/workflows/pr.yml</code></td><td>6 nodes</td></tr>
-<tr><td><code>AGENTS.md</code></td><td>3 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: references x5, relates x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 3. Graph Build ====== -->
-<h2 id="build-graph">3. Graph Build</h2>
+<!-- ====== 2. Graph Build ====== -->
+<h2 id="build-graph">2. Graph Build</h2>
 <p>Graph Build groups implementation around packagejson, tsconfigjson, renovatejson, github, mostly in package.json, tsconfig.json, .github/renovate.json. This section covers 42 nodes and 39 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -649,8 +504,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 4. CLI & Skill Installers ====== -->
-<h2 id="cli-skills">4. CLI &amp; Skill Installers</h2>
+<!-- ====== 3. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">3. CLI &amp; Skill Installers</h2>
 <p>CLI &amp; Skill Installers groups implementation around crawl, extensionsts, externalts, utilsts, mostly in crawl-extensions.ts, crawl-external.ts, src/crawl-utils.ts. This section covers 52 nodes and 102 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -1005,81 +860,14 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 5. Ingestion & Updates ====== -->
-<h2 id="ingest-cache-update">5. Ingestion &amp; Updates</h2>
-<p>Ingestion &amp; Updates groups implementation around agentsmd, yaml, frontmatter, markdown, mostly in AGENTS.md. This section covers 2 nodes and 1 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<!-- ====== 4. Serving API ====== -->
+<h2 id="serve-api">4. Serving API</h2>
+<p>Serving API groups implementation around server, searchpy, mcp, serverpy, mostly in server/search.py, server/mcp_server.py, README.md. This section covers 80 nodes and 140 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Ingestion &amp; Updates (2 nodes, 1 edges)
-    agents_md_yaml_frontmatter_cafffb04("YAML Frontmatter in Markdown Files<br/><small>AGENTS.md</small>")
-    agents_md_url_to_path_lookup_b7885c94("URL-to-Path Lookup via index.json<br/><small>AGENTS.md</small>")
-    agents_md_yaml_frontmatter_cafffb04 -->|relates| agents_md_url_to_path_lookup_b7885c94
-    class agents_md_yaml_frontmatter_cafffb04 concept;
-    class agents_md_url_to_path_lookup_b7885c94 klass;
-    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
-    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
-    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
-    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
-    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
-    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
-    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
-    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
-    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
-</div>
-
-<h3>Call Details</h3>
-<table class="call-table">
-<tr>
-  <th style="width:5%">#</th>
-  <th style="width:28%">Node</th>
-  <th style="width:10%">Type</th>
-  <th style="width:17%">Caller</th>
-  <th style="width:20%">Callees</th>
-  <th style="width:20%">Description</th>
-</tr>
-<tr>
-  <td>1</td>
-  <td><code>YAML Frontmatter in Markdown Files</code><br><small style="color:var(--muted)">AGENTS.md</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Design note for YAML Frontmatter in Markdown Files.</td>
-</tr>
-<tr>
-  <td>2</td>
-  <td><code>URL-to-Path Lookup via index.json</code><br><small style="color:var(--muted)">AGENTS.md</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>URL-to-Path Lookup via index.json node in AGENTS.md.</td>
-</tr>
-</table>
-
-<div class="grid">
-  <div class="card">
-    <h4>Key Files</h4>
-    <table style="width:100%;font-size:0.85rem;">
-      <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>AGENTS.md</code></td><td>2 nodes</td></tr>
-    </table>
-  </div>
-  <div class="card">
-    <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: relates x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
-  </div>
-</div>
-<hr>
-
-<!-- ====== 6. Serving API ====== -->
-<h2 id="serve-api">6. Serving API</h2>
-<p>Serving API groups implementation around server, searchpy, mcp, serverpy, mostly in server/search.py, server/mcp_server.py, README.md. This section covers 95 nodes and 162 internal edges; the diagram shows only representative relationships to stay readable.</p>
-
-<div class="mermaid">
-%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
-flowchart LR
-    %% Section: Serving API (95 nodes, 162 edges)
+    %% Section: Serving API (80 nodes, 140 edges)
     subgraph serve_api_server_mcp_server_py_8fb00574["server/mcp_server.py"]
         server_mcp_server_e6605fa2("mcp_server.py")
         server_mcp_server_get_product_knowledge_5961dc1d("get_product_knowledge()<br/><small>server/mcp_server.py</small>")
@@ -1125,7 +913,7 @@ flowchart LR
     server_mcp_server_e6605fa2 -->|imports| server_search_read_product_6c20832b
     server_mcp_server_e6605fa2 -->|imports| server_search_search_docs_0542c377
     server_mcp_server_e6605fa2 -->|imports| server_search_strip_frontmatter_54478477
-    %% Omitted for readability: 77 nodes, 0 edges
+    %% Omitted for readability: 62 nodes, 0 edges
     class server_mcp_server_e6605fa2 module;
     class server_mcp_server_get_product_knowledge_5961dc1d function;
     class server_mcp_server_docs_list_34c6495e function;
@@ -1239,14 +1027,6 @@ flowchart LR
 </tr>
 <tr>
   <td>10</td>
-  <td><code>.do_GET()</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>HealthHandler</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
-  <td><code>load_index()</code><br><small style="color:var(--muted)">server/search.py</small></td>
-  <td>.do_GET() node in server/mcp_server.py.</td>
-</tr>
-<tr>
-  <td>11</td>
   <td><code>main()</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>__init__.py</code><br><small style="color:var(--muted)">server/__init__.py</small></td>
@@ -1254,7 +1034,7 @@ flowchart LR
   <td>main() node in server/mcp_server.py.</td>
 </tr>
 <tr>
-  <td>12</td>
+  <td>11</td>
   <td><code>Rapid7 Docs MCP Server — FastMCP edition.  Tools:   docs_search            — Ful</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
   <td><span class="tag tag-func">Concept</span></td>
   <td>External entry / no inbound edge</td>
@@ -1262,7 +1042,7 @@ flowchart LR
   <td>Design note for Rapid7 Docs MCP Server — FastMCP edition.  Tools:   docs_search            — Ful.</td>
 </tr>
 <tr>
-  <td>13</td>
+  <td>12</td>
   <td><code>search.py</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-class">Module</span></td>
   <td><code>mcp_server.py</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
@@ -1270,7 +1050,7 @@ flowchart LR
   <td>Module file in server/search.py.</td>
 </tr>
 <tr>
-  <td>14</td>
+  <td>13</td>
   <td><code>IndexEntry</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -1278,7 +1058,7 @@ flowchart LR
   <td>IndexEntry node in server/search.py.</td>
 </tr>
 <tr>
-  <td>15</td>
+  <td>14</td>
   <td><code>.__init__()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>IndexEntry</code><br><small style="color:var(--muted)">server/search.py</small></td>
@@ -1286,7 +1066,7 @@ flowchart LR
   <td>.__init__() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>16</td>
+  <td>15</td>
   <td><code>SearchResult</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -1294,7 +1074,7 @@ flowchart LR
   <td>SearchResult node in server/search.py.</td>
 </tr>
 <tr>
-  <td>17</td>
+  <td>16</td>
   <td><code>.__init__()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>SearchResult</code><br><small style="color:var(--muted)">server/search.py</small></td>
@@ -1302,7 +1082,7 @@ flowchart LR
   <td>.__init__() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>18</td>
+  <td>17</td>
   <td><code>load_index()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>do_GET()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>docs_list()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>docs_read()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br>+1 more</td>
@@ -1310,7 +1090,7 @@ flowchart LR
   <td>load_index() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>19</td>
+  <td>18</td>
   <td><code>load_search_index()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -1318,7 +1098,7 @@ flowchart LR
   <td>load_search_index() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>20</td>
+  <td>19</td>
   <td><code>Any</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -1326,7 +1106,7 @@ flowchart LR
   <td>Any node in server/search.py.</td>
 </tr>
 <tr>
-  <td>21</td>
+  <td>20</td>
   <td><code>read_doc()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>docs_read()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>mcp_server.py</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
@@ -1334,7 +1114,7 @@ flowchart LR
   <td>read_doc() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>22</td>
+  <td>21</td>
   <td><code>strip_frontmatter()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>get_product_knowledge()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>mcp_server.py</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
@@ -1342,7 +1122,7 @@ flowchart LR
   <td>strip_frontmatter() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>23</td>
+  <td>22</td>
   <td><code>_escape_regex()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
@@ -1350,7 +1130,7 @@ flowchart LR
   <td>_escape_regex() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>24</td>
+  <td>23</td>
   <td><code>extract_snippet()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>_escape_regex()</code><br><small style="color:var(--muted)">server/search.py</small></td>
@@ -1358,7 +1138,7 @@ flowchart LR
   <td>extract_snippet() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>25</td>
+  <td>24</td>
   <td><code>search_docs()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>docs_search()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>extract_snippet()</code><br><small style="color:var(--muted)">server/search.py</small><br><code>load_index()</code><br><small style="color:var(--muted)">server/search.py</small><br>+4 more</td>
@@ -1366,7 +1146,7 @@ flowchart LR
   <td>search_docs() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>26</td>
+  <td>25</td>
   <td><code>get_sections()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>docs_list()</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>load_index()</code><br><small style="color:var(--muted)">server/search.py</small><br><code>mcp_server.py</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
@@ -1374,7 +1154,23 @@ flowchart LR
   <td>get_sections() node in server/search.py.</td>
 </tr>
 <tr>
+  <td>26</td>
+  <td><code>BlogPost</code><br><small style="color:var(--muted)">server/search.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>AuthMiddleware</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>CallNext</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>HealthHandler</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br>+2 more</td>
+  <td><code>__init__()</code><br><small style="color:var(--muted)">server/search.py</small></td>
+  <td>BlogPost node in server/search.py.</td>
+</tr>
+<tr>
   <td>27</td>
+  <td><code>.__init__()</code><br><small style="color:var(--muted)">server/search.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>BlogPost</code><br><small style="color:var(--muted)">server/search.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>.__init__() node in server/search.py.</td>
+</tr>
+<tr>
+  <td>28</td>
   <td><code>Resource</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
@@ -1382,7 +1178,7 @@ flowchart LR
   <td>Resource node in server/search.py.</td>
 </tr>
 <tr>
-  <td>28</td>
+  <td>29</td>
   <td><code>.__init__()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>Resource</code><br><small style="color:var(--muted)">server/search.py</small></td>
@@ -1390,20 +1186,12 @@ flowchart LR
   <td>.__init__() node in server/search.py.</td>
 </tr>
 <tr>
-  <td>29</td>
+  <td>30</td>
   <td><code>load_blog_index()</code><br><small style="color:var(--muted)">server/search.py</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td><code>mcp_server.py</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>search_blog()</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
   <td>No direct outbound edge</td>
   <td>load_blog_index() node in server/search.py.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>load_resources()</code><br><small style="color:var(--muted)">server/search.py</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>mcp_server.py</code><br><small style="color:var(--muted)">server/mcp_server.py</small><br><code>search_resources()</code><br><small style="color:var(--muted)">server/mcp_server.py</small></td>
-  <td>No direct outbound edge</td>
-  <td>load_resources() node in server/search.py.</td>
 </tr>
 </table>
 
@@ -1415,22 +1203,22 @@ flowchart LR
       <tr><td><code>server/search.py</code></td><td>30 nodes</td></tr>
 <tr><td><code>server/mcp_server.py</code></td><td>17 nodes</td></tr>
 <tr><td><code>README.md</code></td><td>16 nodes</td></tr>
-<tr><td><code>AGENTS.md</code></td><td>12 nodes</td></tr>
 <tr><td><code>server/middleware.py</code></td><td>10 nodes</td></tr>
-<tr><td><code>docker-compose.yml</code></td><td>4 nodes</td></tr>
+<tr><td><code>docker-compose.yml</code></td><td>2 nodes</td></tr>
 <tr><td><code>server/__init__.py</code></td><td>2 nodes</td></tr>
 <tr><td><code>.github/workflows/docker-publish.yml</code></td><td>1 nodes</td></tr>
+<tr><td><code>.github/workflows/main.yml</code></td><td>1 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: references x39, contains x26, calls x19, explains x14. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: references x28, contains x26, calls x19, explains x14. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
 
-<!-- ====== 7. Tests & Fixtures ====== -->
-<h2 id="tests-fixtures">7. Tests &amp; Fixtures</h2>
+<!-- ====== 5. Tests & Fixtures ====== -->
+<h2 id="tests-fixtures">5. Tests &amp; Fixtures</h2>
 <p>Tests &amp; Fixtures groups implementation around test, server, tests, textpy, mostly in server/tests/test_text.py, server/tests/test_search.py, crawl.ts. This section covers 79 nodes and 110 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -1777,8 +1565,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 8. Site Crawler ====== -->
-<h2 id="site-crawler">8. Site Crawler</h2>
+<!-- ====== 6. Site Crawler ====== -->
+<h2 id="site-crawler">6. Site Crawler</h2>
 <p>Site Crawler groups implementation around crawl, sitets, dir, products, mostly in crawl-site.ts, src/crawl-utils.ts. This section covers 23 nodes and 38 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2064,8 +1852,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 9. Community 18 ====== -->
-<h2 id="community-18">9. Community 18</h2>
+<!-- ====== 7. Community 18 ====== -->
+<h2 id="community-18">7. Community 18</h2>
 <p>Community 18 groups implementation around agentsmd, project, overview, running, mostly in AGENTS.md. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2197,8 +1985,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 10. Community 19 ====== -->
-<h2 id="community-19">10. Community 19</h2>
+<!-- ====== 8. Community 19 ====== -->
+<h2 id="community-19">8. Community 19</h2>
 <p>Community 19 groups implementation around readmemd, rapid7, docs, mcp, mostly in README.md. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2330,8 +2118,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 11. Docker Entrypoint ====== -->
-<h2 id="docker-entrypoint">11. Docker Entrypoint</h2>
+<!-- ====== 9. Docker Entrypoint ====== -->
+<h2 id="docker-entrypoint">9. Docker Entrypoint</h2>
 <p>Docker Entrypoint groups implementation around docker, entrypointsh, script, initial, mostly in docker-entrypoint.sh. This section covers 4 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2414,6 +2202,118 @@ flowchart LR
   <div class="card">
     <h4>Design Notes</h4>
     <p>This section comes from graphify community clustering. Relationship summary: defines x2, calls x2, contains x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 10. CI/CD & Code Quality ====== -->
+<h2 id="ci-cd-code-quality">10. CI/CD &amp; Code Quality</h2>
+<p>CI/CD &amp; Code Quality groups implementation around crawler, service, definition, docker, mostly in docker-compose.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CI/CD &amp; Code Quality (1 nodes, 0 edges)
+    docker_compose_yml_crawler_service_b72871fa("crawler Service Definition<br/><small>docker-compose.yml</small>")
+    class docker_compose_yml_crawler_service_b72871fa concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>crawler Service Definition</code><br><small style="color:var(--muted)">docker-compose.yml</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing crawler Service Definition.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>docker-compose.yml</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 11. Document Conventions ====== -->
+<h2 id="document-conventions">11. Document Conventions</h2>
+<p>Document Conventions groups implementation around docker, data, shared, volumes, mostly in docker-compose.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Document Conventions (1 nodes, 0 edges)
+    docker_compose_yml_shared_volumes_7d78ec69("Docker Shared Volumes (docs_data, site_...<br/><small>docker-compose.yml</small>")
+    class docker_compose_yml_shared_volumes_7d78ec69 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Docker Shared Volumes (docs_data, site_data)</code><br><small style="color:var(--muted)">docker-compose.yml</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Docker Shared Volumes (docs_data, site_data) node in docker-compose.yml.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>docker-compose.yml</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -2586,24 +2486,80 @@ flowchart LR
 </div>
 <hr>
 
+<!-- ====== 15. Community 20 ====== -->
+<h2 id="community-20">15. Community 20</h2>
+<p>Community 20 groups implementation around nightly, dependency, smoke, test, mostly in .github/workflows/nightly.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Community 20 (1 nodes, 0 edges)
+    nightly_yml_nightly_workflow_c990d703("Nightly Dependency and Smoke Test Workflow<br/><small>.github/workflows/nightly.yml</small>")
+    class nightly_yml_nightly_workflow_c990d703 concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Nightly Dependency and Smoke Test Workflow</code><br><small style="color:var(--muted)">.github/workflows/nightly.yml</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Nightly Dependency and Smoke Test Workflow.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>.github/workflows/nightly.yml</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
 <h2 id="stats">Project Statistics</h2>
 
 <div class="grid">
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>325</td></tr>
-      <tr><td>Edges</td><td>503</td></tr>
+      <tr><td>Nodes</td><td>302</td></tr>
+      <tr><td>Edges</td><td>471</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>20</td></tr>
-      <tr><td>Documented Sections</td><td>13</td></tr>
+      <tr><td>Communities</td><td>21</td></tr>
+      <tr><td>Documented Sections</td><td>14</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>466</td></tr>
-      <tr><td>INFERRED</td><td>37</td></tr>
+      <tr><td>EXTRACTED</td><td>447</td></tr>
+      <tr><td>INFERRED</td><td>24</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
   </div>
@@ -2611,7 +2567,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>rapid7-docs-mcp — Architecture Documentation</p>
-  <p>Generated: 2026-06-19 11:04 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-06-19 11:05 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

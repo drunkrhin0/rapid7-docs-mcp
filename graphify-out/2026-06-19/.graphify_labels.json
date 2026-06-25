@@ -1,0 +1,22 @@
+{
+  "0": "Extensions Crawler",
+  "1": "MCP Server Entry & Tools",
+  "2": "Project Architecture & Concepts",
+  "3": "Stemmer & Text Processing",
+  "4": "NPM Dependencies",
+  "5": "Site Crawler",
+  "6": "Test Suite",
+  "7": "Middleware & Auth",
+  "8": "Docs Crawler",
+  "9": "TypeScript Configuration",
+  "10": "CI/CD & Code Quality",
+  "11": "Renovate Config",
+  "12": "Docker Entrypoint",
+  "13": "Document Conventions",
+  "14": "Image Tags",
+  "15": "Test Config",
+  "16": "Package Init",
+  "17": "Vitest Config",
+  "18": "Community 18",
+  "19": "Community 19"
+}
