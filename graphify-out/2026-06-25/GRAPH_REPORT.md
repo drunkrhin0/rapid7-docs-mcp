@@ -1,16 +1,16 @@
-# Graph Report - rapid7-docs-mcp  (2026-06-25)
+# Graph Report - rapid7-docs-mcp  (2026-06-19)
 
 ## Corpus Check
-- 30 files · ~24,040 words
+- 29 files · ~24,031 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 305 nodes · 473 edges · 22 communities (17 shown, 5 thin omitted)
+- 302 nodes · 471 edges · 21 communities (17 shown, 4 thin omitted)
 - Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 24 edges (avg confidence: 0.51)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a81ecef0`
+- Built from commit: `b28b207e`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -33,7 +33,6 @@
 - [[_COMMUNITY_Community 18|Community 18]]
 - [[_COMMUNITY_Community 19|Community 19]]
 - [[_COMMUNITY_Community 20|Community 20]]
-- [[_COMMUNITY_Community 21|Community 21]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `stem()` - 20 edges
@@ -48,25 +47,25 @@
 10. `sleep()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `processExtension()` --calls--> `ensureDir()`  [EXTRACTED]
-  crawl-extensions.ts → src/crawl-utils.ts
 - `processExtension()` --calls--> `sleep()`  [EXTRACTED]
   crawl-extensions.ts → src/crawl-utils.ts
-- `crawlAllExtensions()` --calls--> `parallelMap()`  [EXTRACTED]
-  crawl-extensions.ts → src/crawl-utils.ts
-- `crawlAllExtensions()` --calls--> `updateIndex()`  [EXTRACTED]
-  crawl-extensions.ts → src/crawl-utils.ts
-- `crawlSingleExtension()` --calls--> `updateIndex()`  [EXTRACTED]
-  crawl-extensions.ts → src/crawl-utils.ts
+- `crawlSection()` --calls--> `ensureDir()`  [EXTRACTED]
+  crawl.ts → src/crawl-utils.ts
+- `crawlSection()` --calls--> `sleep()`  [EXTRACTED]
+  crawl.ts → src/crawl-utils.ts
+- `crawlSection()` --calls--> `updateIndex()`  [EXTRACTED]
+  crawl.ts → src/crawl-utils.ts
+- `main()` --calls--> `buildSearchIndex()`  [EXTRACTED]
+  crawl.ts → src/crawl-utils.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (22 total, 5 thin omitted)
+## Communities (21 total, 4 thin omitted)
 
 ### Community 0 - "Extensions Crawler"
 Cohesion: 0.08
-Nodes (42): cleanStaleFiles(), crawlByUrl(), crawlMadCapSection(), crawlSection(), DELAY_MS, discoverProducts(), API_SOURCES, ApiSource (+34 more)
+Nodes (47): APIResponse, buildMarkdown(), buildToolkitMarkdown(), buildToolkitsIndexMarkdown(), CONCURRENCY, crawlAllExtensions(), crawlSingleExtension(), crawlToolkits() (+39 more)
 
 ### Community 1 - "MCP Server Entry & Tools"
 Cohesion: 0.09
@@ -89,16 +88,16 @@ Cohesion: 0.15
 Nodes (22): BlogPost, crawlBlog(), crawlProducts(), crawlResources(), DATA_DIR, DELAY_MS, extractJsonLdFaqs(), extractMainContent() (+14 more)
 
 ### Community 6 - "Test Suite"
-Cohesion: 0.08
-Nodes (8): mock_data(), Search engine tests using mock crawl data.  Creates temporary docs/ and data/ di, Set up a mock docs/ and data/ directory with sample crawl output., TestBlogSearch, TestDocReader, TestProducts, TestResourcesSearch, TestSearchDocs
+Cohesion: 0.07
+Nodes (9): Path, mock_data(), Search engine tests using mock crawl data.  Creates temporary docs/ and data/ di, Set up a mock docs/ and data/ directory with sample crawl output., TestBlogSearch, TestDocReader, TestProducts, TestResourcesSearch (+1 more)
 
 ### Community 7 - "Middleware & Auth"
 Cohesion: 0.22
 Nodes (13): Middleware, AuthMiddleware, HealthHandler, CallNext, MiddlewareContext, Simple health check handler. Returns index status and crawl freshness., Simple API key middleware for FastMCP., Any (+5 more)
 
 ### Community 8 - "Docs Crawler"
-Cohesion: 0.13
-Nodes (22): APIResponse, buildMarkdown(), buildToolkitMarkdown(), buildToolkitsIndexMarkdown(), CONCURRENCY, crawlAllExtensions(), crawlSingleExtension(), crawlToolkits() (+14 more)
+Cohesion: 0.18
+Nodes (16): cleanStaleFiles(), crawlByUrl(), crawlMadCapSection(), crawlSection(), DELAY_MS, discoverProducts(), fetchJsonSpec(), fetchPage() (+8 more)
 
 ### Community 9 - "TypeScript Configuration"
 Cohesion: 0.15
@@ -121,24 +120,24 @@ Cohesion: 0.25
 Nodes (7): Authentication (optional), Configuration, How it works, Manual crawls, Quick Start, Rapid7 Docs MCP Server, Tools
 
 ## Knowledge Gaps
-- **94 isolated node(s):** `$schema`, `plugin`, `Project overview`, `Running and testing`, `Architecture` (+89 more)
+- **92 isolated node(s):** `Project overview`, `Running and testing`, `Architecture`, `Conventions`, `Gotchas` (+87 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **4 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Path` connect `Extensions Crawler` to `Docs Crawler`, `Site Crawler`, `Test Suite`?**
-  _High betweenness centrality (0.255) - this node is a cross-community bridge._
-- **Why does `mock_data()` connect `Test Suite` to `Extensions Crawler`?**
-  _High betweenness centrality (0.245) - this node is a cross-community bridge._
+- **Why does `Path` connect `Test Suite` to `Docs Crawler`, `Extensions Crawler`, `Site Crawler`?**
+  _High betweenness centrality (0.260) - this node is a cross-community bridge._
 - **Why does `stem()` connect `Stemmer & Text Processing` to `MCP Server Entry & Tools`?**
-  _High betweenness centrality (0.084) - this node is a cross-community bridge._
+  _High betweenness centrality (0.086) - this node is a cross-community bridge._
 - **Are the 6 inferred relationships involving `RateLimitMiddleware` (e.g. with `AuthMiddleware` and `HealthHandler`) actually correct?**
   _`RateLimitMiddleware` has 6 INFERRED edges - model-reasoned connections that need verification._
-- **What connects `$schema`, `plugin`, `Project overview` to the rest of the system?**
-  _115 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **What connects `Project overview`, `Running and testing`, `Architecture` to the rest of the system?**
+  _113 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Extensions Crawler` be split into smaller, more focused modules?**
-  _Cohesion score 0.0784313725490196 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07692307692307693 - nodes in this community are weakly interconnected._
 - **Should `MCP Server Entry & Tools` be split into smaller, more focused modules?**
   _Cohesion score 0.08902439024390243 - nodes in this community are weakly interconnected._
+- **Should `Project Architecture & Concepts` be split into smaller, more focused modules?**
+  _Cohesion score 0.11052631578947368 - nodes in this community are weakly interconnected._

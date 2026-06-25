@@ -60,7 +60,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 <div class="container">
 
 <h1>rapid7-docs-mcp — Complete Call Flow &amp; Architecture Documentation</h1>
-<p class="subtitle">Generated from graphify knowledge graph: 302 nodes, 471 edges, 21 communities. Commit: b28b207</p>
+<p class="subtitle">Generated from graphify knowledge graph: 305 nodes, 473 edges, 22 communities. Commit: a81ecef</p>
 
 <div class="nav">
     <a href="#overview">Architecture Overview</a>
@@ -69,6 +69,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#serve-api">Serving API</a>
     <a href="#tests-fixtures">Tests &amp; Fixtures</a>
     <a href="#site-crawler">Site Crawler</a>
+    <a href="#docs-crawler">Docs Crawler</a>
     <a href="#community-18">Community 18</a>
     <a href="#community-19">Community 19</a>
     <a href="#docker-entrypoint">Docker Entrypoint</a>
@@ -77,7 +78,7 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
     <a href="#image-tags">Image Tags</a>
     <a href="#package-init">Package Init</a>
     <a href="#vitest-config">Vitest Config</a>
-    <a href="#community-20">Community 20</a>
+    <a href="#other">Other</a>
 </div>
 
 <!-- ====== Architecture Overview ====== -->
@@ -89,14 +90,16 @@ hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
 flowchart LR
     BUILD_GRAPH_321CBB04("Graph Build<br/><small>42 nodes</small>")
     class BUILD_GRAPH_321CBB04 module;
-    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>52 nodes</small>")
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>3 nodes</small>")
     class CLI_SKILLS_9964CBB8 module;
     SERVE_API_35EC8E86("Serving API<br/><small>80 nodes</small>")
     class SERVE_API_35EC8E86 module;
-    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>79 nodes</small>")
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>108 nodes</small>")
     class TESTS_FIXTURES_B84B1DCC module;
     SITE_CRAWLER_DB080D00("Site Crawler<br/><small>23 nodes</small>")
     class SITE_CRAWLER_DB080D00 module;
+    DOCS_CRAWLER_F0922DEE("Docs Crawler<br/><small>23 nodes</small>")
+    class DOCS_CRAWLER_F0922DEE module;
     COMMUNITY_18_A335126F("Community 18<br/><small>8 nodes</small>")
     class COMMUNITY_18_A335126F module;
     COMMUNITY_19_9462A0B9("Community 19<br/><small>8 nodes</small>")
@@ -113,15 +116,13 @@ flowchart LR
     class PACKAGE_INIT_4DC30DF4 module;
     VITEST_CONFIG_A2CCEA97("Vitest Config<br/><small>1 nodes</small>")
     class VITEST_CONFIG_A2CCEA97 module;
-    COMMUNITY_20_C86C0F59("Community 20<br/><small>1 nodes</small>")
-    class COMMUNITY_20_C86C0F59 module;
-    TESTS_FIXTURES_B84B1DCC -->|imports x10| CLI_SKILLS_9964CBB8
+    OTHER_D0941E68("Other<br/><small>1 nodes</small>")
+    class OTHER_D0941E68 module;
+    DOCS_CRAWLER_F0922DEE -->|imports x14| TESTS_FIXTURES_B84B1DCC
     SERVE_API_35EC8E86 -->|imports x4| TESTS_FIXTURES_B84B1DCC
-    CLI_SKILLS_9964CBB8 -->|imports x3| SITE_CRAWLER_DB080D00
-    CLI_SKILLS_9964CBB8 -->|imports x2| TESTS_FIXTURES_B84B1DCC
-    TESTS_FIXTURES_B84B1DCC -->|imports x2| SITE_CRAWLER_DB080D00
-    SITE_CRAWLER_DB080D00 -->|imports| TESTS_FIXTURES_B84B1DCC
-    SITE_CRAWLER_DB080D00 -->|imports| CLI_SKILLS_9964CBB8
+    TESTS_FIXTURES_B84B1DCC -->|imports x3| SITE_CRAWLER_DB080D00
+    DOCS_CRAWLER_F0922DEE -->|imports x2| SITE_CRAWLER_DB080D00
+    SITE_CRAWLER_DB080D00 -->|imports x2| TESTS_FIXTURES_B84B1DCC
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -138,19 +139,19 @@ flowchart LR
     <h4>Architecture Layers</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
-      <tr><td>Graph Build</td><td>42</td><td><code>4, 9, 11</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>52</td><td><code>0</code></td></tr><tr><td>Serving API</td><td>80</td><td><code>1, 2, 7</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>79</td><td><code>3, 6, 8, 15</code></td></tr><tr><td>Site Crawler</td><td>23</td><td><code>5</code></td></tr><tr><td>Community 18</td><td>8</td><td><code>18</code></td></tr><tr><td>Community 19</td><td>8</td><td><code>19</code></td></tr><tr><td>Docker Entrypoint</td><td>4</td><td><code>12</code></td></tr><tr><td>CI/CD &amp; Code Quality</td><td>1</td><td><code>10</code></td></tr><tr><td>Document Conventions</td><td>1</td><td><code>13</code></td></tr><tr><td>Image Tags</td><td>1</td><td><code>14</code></td></tr><tr><td>Package Init</td><td>1</td><td><code>16</code></td></tr><tr><td>Vitest Config</td><td>1</td><td><code>17</code></td></tr><tr><td>Community 20</td><td>1</td><td><code>20</code></td></tr>
+      <tr><td>Graph Build</td><td>42</td><td><code>4, 9, 11</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>3</td><td><code>21</code></td></tr><tr><td>Serving API</td><td>80</td><td><code>1, 2, 7</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>108</td><td><code>0, 3, 6, 15</code></td></tr><tr><td>Site Crawler</td><td>23</td><td><code>5</code></td></tr><tr><td>Docs Crawler</td><td>23</td><td><code>8</code></td></tr><tr><td>Community 18</td><td>8</td><td><code>18</code></td></tr><tr><td>Community 19</td><td>8</td><td><code>19</code></td></tr><tr><td>Docker Entrypoint</td><td>4</td><td><code>12</code></td></tr><tr><td>CI/CD &amp; Code Quality</td><td>1</td><td><code>10</code></td></tr><tr><td>Document Conventions</td><td>1</td><td><code>13</code></td></tr><tr><td>Image Tags</td><td>1</td><td><code>14</code></td></tr><tr><td>Package Init</td><td>1</td><td><code>16</code></td></tr><tr><td>Vitest Config</td><td>1</td><td><code>17</code></td></tr><tr><td>Other</td><td>1</td><td><code>20</code></td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Core Flow</h4>
-    <div class="arrow-chain">Graph Build -&gt; CLI &amp; Skill Installers -&gt; Site Crawler -&gt; Tests &amp; Fixtures -&gt; Serving API -&gt; Community 18 -&gt; Community 19</div>
+    <div class="arrow-chain">Graph Build -&gt; CLI &amp; Skill Installers -&gt; Serving API -&gt; Tests &amp; Fixtures -&gt; Site Crawler -&gt; Docs Crawler -&gt; Community 18</div>
   </div>
 </div>
 <div class="grid">
   <div class="card">
     <h4>Graph Report Highlights</h4>
     <ul>
-      <li>302 nodes · 471 edges · 21 communities (17 shown, 4 thin omitted)</li>
+      <li>305 nodes · 473 edges · 22 communities (17 shown, 5 thin omitted)</li>
       <li>Extraction: 95% EXTRACTED · 5% INFERRED · 0% AMBIGUOUS · INFERRED: 24 edges (avg confidence: 0.51)</li>
       <li>Token cost: 0 input · 0 output</li>
       <li>1. `stem()` - 20 edges</li>
@@ -506,79 +507,20 @@ flowchart LR
 
 <!-- ====== 3. CLI & Skill Installers ====== -->
 <h2 id="cli-skills">3. CLI &amp; Skill Installers</h2>
-<p>CLI &amp; Skill Installers groups implementation around crawl, extensionsts, externalts, utilsts, mostly in crawl-extensions.ts, crawl-external.ts, src/crawl-utils.ts. This section covers 52 nodes and 102 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>CLI &amp; Skill Installers groups implementation around opencodejson, opencode, schema, plugin, mostly in .opencode/opencode.json. This section covers 3 nodes and 2 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: CLI &amp; Skill Installers (52 nodes, 102 edges)
-    subgraph cli_skills_crawl_extensions_ts_f084f8c4["crawl-extensions.ts"]
-        crawl_extensions_9e502a25("crawl-extensions.ts")
-        crawl_extensions_crawlallextensions_5a9e9d86("crawlAllExtensions()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_fetchextensionspage_25dc44c1("fetchExtensionsPage()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_striphtml_a88c0c94("stripHtml()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_buildmarkdown_20c726dd("buildMarkdown()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_main_baf85c96("main()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_fetchhelpmd_891df3a5("fetchHelpMd()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_processextension_deb4e62e("processExtension()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_fetchsingleextension_9def99f9("fetchSingleExtension()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_crawlsingleextension_34b697f1("crawlSingleExtension()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_buildtoolkitmarkdown_22cc8aeb("buildToolkitMarkdown()<br/><small>crawl-extensions.ts</small>")
-        crawl_extensions_crawltoolkits_f59eec10("crawlToolkits()<br/><small>crawl-extensions.ts</small>")
-    end
-    subgraph cli_skills_src_crawl_utils_ts_d954207d["src/crawl-utils.ts"]
-        src_crawl_utils_28ea4260("crawl-utils.ts")
-        src_crawl_utils_ensuredir_871c8bb7("ensureDir()<br/><small>src/crawl-utils.ts</small>")
-        src_crawl_utils_parallelmap_3372a417("parallelMap()<br/><small>src/crawl-utils.ts</small>")
-        src_crawl_utils_updateindex_cb4f6150("updateIndex()<br/><small>src/crawl-utils.ts</small>")
-    end
-    subgraph cli_skills_crawl_external_ts_c130470c["crawl-external.ts"]
-        crawl_external_e3f26b16("crawl-external.ts")
-        crawl_external_crawlgithubdocs_07bef969("crawlGitHubDocs()<br/><small>crawl-external.ts</small>")
-    end
-    crawl_extensions_striphtml_a88c0c94 -->|calls| crawl_extensions_buildmarkdown_20c726dd
-    crawl_extensions_fetchextensionspage_25dc44c1 -->|calls| crawl_extensions_crawlallextensions_5a9e9d86
-    crawl_extensions_fetchextensionspage_25dc44c1 -->|calls| crawl_extensions_main_baf85c96
-    crawl_extensions_fetchhelpmd_891df3a5 -->|calls| crawl_extensions_processextension_deb4e62e
-    crawl_extensions_fetchsingleextension_9def99f9 -->|calls| crawl_extensions_crawlsingleextension_34b697f1
-    crawl_extensions_buildmarkdown_20c726dd -->|calls| crawl_extensions_processextension_deb4e62e
-    crawl_extensions_processextension_deb4e62e -->|calls| crawl_extensions_crawlsingleextension_34b697f1
-    crawl_extensions_processextension_deb4e62e -->|calls| src_crawl_utils_ensuredir_871c8bb7
-    crawl_extensions_crawlallextensions_5a9e9d86 -->|calls| src_crawl_utils_parallelmap_3372a417
-    crawl_extensions_crawlallextensions_5a9e9d86 -->|calls| src_crawl_utils_updateindex_cb4f6150
-    crawl_extensions_crawlallextensions_5a9e9d86 -->|calls| crawl_extensions_main_baf85c96
-    crawl_extensions_crawlsingleextension_34b697f1 -->|calls| src_crawl_utils_updateindex_cb4f6150
-    crawl_extensions_crawlsingleextension_34b697f1 -->|calls| crawl_extensions_main_baf85c96
-    crawl_extensions_buildtoolkitmarkdown_22cc8aeb -->|calls| crawl_extensions_crawltoolkits_f59eec10
-    crawl_extensions_crawltoolkits_f59eec10 -->|calls| src_crawl_utils_updateindex_cb4f6150
-    crawl_extensions_crawltoolkits_f59eec10 -->|calls| crawl_extensions_main_baf85c96
-    crawl_external_crawlgithubdocs_07bef969 -->|calls| src_crawl_utils_parallelmap_3372a417
-    crawl_external_crawlgithubdocs_07bef969 -->|calls| src_crawl_utils_updateindex_cb4f6150
-    crawl_extensions_9e502a25 -->|imports| src_crawl_utils_28ea4260
-    crawl_extensions_9e502a25 -->|imports| src_crawl_utils_ensuredir_871c8bb7
-    crawl_extensions_9e502a25 -->|imports| src_crawl_utils_parallelmap_3372a417
-    crawl_extensions_9e502a25 -->|imports| src_crawl_utils_updateindex_cb4f6150
-    crawl_external_e3f26b16 -->|imports| src_crawl_utils_28ea4260
-    crawl_external_e3f26b16 -->|imports| src_crawl_utils_ensuredir_871c8bb7
-    %% Omitted for readability: 34 nodes, 2 edges
-    class crawl_extensions_9e502a25 module;
-    class crawl_extensions_crawlallextensions_5a9e9d86 function;
-    class crawl_extensions_fetchextensionspage_25dc44c1 function;
-    class crawl_extensions_striphtml_a88c0c94 function;
-    class crawl_extensions_buildmarkdown_20c726dd function;
-    class crawl_extensions_main_baf85c96 function;
-    class crawl_extensions_fetchhelpmd_891df3a5 function;
-    class crawl_extensions_processextension_deb4e62e async;
-    class crawl_extensions_fetchsingleextension_9def99f9 function;
-    class crawl_extensions_crawlsingleextension_34b697f1 function;
-    class crawl_extensions_buildtoolkitmarkdown_22cc8aeb function;
-    class crawl_extensions_crawltoolkits_f59eec10 function;
-    class src_crawl_utils_28ea4260 module;
-    class src_crawl_utils_ensuredir_871c8bb7 function;
-    class src_crawl_utils_parallelmap_3372a417 function;
-    class src_crawl_utils_updateindex_cb4f6150 function;
-    class crawl_external_e3f26b16 module;
-    class crawl_external_crawlgithubdocs_07bef969 function;
+    %% Section: CLI &amp; Skill Installers (3 nodes, 2 edges)
+    opencode_opencode_72f859f5("opencode.json")
+    opencode_opencode_plugin_e89e6a7e("plugin<br/><small>.opencode/opencode.json</small>")
+    opencode_opencode_schema_4bfd171e("$schema<br/><small>.opencode/opencode.json</small>")
+    opencode_opencode_72f859f5 -->|contains| opencode_opencode_plugin_e89e6a7e
+    opencode_opencode_72f859f5 -->|contains| opencode_opencode_schema_4bfd171e
+    class opencode_opencode_72f859f5 function;
+    class opencode_opencode_plugin_e89e6a7e function;
+    class opencode_opencode_schema_4bfd171e function;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -602,243 +544,27 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>crawl-extensions.ts</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
+  <td><code>opencode.json</code><br><small style="color:var(--muted)">.opencode/opencode.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>buildSearchIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>crawl-utils.ts</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>DOCS_DIR</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br>+4 more</td>
-  <td>Module file in crawl-extensions.ts.</td>
+  <td>No direct outbound edge</td>
+  <td>opencode.json node in .opencode/opencode.json.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>EXTENSIONS_DIR</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
+  <td><code>$schema</code><br><small style="color:var(--muted)">.opencode/opencode.json</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>EXTENSIONS_DIR node in crawl-extensions.ts.</td>
+  <td>$schema node in .opencode/opencode.json.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>CONCURRENCY</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>CONCURRENCY node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>4</td>
-  <td><code>FETCH_DELAY_MS</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>FETCH_DELAY_MS node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>5</td>
-  <td><code>ExtensionResult</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ExtensionResult node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>6</td>
-  <td><code>APIResponse</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-endpoint">API</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>APIResponse node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>7</td>
-  <td><code>stripHtml()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>buildMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>8</td>
-  <td><code>fetchExtensionsPage()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlAllExtensions()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>Organizes documentation pages, navigation, or content lookup.</td>
-</tr>
-<tr>
-  <td>9</td>
-  <td><code>fetchHelpMd()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>fetchHelpMd() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>10</td>
-  <td><code>fetchSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>fetchSingleExtension() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>11</td>
-  <td><code>buildMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>stripHtml()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>12</td>
-  <td><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-async">Async</span></td>
-  <td><code>buildMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>fetchHelpMd()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>ensureDir()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
-  <td>processExtension() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>13</td>
-  <td><code>crawlAllExtensions()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>fetchExtensionsPage()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>parallelMap()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>updateIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
-  <td>crawlAllExtensions() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>14</td>
-  <td><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>fetchSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>updateIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
-  <td>crawlSingleExtension() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>15</td>
-  <td><code>ToolkitSlugRef</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ToolkitSlugRef node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>16</td>
-  <td><code>ToolkitWorkflow</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ToolkitWorkflow node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>17</td>
-  <td><code>ToolkitSubTopic</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ToolkitSubTopic node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>18</td>
-  <td><code>ToolkitData</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ToolkitData node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>19</td>
-  <td><code>ToolkitsJson</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>ToolkitsJson node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>20</td>
-  <td><code>buildToolkitMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>21</td>
-  <td><code>buildToolkitsIndexMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td>Exports documentation data to a target format.</td>
-</tr>
-<tr>
-  <td>22</td>
-  <td><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>buildToolkitMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>buildToolkitsIndexMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>updateIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
-  <td>crawlToolkits() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>23</td>
-  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td><code>crawlAllExtensions()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br>+1 more</td>
-  <td><code>buildSearchIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
-  <td>main() node in crawl-extensions.ts.</td>
-</tr>
-<tr>
-  <td>24</td>
-  <td><code>crawl-external.ts</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>buildSearchIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>crawl-utils.ts</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>DOCS_DIR</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br>+4 more</td>
-  <td>Module file in crawl-external.ts.</td>
-</tr>
-<tr>
-  <td>25</td>
-  <td><code>VERBOSE</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>VERBOSE node in crawl-external.ts.</td>
-</tr>
-<tr>
-  <td>26</td>
-  <td><code>hashContent()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td>Caches analysis results or computes cache keys.</td>
-</tr>
-<tr>
-  <td>27</td>
-  <td><code>writeIfChanged()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>ensureDir()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
-  <td>writeIfChanged() node in crawl-external.ts.</td>
-</tr>
-<tr>
-  <td>28</td>
-  <td><code>cleanStaleFiles()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td><span class="tag tag-func">Function</span></td>
-  <td>External entry / no inbound edge</td>
-  <td><code>crawlGitHubDocs()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td>cleanStaleFiles() node in crawl-external.ts.</td>
-</tr>
-<tr>
-  <td>29</td>
-  <td><code>extractFrontmatterTitle()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><code>plugin</code><br><small style="color:var(--muted)">.opencode/opencode.json</small></td>
   <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>extractFrontmatterTitle() node in crawl-external.ts.</td>
-</tr>
-<tr>
-  <td>30</td>
-  <td><code>GitHubTreeItem</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
-  <td><span class="tag tag-class">Class</span></td>
-  <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Turns a local path or remote repository into analysis context.</td>
+  <td>plugin node in .opencode/opencode.json.</td>
 </tr>
 </table>
 
@@ -847,15 +573,12 @@ flowchart LR
     <h4>Key Files</h4>
     <table style="width:100%;font-size:0.85rem;">
       <tr><th>File</th><th>Coverage</th></tr>
-      <tr><td><code>crawl-extensions.ts</code></td><td>23 nodes</td></tr>
-<tr><td><code>crawl-external.ts</code></td><td>16 nodes</td></tr>
-<tr><td><code>src/crawl-utils.ts</code></td><td>9 nodes</td></tr>
-<tr><td><code>src/text.ts</code></td><td>4 nodes</td></tr>
+      <tr><td><code>.opencode/opencode.json</code></td><td>3 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: contains x48, calls x36, imports x15, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1219,68 +942,76 @@ flowchart LR
 
 <!-- ====== 5. Tests & Fixtures ====== -->
 <h2 id="tests-fixtures">5. Tests &amp; Fixtures</h2>
-<p>Tests &amp; Fixtures groups implementation around test, server, tests, textpy, mostly in server/tests/test_text.py, server/tests/test_search.py, crawl.ts. This section covers 79 nodes and 110 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<p>Tests &amp; Fixtures groups implementation around test, server, tests, textpy, mostly in server/tests/test_text.py, server/tests/test_search.py, crawl.ts. This section covers 108 nodes and 176 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Tests &amp; Fixtures (79 nodes, 110 edges)
-    subgraph tests_fixtures_crawl_ts_93bc61d2["crawl.ts"]
-        crawl_isvalidproducturl_ec3bf02e("isValidProductUrl()<br/><small>crawl.ts</small>")
-        crawl_main_15976828("main()<br/><small>crawl.ts</small>")
-        crawl_urltofilepath_1f2fc924("urlToFilePath()<br/><small>crawl.ts</small>")
-        crawl_crawlsection_99e7d0c4("crawlSection()<br/><small>crawl.ts</small>")
-        crawl_fetchjsonspec_4974aeed("fetchJsonSpec()<br/><small>crawl.ts</small>")
-        crawl_fetchpage_1af87355("fetchPage()<br/><small>crawl.ts</small>")
-        crawl_fetchsitemapurls_f9bad50b("fetchSitemapUrls()<br/><small>crawl.ts</small>")
-        crawl_crawlmadcapsection_162dbfe5("crawlMadCapSection()<br/><small>crawl.ts</small>")
-        crawl_crawlbyurl_67f03df0("crawlByUrl()<br/><small>crawl.ts</small>")
-        crawl_cleanstalefiles_86497be3("cleanStaleFiles()<br/><small>crawl.ts</small>")
-        crawl_discoverproducts_4e1e42bc("discoverProducts()<br/><small>crawl.ts</small>")
+    %% Section: Tests &amp; Fixtures (108 nodes, 176 edges)
+    subgraph tests_fixtures_crawl_external_ts_1141184a["crawl-external.ts"]
+        crawl_external_e3f26b16("crawl-external.ts")
+        crawl_external_hashcontent_0f725441("hashContent()<br/><small>crawl-external.ts</small>")
+        crawl_external_crawlopenapispec_cafac622("crawlOpenApiSpec()<br/><small>crawl-external.ts</small>")
+        crawl_external_writeifchanged_81ca0da9("writeIfChanged()<br/><small>crawl-external.ts</small>")
+        crawl_external_cleanstalefiles_b39abd08("cleanStaleFiles()<br/><small>crawl-external.ts</small>")
+        crawl_external_crawlgithubdocs_07bef969("crawlGitHubDocs()<br/><small>crawl-external.ts</small>")
+        crawl_external_githubheaders_a530f91f("githubHeaders()<br/><small>crawl-external.ts</small>")
+        crawl_external_crawlmetasploit_bae56814("crawlMetasploit()<br/><small>crawl-external.ts</small>")
+        crawl_external_crawlvelociraptor_63fbc265("crawlVelociraptor()<br/><small>crawl-external.ts</small>")
+        crawl_external_fetchspec_0ec43898("fetchSpec()<br/><small>crawl-external.ts</small>")
     end
-    subgraph tests_fixtures_server_tests_test_search_py_56ca9d9b["server/tests/test_search.py"]
-        tests_test_search_testsearchdocs_19baec78("TestSearchDocs<br/><small>server/tests/test_search.py</small>")
-        tests_test_search_testdocreader_f0095045("TestDocReader<br/><small>server/tests/test_search.py</small>")
-        tests_test_search_testproducts_6f635d9e("TestProducts<br/><small>server/tests/test_search.py</small>")
-        tests_test_search_testsearchdocs_test_search_fin_a0aed8dd("test_search_finds_by_url_via_index()<br/><small>server/tests/test_search.py</small>")
+    subgraph tests_fixtures_src_crawl_utils_ts_b3cd95da["src/crawl-utils.ts"]
+        src_crawl_utils_ensuredir_871c8bb7("ensureDir()<br/><small>src/crawl-utils.ts</small>")
+        src_crawl_utils_parallelmap_3372a417("parallelMap()<br/><small>src/crawl-utils.ts</small>")
+        src_crawl_utils_updateindex_cb4f6150("updateIndex()<br/><small>src/crawl-utils.ts</small>")
+    end
+    subgraph tests_fixtures_crawl_ts_93bc61d2["crawl.ts"]
+        crawl_3b8eaaf7("crawl.ts")
+        crawl_crawlsection_99e7d0c4("crawlSection()<br/><small>crawl.ts</small>")
     end
     subgraph tests_fixtures_server_tests_test_text_py_2dddf77a["server/tests/test_text.py"]
         tests_test_text_teststem_1b74e941("TestStem<br/><small>server/tests/test_text.py</small>")
         tests_test_text_testtokenize_52ac3e99("TestTokenize<br/><small>server/tests/test_text.py</small>")
-        tests_test_text_0798edf2("test_text.py")
     end
-    crawl_isvalidproducturl_ec3bf02e -->|calls| crawl_main_15976828
-    crawl_urltofilepath_1f2fc924 -->|calls| crawl_crawlsection_99e7d0c4
-    crawl_fetchjsonspec_4974aeed -->|calls| crawl_fetchpage_1af87355
-    crawl_fetchpage_1af87355 -->|calls| crawl_crawlsection_99e7d0c4
-    crawl_fetchsitemapurls_f9bad50b -->|calls| crawl_crawlmadcapsection_162dbfe5
-    crawl_crawlsection_99e7d0c4 -->|calls| crawl_crawlbyurl_67f03df0
-    crawl_crawlsection_99e7d0c4 -->|calls| crawl_crawlmadcapsection_162dbfe5
-    crawl_crawlsection_99e7d0c4 -->|calls| crawl_cleanstalefiles_86497be3
-    crawl_crawlsection_99e7d0c4 -->|calls| crawl_main_15976828
-    crawl_crawlmadcapsection_162dbfe5 -->|calls| crawl_crawlbyurl_67f03df0
-    crawl_discoverproducts_4e1e42bc -->|calls| crawl_main_15976828
-    crawl_crawlbyurl_67f03df0 -->|calls| crawl_main_15976828
-    tests_test_search_testsearchdocs_19baec78 -->|method| tests_test_search_testsearchdocs_test_search_fin_a0aed8dd
-    %% Omitted for readability: 61 nodes, 0 edges
-    class crawl_isvalidproducturl_ec3bf02e function;
-    class crawl_main_15976828 function;
-    class crawl_urltofilepath_1f2fc924 function;
+    tests_test_search_testsearchdocs_19baec78("TestSearchDocs<br/><small>server/tests/test_search.py</small>")
+    crawl_external_hashcontent_0f725441 -->|calls| crawl_external_crawlopenapispec_cafac622
+    crawl_external_writeifchanged_81ca0da9 -->|calls| crawl_external_crawlopenapispec_cafac622
+    crawl_external_writeifchanged_81ca0da9 -->|calls| src_crawl_utils_ensuredir_871c8bb7
+    crawl_external_cleanstalefiles_b39abd08 -->|calls| crawl_external_crawlgithubdocs_07bef969
+    crawl_external_cleanstalefiles_b39abd08 -->|calls| crawl_external_crawlopenapispec_cafac622
+    crawl_external_githubheaders_a530f91f -->|calls| crawl_external_crawlgithubdocs_07bef969
+    crawl_external_crawlgithubdocs_07bef969 -->|calls| src_crawl_utils_parallelmap_3372a417
+    crawl_external_crawlgithubdocs_07bef969 -->|calls| src_crawl_utils_updateindex_cb4f6150
+    crawl_external_crawlgithubdocs_07bef969 -->|calls| crawl_external_crawlmetasploit_bae56814
+    crawl_external_crawlgithubdocs_07bef969 -->|calls| crawl_external_crawlvelociraptor_63fbc265
+    crawl_external_fetchspec_0ec43898 -->|calls| crawl_external_crawlopenapispec_cafac622
+    crawl_external_crawlopenapispec_cafac622 -->|calls| src_crawl_utils_updateindex_cb4f6150
+    crawl_crawlsection_99e7d0c4 -->|calls| src_crawl_utils_ensuredir_871c8bb7
+    crawl_crawlsection_99e7d0c4 -->|calls| src_crawl_utils_updateindex_cb4f6150
+    crawl_external_e3f26b16 -->|imports| src_crawl_utils_ensuredir_871c8bb7
+    crawl_external_e3f26b16 -->|imports| src_crawl_utils_parallelmap_3372a417
+    crawl_external_e3f26b16 -->|imports| src_crawl_utils_updateindex_cb4f6150
+    crawl_3b8eaaf7 -->|imports| src_crawl_utils_ensuredir_871c8bb7
+    crawl_3b8eaaf7 -->|imports| src_crawl_utils_updateindex_cb4f6150
+    %% Omitted for readability: 90 nodes, 0 edges
+    class crawl_external_e3f26b16 module;
+    class crawl_external_hashcontent_0f725441 function;
+    class crawl_external_crawlopenapispec_cafac622 api;
+    class crawl_external_writeifchanged_81ca0da9 function;
+    class crawl_external_cleanstalefiles_b39abd08 function;
+    class crawl_external_crawlgithubdocs_07bef969 function;
+    class crawl_external_githubheaders_a530f91f function;
+    class crawl_external_crawlmetasploit_bae56814 function;
+    class crawl_external_crawlvelociraptor_63fbc265 function;
+    class crawl_external_fetchspec_0ec43898 function;
+    class src_crawl_utils_ensuredir_871c8bb7 function;
+    class src_crawl_utils_parallelmap_3372a417 function;
+    class src_crawl_utils_updateindex_cb4f6150 function;
+    class crawl_3b8eaaf7 module;
     class crawl_crawlsection_99e7d0c4 function;
-    class crawl_fetchjsonspec_4974aeed function;
-    class crawl_fetchpage_1af87355 function;
-    class crawl_fetchsitemapurls_f9bad50b function;
-    class crawl_crawlmadcapsection_162dbfe5 function;
-    class crawl_crawlbyurl_67f03df0 function;
-    class crawl_cleanstalefiles_86497be3 function;
-    class crawl_discoverproducts_4e1e42bc function;
-    class tests_test_search_testsearchdocs_19baec78 test;
-    class tests_test_search_testdocreader_f0095045 test;
-    class tests_test_search_testproducts_6f635d9e test;
-    class tests_test_search_testsearchdocs_test_search_fin_a0aed8dd test;
     class tests_test_text_teststem_1b74e941 test;
     class tests_test_text_testtokenize_52ac3e99 test;
-    class tests_test_text_0798edf2 test;
+    class tests_test_search_testsearchdocs_19baec78 test;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
     classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
     classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
@@ -1304,243 +1035,243 @@ flowchart LR
 </tr>
 <tr>
   <td>1</td>
-  <td><code>test_text.py</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
+  <td><code>graphify.js</code><br><small style="color:var(--muted)">.opencode/plugins/graphify.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small><br><code>text.py</code><br><small style="color:var(--muted)">server/text.py</small><br><code>tokenize()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Module file in server/tests/test_text.py.</td>
+  <td><code>Path</code><br><small style="color:var(--muted)">server/tests/test_search.py</small></td>
+  <td>Builds dependency relationships and graph data.</td>
 </tr>
 <tr>
   <td>2</td>
-  <td><code>TestStopWords</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
+  <td><code>GraphifyPlugin()</code><br><small style="color:var(--muted)">.opencode/plugins/graphify.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>test_common_stop_words_filtered()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_meaningful_words_not_filtered()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>No direct outbound edge</td>
+  <td>Builds dependency relationships and graph data.</td>
 </tr>
 <tr>
   <td>3</td>
-  <td><code>.test_common_stop_words_filtered()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStopWords</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td>No direct outbound edge</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawl-external.ts</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>buildSearchIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>crawl-utils.ts</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>DOCS_DIR</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br>+5 more</td>
+  <td>Module file in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>4</td>
-  <td><code>.test_meaningful_words_not_filtered()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStopWords</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
+  <td><code>VERBOSE</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>VERBOSE node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>5</td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
+  <td><code>hashContent()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>test_able_ible_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_ation_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_ed_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br>+12 more</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td>Caches analysis results or computes cache keys.</td>
 </tr>
 <tr>
   <td>6</td>
-  <td><code>.test_short_words_unchanged()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>writeIfChanged()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>ensureDir()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
+  <td>writeIfChanged() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>7</td>
-  <td><code>.test_ation_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>cleanStaleFiles()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlGitHubDocs()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td>cleanStaleFiles() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>8</td>
-  <td><code>.test_ment_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>extractFrontmatterTitle()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>extractFrontmatterTitle() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>9</td>
-  <td><code>.test_ness_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>GitHubTreeItem</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
 </tr>
 <tr>
   <td>10</td>
-  <td><code>.test_able_ible_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>githubHeaders()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlGitHubDocs()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td>Turns a local path or remote repository into analysis context.</td>
 </tr>
 <tr>
   <td>11</td>
-  <td><code>.test_ing_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawlGitHubDocs()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>cleanStaleFiles()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>githubHeaders()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><code>crawlMetasploit()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>crawlVelociraptor()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>parallelMap()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br>+1 more</td>
+  <td>Turns a local path or remote repository into analysis context.</td>
 </tr>
 <tr>
   <td>12</td>
-  <td><code>.test_ed_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>ApiSource</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ApiSource node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>13</td>
-  <td><code>.test_plural_ies()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>API_SOURCES</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>API_SOURCES node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>14</td>
-  <td><code>.test_plural_sses()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>fetchSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td>fetchSpec() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>15</td>
-  <td><code>.test_plural_general_s()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>cleanStaleFiles()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>fetchSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>hashContent()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br>+1 more</td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>updateIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
+  <td>crawlOpenApiSpec() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>16</td>
-  <td><code>.test_plural_s_excluded()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawlMetasploit()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crawlGitHubDocs()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td>crawlMetasploit() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>17</td>
-  <td><code>.test_ly_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawlVelociraptor()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crawlGitHubDocs()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td>crawlVelociraptor() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>18</td>
-  <td><code>.test_er_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crawlMetasploit()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>crawlOpenApiSpec()</code><br><small style="color:var(--muted)">crawl-external.ts</small><br><code>crawlVelociraptor()</code><br><small style="color:var(--muted)">crawl-external.ts</small></td>
+  <td><code>buildSearchIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small></td>
+  <td>main() node in crawl-external.ts.</td>
 </tr>
 <tr>
   <td>19</td>
-  <td><code>.test_trailing_e()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>crawl.ts</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>buildSearchIndex()</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>crawl-utils.ts</code><br><small style="color:var(--muted)">src/crawl-utils.ts</small><br><code>crawl.test.ts</code><br><small style="color:var(--muted)">tests/crawl.test.ts</small><br>+5 more</td>
+  <td>Module file in crawl.ts.</td>
 </tr>
 <tr>
   <td>20</td>
-  <td><code>.test_no_change()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestStem</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>DELAY_MS</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>DELAY_MS node in crawl.ts.</td>
 </tr>
 <tr>
   <td>21</td>
-  <td><code>TestTokenize</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
+  <td><code>VERBOSE</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
   <td>External entry / no inbound edge</td>
-  <td><code>test_basic_tokenization()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_mixed_case()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_punctuation_stripped()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br>+1 more</td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td>No direct outbound edge</td>
+  <td>VERBOSE node in crawl.ts.</td>
 </tr>
 <tr>
   <td>22</td>
-  <td><code>.test_basic_tokenization()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestTokenize</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>tokenize()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>VALID_CRAWL_DOMAINS</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>VALID_CRAWL_DOMAINS node in crawl.ts.</td>
 </tr>
 <tr>
   <td>23</td>
-  <td><code>.test_punctuation_stripped()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestTokenize</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>tokenize()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>isValidProductUrl()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawl.test.ts</code><br><small style="color:var(--muted)">tests/crawl.test.ts</small><br><code>main()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td>isValidProductUrl() node in crawl.ts.</td>
 </tr>
 <tr>
   <td>24</td>
-  <td><code>.test_short_tokens_filtered()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestTokenize</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>tokenize()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>PRODUCT_SECTIONS</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>PRODUCT_SECTIONS node in crawl.ts.</td>
 </tr>
 <tr>
   <td>25</td>
-  <td><code>.test_mixed_case()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Test</span></td>
-  <td><code>TestTokenize</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><code>tokenize()</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td>Verifies imports, entry points, or version behavior.</td>
+  <td><code>td</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>td node in crawl.ts.</td>
 </tr>
 <tr>
   <td>26</td>
-  <td><code>Verify Python stemmer produces identical output to TypeScript stemmer in src/tex</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>urlToFilePath()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Design note for Verify Python stemmer produces identical output to TypeScript stemmer in src/tex.</td>
+  <td><code>crawlSection()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td>urlToFilePath() node in crawl.ts.</td>
 </tr>
 <tr>
   <td>27</td>
-  <td><code>text.py</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td><span class="tag tag-class">Module</span></td>
-  <td><code>test_text.py</code><br><small style="color:var(--muted)">server/tests/test_text.py</small></td>
+  <td><code>normalizeUrl()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
   <td>No direct outbound edge</td>
-  <td>Module file in server/text.py.</td>
+  <td>normalizeUrl() node in crawl.ts.</td>
 </tr>
 <tr>
   <td>28</td>
-  <td><code>stem()</code><br><small style="color:var(--muted)">server/text.py</small></td>
+  <td><code>fetchJsonSpec()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>test_able_ible_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_ation_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_ed_suffix()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br>+13 more</td>
-  <td>No direct outbound edge</td>
-  <td>stem() node in server/text.py.</td>
+  <td>External entry / no inbound edge</td>
+  <td><code>fetchPage()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td>fetchJsonSpec() node in crawl.ts.</td>
 </tr>
 <tr>
   <td>29</td>
-  <td><code>tokenize()</code><br><small style="color:var(--muted)">server/text.py</small></td>
+  <td><code>fetchPage()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
   <td><span class="tag tag-func">Function</span></td>
-  <td><code>test_basic_tokenization()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_mixed_case()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br><code>test_punctuation_stripped()</code><br><small style="color:var(--muted)">server/tests/test_text.py</small><br>+2 more</td>
-  <td>No direct outbound edge</td>
-  <td>tokenize() node in server/text.py.</td>
+  <td><code>fetchJsonSpec()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><code>crawlSection()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
 </tr>
 <tr>
   <td>30</td>
-  <td><code>Stemmer, stop words, and tokenizer — MUST match src/text.ts exactly.  These func</code><br><small style="color:var(--muted)">server/text.py</small></td>
-  <td><span class="tag tag-func">Concept</span></td>
+  <td><code>fetchSitemapUrls()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
   <td>External entry / no inbound edge</td>
-  <td>No direct outbound edge</td>
-  <td>Design note for Stemmer, stop words, and tokenizer — MUST match src/text.ts exactly.  These func.</td>
+  <td><code>crawlMadCapSection()</code><br><small style="color:var(--muted)">crawl.ts</small></td>
+  <td>fetchSitemapUrls() node in crawl.ts.</td>
 </tr>
 </table>
 
@@ -1552,15 +1283,16 @@ flowchart LR
       <tr><td><code>server/tests/test_text.py</code></td><td>26 nodes</td></tr>
 <tr><td><code>server/tests/test_search.py</code></td><td>25 nodes</td></tr>
 <tr><td><code>crawl.ts</code></td><td>18 nodes</td></tr>
+<tr><td><code>crawl-external.ts</code></td><td>16 nodes</td></tr>
+<tr><td><code>src/crawl-utils.ts</code></td><td>9 nodes</td></tr>
 <tr><td><code>server/text.py</code></td><td>6 nodes</td></tr>
+<tr><td><code>src/text.ts</code></td><td>4 nodes</td></tr>
 <tr><td><code>.opencode/plugins/graphify.js</code></td><td>2 nodes</td></tr>
-<tr><td><code>server/tests/conftest.py</code></td><td>1 nodes</td></tr>
-<tr><td><code>tests/crawl.test.ts</code></td><td>1 nodes</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Design Notes</h4>
-    <p>This section comes from graphify community clustering. Relationship summary: method x36, calls x31, contains x29, explains x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x55, calls x52, method x36, imports x17. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
   </div>
 </div>
 <hr>
@@ -1852,8 +1584,287 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 7. Community 18 ====== -->
-<h2 id="community-18">7. Community 18</h2>
+<!-- ====== 7. Docs Crawler ====== -->
+<h2 id="docs-crawler">7. Docs Crawler</h2>
+<p>Docs Crawler groups implementation around crawl, extensionsts, extensions, dir, mostly in crawl-extensions.ts. This section covers 23 nodes and 34 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Docs Crawler (23 nodes, 34 edges)
+    crawl_extensions_fetchextensionspage_25dc44c1("fetchExtensionsPage()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_buildtoolkitmarkdown_22cc8aeb("buildToolkitMarkdown()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_buildtoolkitsindexmarkdown_300e1aae("buildToolkitsIndexMarkdown()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_fetchhelpmd_891df3a5("fetchHelpMd()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_fetchsingleextension_9def99f9("fetchSingleExtension()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_striphtml_a88c0c94("stripHtml()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_buildmarkdown_20c726dd("buildMarkdown()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_crawlallextensions_5a9e9d86("crawlAllExtensions()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_main_baf85c96("main()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_processextension_deb4e62e("processExtension()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_crawlsingleextension_34b697f1("crawlSingleExtension()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_crawltoolkits_f59eec10("crawlToolkits()<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_apiresponse_24d6aac9("APIResponse<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_concurrency_2a91fc00("CONCURRENCY<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_extensions_dir_d9001f40("EXTENSIONS_DIR<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_extensionresult_31f6750d("ExtensionResult<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_fetch_delay_ms_3c12952e("FETCH_DELAY_MS<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_toolkitdata_143ad836("ToolkitData<br/><small>crawl-extensions.ts</small>")
+    crawl_extensions_striphtml_a88c0c94 -->|calls| crawl_extensions_buildmarkdown_20c726dd
+    crawl_extensions_fetchextensionspage_25dc44c1 -->|calls| crawl_extensions_crawlallextensions_5a9e9d86
+    crawl_extensions_fetchextensionspage_25dc44c1 -->|calls| crawl_extensions_main_baf85c96
+    crawl_extensions_fetchhelpmd_891df3a5 -->|calls| crawl_extensions_processextension_deb4e62e
+    crawl_extensions_fetchsingleextension_9def99f9 -->|calls| crawl_extensions_crawlsingleextension_34b697f1
+    crawl_extensions_buildmarkdown_20c726dd -->|calls| crawl_extensions_processextension_deb4e62e
+    crawl_extensions_processextension_deb4e62e -->|calls| crawl_extensions_crawlsingleextension_34b697f1
+    crawl_extensions_crawlallextensions_5a9e9d86 -->|calls| crawl_extensions_main_baf85c96
+    crawl_extensions_crawlsingleextension_34b697f1 -->|calls| crawl_extensions_main_baf85c96
+    crawl_extensions_buildtoolkitmarkdown_22cc8aeb -->|calls| crawl_extensions_crawltoolkits_f59eec10
+    crawl_extensions_buildtoolkitsindexmarkdown_300e1aae -->|calls| crawl_extensions_crawltoolkits_f59eec10
+    crawl_extensions_crawltoolkits_f59eec10 -->|calls| crawl_extensions_main_baf85c96
+    %% Omitted for readability: 5 nodes, 0 edges
+    class crawl_extensions_fetchextensionspage_25dc44c1 function;
+    class crawl_extensions_buildtoolkitmarkdown_22cc8aeb function;
+    class crawl_extensions_buildtoolkitsindexmarkdown_300e1aae function;
+    class crawl_extensions_fetchhelpmd_891df3a5 function;
+    class crawl_extensions_fetchsingleextension_9def99f9 function;
+    class crawl_extensions_striphtml_a88c0c94 function;
+    class crawl_extensions_buildmarkdown_20c726dd function;
+    class crawl_extensions_crawlallextensions_5a9e9d86 function;
+    class crawl_extensions_main_baf85c96 function;
+    class crawl_extensions_processextension_deb4e62e async;
+    class crawl_extensions_crawlsingleextension_34b697f1 function;
+    class crawl_extensions_crawltoolkits_f59eec10 function;
+    class crawl_extensions_apiresponse_24d6aac9 api;
+    class crawl_extensions_concurrency_2a91fc00 klass;
+    class crawl_extensions_extensions_dir_d9001f40 klass;
+    class crawl_extensions_extensionresult_31f6750d klass;
+    class crawl_extensions_fetch_delay_ms_3c12952e klass;
+    class crawl_extensions_toolkitdata_143ad836 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>crawl-extensions.ts</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>EXTENSIONS_DIR</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>EXTENSIONS_DIR node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>CONCURRENCY</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>CONCURRENCY node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>FETCH_DELAY_MS</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>FETCH_DELAY_MS node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>ExtensionResult</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ExtensionResult node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>APIResponse</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>APIResponse node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>stripHtml()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>buildMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>fetchExtensionsPage()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlAllExtensions()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>Organizes documentation pages, navigation, or content lookup.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>fetchHelpMd()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>fetchHelpMd() node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>fetchSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>fetchSingleExtension() node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>buildMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>stripHtml()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td><code>buildMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>fetchHelpMd()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>processExtension() node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>crawlAllExtensions()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetchExtensionsPage()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>crawlAllExtensions() node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>fetchSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>processExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>crawlSingleExtension() node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>ToolkitSlugRef</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ToolkitSlugRef node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>ToolkitWorkflow</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ToolkitWorkflow node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>ToolkitSubTopic</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ToolkitSubTopic node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>ToolkitData</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ToolkitData node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>ToolkitsJson</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>ToolkitsJson node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>buildToolkitMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>buildToolkitsIndexMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>buildToolkitMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>buildToolkitsIndexMarkdown()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td>crawlToolkits() node in crawl-extensions.ts.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>main()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>crawlAllExtensions()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>crawlSingleExtension()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br><code>crawlToolkits()</code><br><small style="color:var(--muted)">crawl-extensions.ts</small><br>+1 more</td>
+  <td>No direct outbound edge</td>
+  <td>main() node in crawl-extensions.ts.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>crawl-extensions.ts</code></td><td>23 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x22, calls x12. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. Community 18 ====== -->
+<h2 id="community-18">8. Community 18</h2>
 <p>Community 18 groups implementation around agentsmd, project, overview, running, mostly in AGENTS.md. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -1985,8 +1996,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 8. Community 19 ====== -->
-<h2 id="community-19">8. Community 19</h2>
+<!-- ====== 9. Community 19 ====== -->
+<h2 id="community-19">9. Community 19</h2>
 <p>Community 19 groups implementation around readmemd, rapid7, docs, mcp, mostly in README.md. This section covers 8 nodes and 7 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2118,8 +2129,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 9. Docker Entrypoint ====== -->
-<h2 id="docker-entrypoint">9. Docker Entrypoint</h2>
+<!-- ====== 10. Docker Entrypoint ====== -->
+<h2 id="docker-entrypoint">10. Docker Entrypoint</h2>
 <p>Docker Entrypoint groups implementation around docker, entrypointsh, script, initial, mostly in docker-entrypoint.sh. This section covers 4 nodes and 5 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2206,8 +2217,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 10. CI/CD & Code Quality ====== -->
-<h2 id="ci-cd-code-quality">10. CI/CD &amp; Code Quality</h2>
+<!-- ====== 11. CI/CD & Code Quality ====== -->
+<h2 id="ci-cd-code-quality">11. CI/CD &amp; Code Quality</h2>
 <p>CI/CD &amp; Code Quality groups implementation around crawler, service, definition, docker, mostly in docker-compose.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2262,8 +2273,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 11. Document Conventions ====== -->
-<h2 id="document-conventions">11. Document Conventions</h2>
+<!-- ====== 12. Document Conventions ====== -->
+<h2 id="document-conventions">12. Document Conventions</h2>
 <p>Document Conventions groups implementation around docker, data, shared, volumes, mostly in docker-compose.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2318,8 +2329,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 12. Image Tags ====== -->
-<h2 id="image-tags">12. Image Tags</h2>
+<!-- ====== 13. Image Tags ====== -->
+<h2 id="image-tags">13. Image Tags</h2>
 <p>Image Tags groups implementation around server, rapid7, docs, mcp, mostly in server/pyproject.toml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2374,8 +2385,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 13. Package Init ====== -->
-<h2 id="package-init">13. Package Init</h2>
+<!-- ====== 14. Package Init ====== -->
+<h2 id="package-init">14. Package Init</h2>
 <p>Package Init groups implementation around server, tests, mostly in server/tests/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2430,8 +2441,8 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 14. Vitest Config ====== -->
-<h2 id="vitest-config">14. Vitest Config</h2>
+<!-- ====== 15. Vitest Config ====== -->
+<h2 id="vitest-config">15. Vitest Config</h2>
 <p>Vitest Config groups implementation around vitestconfigts, mostly in vitest.config.ts. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
@@ -2486,14 +2497,14 @@ flowchart LR
 </div>
 <hr>
 
-<!-- ====== 15. Community 20 ====== -->
-<h2 id="community-20">15. Community 20</h2>
-<p>Community 20 groups implementation around nightly, dependency, smoke, test, mostly in .github/workflows/nightly.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+<!-- ====== 16. Other ====== -->
+<h2 id="other">16. Other</h2>
+<p>Other groups implementation around nightly, dependency, smoke, test, mostly in .github/workflows/nightly.yml. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
 
 <div class="mermaid">
 %%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
 flowchart LR
-    %% Section: Community 20 (1 nodes, 0 edges)
+    %% Section: Other (1 nodes, 0 edges)
     nightly_yml_nightly_workflow_c990d703("Nightly Dependency and Smoke Test Workflow<br/><small>.github/workflows/nightly.yml</small>")
     class nightly_yml_nightly_workflow_c990d703 concept;
     classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
@@ -2548,17 +2559,17 @@ flowchart LR
   <div class="card">
     <h4>Graph</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>Nodes</td><td>302</td></tr>
-      <tr><td>Edges</td><td>471</td></tr>
+      <tr><td>Nodes</td><td>305</td></tr>
+      <tr><td>Edges</td><td>473</td></tr>
       <tr><td>Hyperedges</td><td>0</td></tr>
-      <tr><td>Communities</td><td>21</td></tr>
-      <tr><td>Documented Sections</td><td>14</td></tr>
+      <tr><td>Communities</td><td>22</td></tr>
+      <tr><td>Documented Sections</td><td>15</td></tr>
     </table>
   </div>
   <div class="card">
     <h4>Edge Confidence</h4>
     <table style="width:100%;font-size:0.85rem;">
-      <tr><td>EXTRACTED</td><td>447</td></tr>
+      <tr><td>EXTRACTED</td><td>449</td></tr>
       <tr><td>INFERRED</td><td>24</td></tr>
       <tr><td>AMBIGUOUS</td><td>0</td></tr>
     </table>
@@ -2567,7 +2578,7 @@ flowchart LR
 
 <div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
   <p>rapid7-docs-mcp — Architecture Documentation</p>
-  <p>Generated: 2026-06-19 11:05 UTC · graphify callflow-html</p>
+  <p>Generated: 2026-06-25 05:37 UTC · graphify callflow-html</p>
 </div>
 
 </div><!-- .container -->

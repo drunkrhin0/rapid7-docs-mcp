@@ -160,18 +160,13 @@
     "semantic_hash": ""
   },
   ".opencode/opencode.json": {
-    "mtime": 1781870735.7324955,
-    "ast_hash": "e5f74d14a81702b55bdf53b33ec991d7",
+    "mtime": 1781864395.9588373,
+    "ast_hash": "abcc8b9dcd80bca5f9dde6d9f0c3ae79",
     "semantic_hash": ""
   },
   ".opencode/plugins/graphify.js": {
     "mtime": 1781864395.9586577,
     "ast_hash": "64ccd3c03dbfe0980b6095766f5c4e52",
-    "semantic_hash": ""
-  },
-  ".opencode/package.json": {
-    "mtime": 1781870746.9806242,
-    "ast_hash": "3c9679bfc33f414fac06b8b4daf71a35",
     "semantic_hash": ""
   }
 }
