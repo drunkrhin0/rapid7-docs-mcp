@@ -131,7 +131,7 @@ jobs:
           else
             RANGE="${PREV_TAG}..HEAD"
           fi
-          echo "range=${RANGE}" >> $GITHUB_OUTPUT
+          echo "range=${RANGE}" >> "$GITHUB_OUTPUT"
           git log "${RANGE}" --pretty=format:"- %s (%h)" > release-notes.md
           cat release-notes.md
 

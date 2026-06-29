@@ -1,0 +1,5 @@
+self-hosted-runner:
+  labels:
+    - docker
+    - ubuntu-latest
+    - ubuntu-22.04
