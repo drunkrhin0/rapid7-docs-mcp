@@ -342,15 +342,12 @@ async def search_blog(
             msg += f' in category "{category}"'
         return f"{msg}. Total indexed: {len(posts)} posts."
 
-    text = "\n\n".join(
-        (
-            f"**[{i + 1}] {p.title}**\n"
-            f"{'Date: ' + p.date if p.date else 'Date: N/A'}"
-            f"{(' | Category: ' + p.category) if p.category else ''}\n"
-            f"URL: {p.url}"
-        )
-        for i, p in enumerate(results)
-    )
+    def _format_post(i: int, p: Any) -> str:
+        date_line = f"Date: {p.date}" if p.date else "Date: N/A"
+        category_line = f" | Category: {p.category}" if p.category else ""
+        return f"**[{i + 1}] {p.title}**\n{date_line}{category_line}\nURL: {p.url}"
+
+    text = "\n\n".join(_format_post(i, p) for i, p in enumerate(results))
 
     blog_data = {
         "results": [
@@ -410,15 +407,16 @@ async def search_resources(
             msg += f' of type "{type}"'
         return f"{msg}. Total indexed: {len(resources)} resources."
 
-    text = "\n\n".join(
-        (
-            f"**[{i + 1}] {r.title}**"
-            f"{('\nType: ' + r.type) if r.type else ''}"
-            f"{('\n' + r.description) if r.description else ''}"
-            f"{'\nURL: ' + r.url}"
-        )
-        for i, r in enumerate(results)
-    )
+    def _format_resource(i: int, r: Any) -> str:
+        lines = [f"**[{i + 1}] {r.title}**"]
+        if r.type:
+            lines.append(f"Type: {r.type}")
+        if r.description:
+            lines.append(r.description)
+        lines.append(f"URL: {r.url}")
+        return "\n".join(lines)
+
+    text = "\n\n".join(_format_resource(i, r) for i, r in enumerate(results))
 
     resource_data = {
         "results": [
