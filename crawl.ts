@@ -59,6 +59,9 @@ const PRODUCT_SECTIONS: Record<string, string> = {
   'surface-command':         `${BASE_URL}/surface-command/`,
   insight:                   `${BASE_URL}/insight/`,
   services:                  `${BASE_URL}/services/`,
+  // documentation.rapid7.com (MadCap HTML5 with sitemap-seeded crawl)
+  'incident-command':        `${DOCUMENTATION_BASE_URL}/incident-command/`,
+  'exposure-command':        `${DOCUMENTATION_BASE_URL}/exposure-command/`,
   // API reference HTML docs on help.rapid7.com
   'insightvm-api':           `${HELP_URL}/insightvm/en-us/api/`,
   'insightidr-api':          `${HELP_URL}/insightidr/en-us/api/`,
