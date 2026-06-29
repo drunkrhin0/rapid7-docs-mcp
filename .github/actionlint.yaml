@@ -1,5 +1,6 @@
-self-hosted-runner:
-  labels:
-    - docker
-    - ubuntu-latest
-    - ubuntu-22.04
+# actionlint config — for local `docker run rhysd/actionlint` runs.
+# Used by developers before pushing to catch workflow syntax errors
+# without waiting for the CI runner.
+#
+# Note: CI uses `runs-on: ubuntu-22.04` (a pre-built runner label), so
+# no self-hosted-runner.labels are needed.

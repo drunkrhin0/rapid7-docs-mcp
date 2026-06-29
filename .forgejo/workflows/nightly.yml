@@ -11,7 +11,7 @@ permissions:
 jobs:
   deps-check:
     name: Dep Check
-    runs-on: docker
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +31,7 @@ jobs:
 
   smoke-test:
     name: Smoke Test
-    runs-on: docker
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
 

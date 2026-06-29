@@ -15,7 +15,7 @@ permissions:
 jobs:
   quality-gates:
     name: Quality Gates
-    runs-on: docker
+    runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,7 +48,7 @@ jobs:
   docker-build-push:
     name: Build & Push Images
     needs: quality-gates
-    runs-on: docker
+    runs-on: ubuntu-22.04
     permissions:
       contents: read
       packages: write
@@ -113,7 +113,7 @@ jobs:
   forgejo-release:
     name: Forgejo Release
     needs: docker-build-push
-    runs-on: docker
+    runs-on: ubuntu-22.04
     permissions:
       contents: write
     steps:
