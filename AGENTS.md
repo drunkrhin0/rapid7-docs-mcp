@@ -52,16 +52,4 @@ cd server && pip install -e .[dev] && pytest
 - **Python imports use the package**: Tests run with `PYTHONPATH` pointing at the repo root, so imports use `from server.search import ...`. Running `python server/mcp_server.py` directly fails — use `python -m server.mcp_server` instead (as the Dockerfile does).
 - **SSE transport doesn't support health endpoint**: The `mcp-server-sse` container runs only FastMCP on port 8000 — no separate health port. Only the Streamable HTTP variant (`mcp-server`) exposes both MCP (8000) and health (8001).
 
-## Graphify
 
-A knowledge graph for this repo lives at `graphify-out/`. Rebuild incrementally after code changes:
-
-```bash
-/graphify . --update              # incremental re-extract
-graphify query "your question"    # BFS traversal against existing graph
-graphify path "NodeA" "NodeB"     # shortest path between two nodes
-```
-
-Open `graphify-out/graph.html` in a browser for the interactive view. `graphify-out/` is gitignored - if it isn't, add it.
-
-A post-commit hook auto-rebuilds the graph on every commit (code-only, background, no LLM). It lives in `.githooks/` — commit that directory so the hook works after clone. To enable: `git config core.hooksPath .githooks` (already set in this repo).
