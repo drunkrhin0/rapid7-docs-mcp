@@ -52,10 +52,6 @@ jobs:
   typecheck:
     name: Type Check
     runs-on: docker
-    # TODO: Pre-existing type errors in crawl-site.ts and crawl.ts surfaced
-    # by expanding tsconfig.json include. Tracked in plan/tasks.md Phase 7.
-    # Re-enable `continue-on-error: false` after those are fixed.
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

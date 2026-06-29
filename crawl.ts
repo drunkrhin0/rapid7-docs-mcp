@@ -160,7 +160,10 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
 
     // Extract main content — try selectors in priority order, fall back to body
     const CONTENT_SELECTORS = ['#mc-main-content', 'main article', 'main .content', '[role="main"]', 'main', 'article'];
-    let contentEl = $('body'); // fallback
+    // The widened type avoids a fight with cheerio's overloads — `.first()`
+    // returns Cheerio<AnyNode> but downstream `.find`/`.remove` accept either.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let contentEl: any = $('body');
     for (const sel of CONTENT_SELECTORS) {
       const el = $(sel).first();
       if (el.length) {

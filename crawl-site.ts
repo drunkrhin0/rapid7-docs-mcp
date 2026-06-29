@@ -99,7 +99,7 @@ const td = new TurndownService({
 
 // Remove images, scripts, styles — we want clean text
 td.addRule('removeImages', {
-  filter: ['img', 'picture', 'video', 'svg'],
+  filter: ['img', 'picture', 'video', 'svg'] as TurndownService.Filter,
   replacement: () => '',
 });
 
