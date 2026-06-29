@@ -18,12 +18,7 @@ import { describe, it, expect } from 'vitest';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname, relative } from 'node:path';
 
-const ALLOWED_FILES = new Set([
-  'package.json',
-  'server/__init__.py',
-  'server/pyproject.toml',
-  'package-lock.json',
-]);
+const ALLOWED_FILES = new Set(['package.json', 'server/__init__.py', 'server/pyproject.toml', 'package-lock.json']);
 
 const SKIP_DIRS = new Set([
   'node_modules',

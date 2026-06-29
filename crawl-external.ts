@@ -49,7 +49,7 @@ import { createHash } from 'crypto';
 import yaml from 'js-yaml';
 import { DOCS_DIR, IndexEntry, ensureDir, updateIndex, buildSearchIndex, parallelMap } from './src/crawl-utils.js';
 
-const VERBOSE    = process.argv.includes('--verbose');
+const VERBOSE = process.argv.includes('--verbose');
 const STALE_DAYS = 14;
 const CONCURRENCY = 5;
 
@@ -122,7 +122,7 @@ interface GitHubTreeItem {
 
 function githubHeaders(): Record<string, string> {
   const h: Record<string, string> = {
-    'Accept': 'application/vnd.github+json',
+    Accept: 'application/vnd.github+json',
     'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0',
   };
   if (process.env.GITHUB_TOKEN) h['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
@@ -142,56 +142,69 @@ async function crawlGitHubDocs(opts: {
   const { label, section, repo, branch, prefix, toUrl } = opts;
   console.log(`\n🕷  Crawling ${label} (GitHub: ${repo})`);
 
-  const treeResp = await axios.get(
-    `https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`,
-    { headers: githubHeaders(), timeout: 15000 }
-  );
+  const treeResp = await axios.get(`https://api.github.com/repos/${repo}/git/trees/${branch}?recursive=1`, {
+    headers: githubHeaders(),
+    timeout: 15000,
+  });
 
-  const mdFiles: GitHubTreeItem[] = (treeResp.data.tree as GitHubTreeItem[])
-    .filter(item => item.type === 'blob' && item.path.startsWith(prefix) && item.path.endsWith('.md'));
+  const mdFiles: GitHubTreeItem[] = (treeResp.data.tree as GitHubTreeItem[]).filter(
+    (item) => item.type === 'blob' && item.path.startsWith(prefix) && item.path.endsWith('.md'),
+  );
 
   console.log(`  Found ${mdFiles.length} markdown files`);
   fs.mkdirSync(path.join(DOCS_DIR, section), { recursive: true });
 
   const entries: IndexEntry[] = [];
   const visitedFiles = new Set<string>();
-  let updated = 0, failed = 0, count = 0;
+  let updated = 0,
+    failed = 0,
+    count = 0;
 
-  await parallelMap(mdFiles, async (item) => {
-    const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${item.path}`;
-    const localPath = path.join(DOCS_DIR, section, item.path.slice(prefix.length));
-    const pageUrl   = toUrl(item.path);
-    const idx = ++count;
+  await parallelMap(
+    mdFiles,
+    async (item) => {
+      const rawUrl = `https://raw.githubusercontent.com/${repo}/${branch}/${item.path}`;
+      const localPath = path.join(DOCS_DIR, section, item.path.slice(prefix.length));
+      const pageUrl = toUrl(item.path);
+      const idx = ++count;
 
-    if (VERBOSE) process.stdout.write(`  [${idx}/${mdFiles.length}] ${item.path.slice(prefix.length)} ... `);
+      if (VERBOSE) process.stdout.write(`  [${idx}/${mdFiles.length}] ${item.path.slice(prefix.length)} ... `);
 
-    try {
-      const resp = await axios.get(rawUrl, {
-        timeout: 15000,
-        headers: { 'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0' },
-        responseType: 'text',
-      });
+      try {
+        const resp = await axios.get(rawUrl, {
+          timeout: 15000,
+          headers: { 'User-Agent': 'Rapid7-Docs-MCP-Crawler/1.0' },
+          responseType: 'text',
+        });
 
-      const { title, body } = extractFrontmatterTitle(resp.data as string);
-      const displayTitle = title || path.basename(item.path, '.md').replace(/[-_]/g, ' ');
-      const newHash = hashContent(body);
-      const fm = `---\ntitle: "${displayTitle.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n`;
-      const changed = writeIfChanged(localPath, fm + body, newHash);
+        const { title, body } = extractFrontmatterTitle(resp.data as string);
+        const displayTitle = title || path.basename(item.path, '.md').replace(/[-_]/g, ' ');
+        const newHash = hashContent(body);
+        const fm = `---\ntitle: "${displayTitle.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"\nurl: "${pageUrl}"\ncrawled: "${new Date().toISOString()}"\nhash: "${newHash}"\n---\n\n`;
+        const changed = writeIfChanged(localPath, fm + body, newHash);
 
-      if (changed) { updated++; if (VERBOSE) console.log(`✓ ${displayTitle}`); }
-      else { if (VERBOSE) console.log('↩ (unchanged)'); }
+        if (changed) {
+          updated++;
+          if (VERBOSE) console.log(`✓ ${displayTitle}`);
+        } else {
+          if (VERBOSE) console.log('↩ (unchanged)');
+        }
 
-      visitedFiles.add(localPath);
-      entries.push({ path: path.relative(DOCS_DIR, localPath), title: displayTitle, url: pageUrl });
-    } catch (err) {
-      failed++;
-      if (VERBOSE) console.error(`✗ ${err instanceof Error ? err.message : err}`);
-    }
-  }, CONCURRENCY);
+        visitedFiles.add(localPath);
+        entries.push({ path: path.relative(DOCS_DIR, localPath), title: displayTitle, url: pageUrl });
+      } catch (err) {
+        failed++;
+        if (VERBOSE) console.error(`✗ ${err instanceof Error ? err.message : err}`);
+      }
+    },
+    CONCURRENCY,
+  );
 
   const staleRemoved = cleanStaleFiles(path.join(DOCS_DIR, section), visitedFiles);
   updateIndex(entries);
-  console.log(`✅ ${section} — ${mdFiles.length} files (${updated} updated, ${failed} failed, ${staleRemoved} stale removed)`);
+  console.log(
+    `✅ ${section} — ${mdFiles.length} files (${updated} updated, ${failed} failed, ${staleRemoved} stale removed)`,
+  );
 }
 
 // ─── OpenAPI source crawler ───────────────────────────────────────────────────
@@ -322,10 +335,13 @@ async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
   let updated = 0;
 
   for (const [tag, endpoints] of tagGroups) {
-    const slug     = tag.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    const slug = tag
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
     const filePath = path.join(DOCS_DIR, section, `${slug}.md`);
-    const pageUrl  = `${pageBaseUrl}#tag/${encodeURIComponent(tag)}`;
-    const title    = `${tag} - ${spec.info?.title || label}`;
+    const pageUrl = `${pageBaseUrl}#tag/${encodeURIComponent(tag)}`;
+    const title = `${tag} - ${spec.info?.title || label}`;
 
     // ─── Build markdown body ────────────────────────────────────────────────
 
@@ -335,7 +351,7 @@ async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
 
     for (const { method, pathStr, op } of endpoints) {
       md += `## ${method} ${pathStr}\n\n`;
-      if (op.summary)     md += `**${op.summary}**\n\n`;
+      if (op.summary) md += `**${op.summary}**\n\n`;
       if (op.description) md += `${String(op.description).trim()}\n\n`;
 
       // Parameters
@@ -344,7 +360,7 @@ async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
       if (params.length > 0) {
         md += `**Parameters:**\n\n`;
         for (const p of params) {
-          const req  = p.required ? ' *(required)*' : '';
+          const req = p.required ? ' *(required)*' : '';
           const desc = p.description ? ` — ${String(p.description).replace(/\n/g, ' ')}` : '';
           const type = p.schema?.type ? ` \`${p.schema.type}\`` : '';
           md += `- \`${p.name}\` (${p.in}${req})${type}${desc}\n`;
@@ -384,18 +400,20 @@ async function crawlOpenApiSpec(source: ApiSource): Promise<void> {
 
   const staleRemoved = cleanStaleFiles(path.join(DOCS_DIR, section), visitedFiles);
   updateIndex(entries);
-  console.log(`✅ ${section} — ${tagGroups.size} tag files, ${totalPaths} endpoints (${updated} updated, ${staleRemoved} stale removed)`);
+  console.log(
+    `✅ ${section} — ${tagGroups.size} tag files, ${totalPaths} endpoints (${updated} updated, ${staleRemoved} stale removed)`,
+  );
 }
 
 // ─── GitHub source definitions ────────────────────────────────────────────────
 
 async function crawlMetasploit(): Promise<void> {
   await crawlGitHubDocs({
-    label:   'Metasploit Framework wiki',
+    label: 'Metasploit Framework wiki',
     section: 'metasploit-framework',
-    repo:    'rapid7/metasploit-framework',
-    branch:  'master',
-    prefix:  'docs/metasploit-framework.wiki/',
+    repo: 'rapid7/metasploit-framework',
+    branch: 'master',
+    prefix: 'docs/metasploit-framework.wiki/',
     toUrl: (p) => {
       const name = path.basename(p, '.md');
       return `https://github.com/rapid7/metasploit-framework/wiki/${name}`;
@@ -405,11 +423,11 @@ async function crawlMetasploit(): Promise<void> {
 
 async function crawlVelociraptor(): Promise<void> {
   await crawlGitHubDocs({
-    label:   'Velociraptor docs',
+    label: 'Velociraptor docs',
     section: 'velociraptor',
-    repo:    'Velocidex/velociraptor-docs',
-    branch:  'master',
-    prefix:  'content/docs/',
+    repo: 'Velocidex/velociraptor-docs',
+    branch: 'master',
+    prefix: 'content/docs/',
     toUrl: (p) => {
       const rel = p
         .slice('content/docs/'.length)
@@ -423,12 +441,12 @@ async function crawlVelociraptor(): Promise<void> {
 // ─── Entry point ─────────────────────────────────────────────────────────────
 
 async function main(): Promise<void> {
-  const args   = process.argv.slice(2).filter(a => a !== '--verbose');
+  const args = process.argv.slice(2).filter((a) => a !== '--verbose');
   const runAll = args.length === 0;
 
   fs.mkdirSync(DOCS_DIR, { recursive: true });
 
-  if (runAll || args.includes('--metasploit'))   await crawlMetasploit();
+  if (runAll || args.includes('--metasploit')) await crawlMetasploit();
   if (runAll || args.includes('--velociraptor')) await crawlVelociraptor();
 
   for (const source of API_SOURCES) {
@@ -440,7 +458,7 @@ async function main(): Promise<void> {
   buildSearchIndex();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Crawl failed:', err);
   process.exit(1);
 });

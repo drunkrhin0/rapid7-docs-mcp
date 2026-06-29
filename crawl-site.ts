@@ -50,26 +50,17 @@ const PRODUCTS: ProductDef[] = [
   {
     slug: 'insightappsec',
     name: 'InsightAppSec',
-    pages: [
-      '/products/insightappsec/',
-      '/products/insightappsec/pricing/',
-    ],
+    pages: ['/products/insightappsec/', '/products/insightappsec/pricing/'],
   },
   {
     slug: 'insightcloudsec',
     name: 'InsightCloudSec',
-    pages: [
-      '/products/insightcloudsec/',
-      '/products/insightcloudsec/pricing/',
-    ],
+    pages: ['/products/insightcloudsec/', '/products/insightcloudsec/pricing/'],
   },
   {
     slug: 'insightvm',
     name: 'InsightVM',
-    pages: [
-      '/products/insightvm/',
-      '/products/insightvm/pricing/',
-    ],
+    pages: ['/products/insightvm/', '/products/insightvm/pricing/'],
   },
   {
     slug: 'metasploit',
@@ -84,17 +75,12 @@ const PRODUCTS: ProductDef[] = [
   {
     slug: 'siem',
     name: 'Incident Command (SIEM)',
-    pages: [
-      '/products/siem/',
-      '/products/siem/packages/',
-    ],
+    pages: ['/products/siem/', '/products/siem/packages/'],
   },
   {
     slug: 'threat-command',
     name: 'Threat Command',
-    pages: [
-      '/products/threat-command/',
-    ],
+    pages: ['/products/threat-command/'],
   },
   {
     slug: 'velociraptor',
@@ -156,11 +142,15 @@ function extractJsonLdFaqs(html: string): FAQItem[] {
         if (item['@type'] === 'Question' && item.name) {
           faqs.push({
             question: item.name,
-            answer: cheerio.load(item.acceptedAnswer?.text || '')('body').text(),
+            answer: cheerio
+              .load(item.acceptedAnswer?.text || '')('body')
+              .text(),
           });
         }
       }
-    } catch { /* partial match or malformed JSON — try next */ }
+    } catch {
+      /* partial match or malformed JSON — try next */
+    }
   }
 
   // Also try standard <script type="application/ld+json"> tags (non-RSC pages)
@@ -169,19 +159,25 @@ function extractJsonLdFaqs(html: string): FAQItem[] {
     $('script[type="application/ld+json"]').each((_, el) => {
       try {
         const data = JSON.parse($(el).html() || '');
-        const faqPage = data['@type'] === 'FAQPage' ? data
-          : data['@graph']?.find((g: { '@type': string }) => g['@type'] === 'FAQPage');
+        const faqPage =
+          data['@type'] === 'FAQPage'
+            ? data
+            : data['@graph']?.find((g: { '@type': string }) => g['@type'] === 'FAQPage');
         if (faqPage?.mainEntity) {
           for (const item of faqPage.mainEntity) {
             if (item['@type'] === 'Question') {
               faqs.push({
                 question: item.name || '',
-                answer: cheerio.load(item.acceptedAnswer?.text || '')('body').text(),
+                answer: cheerio
+                  .load(item.acceptedAnswer?.text || '')('body')
+                  .text(),
               });
             }
           }
         }
-      } catch { /* not valid JSON-LD */ }
+      } catch {
+        /* not valid JSON-LD */
+      }
     });
   }
 
@@ -202,9 +198,10 @@ function extractMainContent(html: string): string {
   main.find('form, [class*="request-demo"], [class*="trial"]').remove();
 
   const rawHtml = main.html() || '';
-  return td.turndown(rawHtml)
-    .replace(/^### \s*$/gm, '')        // Remove empty headings (accordion toggles)
-    .replace(/\n{3,}/g, '\n\n')        // Collapse excessive newlines
+  return td
+    .turndown(rawHtml)
+    .replace(/^### \s*$/gm, '') // Remove empty headings (accordion toggles)
+    .replace(/\n{3,}/g, '\n\n') // Collapse excessive newlines
     .trim();
 }
 
@@ -216,15 +213,13 @@ function extractMetaDescription(html: string): string {
 function sectionNameFromPath(urlPath: string, productSlug: string): string {
   // /products/command/pricing/ → "Pricing"
   // /products/command/ → "Overview"
-  const cleaned = urlPath
-    .replace(`/products/${productSlug}/`, '')
-    .replace(/\/$/, '');
+  const cleaned = urlPath.replace(`/products/${productSlug}/`, '').replace(/\/$/, '');
 
   if (!cleaned) return 'Overview';
 
   return cleaned
     .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(' ');
 }
 
@@ -309,13 +304,11 @@ async function scrapeProduct(product: ProductDef): Promise<void> {
 
 async function crawlProducts(singleSlug?: string): Promise<void> {
   console.log('\n📦 Scraping Rapid7 products...');
-  const targets = singleSlug
-    ? PRODUCTS.filter(p => p.slug === singleSlug)
-    : PRODUCTS;
+  const targets = singleSlug ? PRODUCTS.filter((p) => p.slug === singleSlug) : PRODUCTS;
 
   if (singleSlug && targets.length === 0) {
     console.error(`  ✗ Unknown product: ${singleSlug}`);
-    console.error(`  Available: ${PRODUCTS.map(p => p.slug).join(', ')}`);
+    console.error(`  Available: ${PRODUCTS.map((p) => p.slug).join(', ')}`);
     process.exit(1);
   }
 
@@ -359,9 +352,7 @@ async function scrapeBlogPage(pageNum: number): Promise<{ posts: BlogPost[]; has
     seen.add(href);
 
     // Title from img alt (most reliable on this site) or heading text
-    const title = $a.find('img[alt]').first().attr('alt')?.trim()
-      || $a.find('h2, h3, h4').first().text().trim()
-      || '';
+    const title = $a.find('img[alt]').first().attr('alt')?.trim() || $a.find('h2, h3, h4').first().text().trim() || '';
 
     if (!title || title.length < 5) return;
 
@@ -387,8 +378,8 @@ async function scrapeBlogPage(pageNum: number): Promise<{ posts: BlogPost[]; has
   });
 
   // Check for next page
-  const hasNext = $(`a[href="/blog/page/${pageNum + 1}/"]`).length > 0
-    || $(`a[href*="/blog/page/${pageNum + 1}"]`).length > 0;
+  const hasNext =
+    $(`a[href="/blog/page/${pageNum + 1}/"]`).length > 0 || $(`a[href*="/blog/page/${pageNum + 1}"]`).length > 0;
 
   return { posts, hasNext };
 }
@@ -449,11 +440,10 @@ async function scrapeResourcesPage(pageNum: number): Promise<{ resources: Resour
     const href = $a.attr('href') || '';
     const fullUrl = `${BASE_URL}${href}`;
 
-    if (resources.some(r => r.url === fullUrl)) return;
+    if (resources.some((r) => r.url === fullUrl)) return;
 
     const $card = $a.closest('[class]');
-    const title = $a.find('h2, h3').first().text().trim()
-      || $a.text().trim();
+    const title = $a.find('h2, h3').first().text().trim() || $a.text().trim();
 
     if (!title || title.length < 5) return;
 
@@ -461,14 +451,18 @@ async function scrapeResourcesPage(pageNum: number): Promise<{ resources: Resour
     let type = $card.find('[class*="type"], [class*="label"], [class*="tag"]').first().text().trim() || '';
 
     // Description: first <p> in the card
-    const allP = $card.find('p').toArray().map(p => $(p).text().trim()).filter(Boolean);
+    const allP = $card
+      .find('p')
+      .toArray()
+      .map((p) => $(p).text().trim())
+      .filter(Boolean);
     let description = '';
 
     // The first <p> is often a short type label; real descriptions are longer
     const TYPE_LABELS = ['research', 'report', 'whitepaper', 'webinar', 'guide', 'ebook', 'datasheet', 'infographic'];
     if (!type && allP.length > 0 && allP[0].length < 30) {
       const lower = allP[0].toLowerCase();
-      if (TYPE_LABELS.some(t => lower.includes(t))) {
+      if (TYPE_LABELS.some((t) => lower.includes(t))) {
         type = allP[0];
         description = allP.length > 1 ? allP[1] : '';
       } else {
@@ -481,8 +475,9 @@ async function scrapeResourcesPage(pageNum: number): Promise<{ resources: Resour
     resources.push({ title, url: fullUrl, type, description });
   });
 
-  const hasNext = $(`a[href="/resources/page/${pageNum + 1}/"]`).length > 0
-    || $(`a[href*="/resources/page/${pageNum + 1}"]`).length > 0;
+  const hasNext =
+    $(`a[href="/resources/page/${pageNum + 1}/"]`).length > 0 ||
+    $(`a[href*="/resources/page/${pageNum + 1}"]`).length > 0;
 
   return { resources, hasNext };
 }
@@ -541,7 +536,7 @@ async function main(): Promise<void> {
   if (doResources) await crawlResources();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Site crawl failed:', err);
   process.exit(1);
 });

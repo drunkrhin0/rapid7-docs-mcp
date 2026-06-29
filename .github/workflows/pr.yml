@@ -61,7 +61,7 @@ jobs:
 
   sast:
     runs-on: docker
-    continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
+    continue-on-error: true # SARIF upload requires GitHub; non-blocking on Forgejo
     permissions:
       contents: read
       security-events: write
@@ -93,7 +93,7 @@ jobs:
 
   docker-scan:
     runs-on: docker
-    continue-on-error: true   # SARIF upload requires GitHub; non-blocking on Forgejo
+    continue-on-error: true # SARIF upload requires GitHub; non-blocking on Forgejo
     permissions:
       contents: read
       security-events: write
@@ -106,5 +106,3 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: HIGH,CRITICAL
-
-

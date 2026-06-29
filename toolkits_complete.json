@@ -100,21 +100,14 @@
                   "id": "1",
                   "name": "Post Office 365 Phishing Alerts to Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Microsoft_Office_365_Email_Indicators_to_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Microsoft_Office_365_Email_Indicators_to_Microsoft_Teams"
                     }
                   ],
@@ -124,21 +117,14 @@
                   "id": "2",
                   "name": "Post Exchange Phishing Alerts to Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Parse_Phishing_Indicators_with_Microsoft_Exchange_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Post_Exchange_Phishing_Alerts_to_Microsoft_Teams"
                     }
                   ],
@@ -148,21 +134,14 @@
                   "id": "1",
                   "name": "Post Gmail Phishing Alerts to Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Parse_Phishing_Indicators_with_Gmail_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Post_Gmail_Phishing_Alerts_to_Microsoft_Teams"
                     }
                   ],
@@ -207,21 +186,14 @@
                   "id": "1",
                   "name": "Enrich Indicators with OSInt from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Open_Source_Indicator_Enrichment_with_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Open_Source_Indicator_Enrichment_with_Microsoft_Teams"
                     }
                   ],
@@ -231,21 +203,14 @@
                   "id": "2",
                   "name": "Enrich URL with VirusTotal from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Slack_Chatbot_URL_Analysis_with_VirusTotal"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Microsoft_Teams_URL_Analysis"
                     }
                   ],
@@ -255,21 +220,14 @@
                   "id": "4",
                   "name": "Enrich IP with IPStack from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "GeoIP_Lookup_with_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "GeoIP_Lookup_with_Microsoft_Teams"
                     }
                   ],
@@ -279,21 +237,14 @@
                   "id": "5",
                   "name": "Enrich Hash with VirusTotal from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Slack_Chatbot_Hash_Analysis_with_VirusTotal"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Enrich_File_Hash_with_Microsoft_Teams"
                     }
                   ],
@@ -303,21 +254,14 @@
                   "id": "6",
                   "name": "Unshorten URL with unshorten.me from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Unshorten_URL_with_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Unshorten_URL_with_Microsoft_Teams"
                     }
                   ],
@@ -362,21 +306,14 @@
                   "id": "1",
                   "name": "Find and Delete Office 365 Emails from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Delete_O365_Emails_With_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Delete_Emails_from_O365_With_Microsoft_Teams"
                     }
                   ],
@@ -388,15 +325,11 @@
                   "configurable": "true",
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Purge_Office_365_Emails_with_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Purge_Office_365_Emails_with_Microsoft_Teams"
                     }
                   ],
@@ -408,15 +341,11 @@
                   "configurable": "true",
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Sender_in_Office_365_with_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Sender_in_Office_365_with_Teams"
                     }
                   ],
@@ -461,21 +390,14 @@
                   "id": "1",
                   "name": "Disable User Account in Active Directory from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Suspend_AD_LDAP_User_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Disable_User_in_Active_Directory_from_Microsoft_Teams"
                     }
                   ],
@@ -485,21 +407,14 @@
                   "id": "2",
                   "name": "Disable User Account in Azure AD from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Suspend_User_in_Azure_AD_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Suspend_User_in_Azure_AD_from_Microsoft_Teams"
                     }
                   ],
@@ -509,21 +424,14 @@
                   "id": "3",
                   "name": "Force Password Reset in Active Directory from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Force_Password_Reset_in_Active_Directory_With_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Force_Password_Reset_in_Active_Directory_with_Microsoft_Teams"
                     }
                   ],
@@ -533,21 +441,14 @@
                   "id": "4",
                   "name": "Force Password Reset in Azure AD from Slack/Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Force_Password_Reset_in_Azure_AD_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Force_Password_Reset_in_Azure_AD_from_Microsoft_Teams"
                     }
                   ],
@@ -599,21 +500,14 @@
                   "id": "1",
                   "name": "Alert on New High-Risk Vulnerability in Vulnerability Management with Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Alert_on_New_High_Risk_Vulnerability_in_InsightVM_with_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Alert_on_New_High_Risk_Vulnerability_in_InsightVM_with_Microsoft_Teams"
                     }
                   ],
@@ -623,21 +517,14 @@
                   "id": "2",
                   "name": "Send Remediated Vulnerabilities Message in Slack or Microsoft Teams from Vulnerability Management",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Send_Remediated_Vulnerabilities_Message_in_Slack_from_InsightVM"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Send_Remediated_Vulnerabilities_Message_in_Microsoft_Teams_from_InsightVM"
                     }
                   ],
@@ -647,21 +534,14 @@
                   "id": "3",
                   "name": "Lookup Vulnerability from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Lookup_Vuln_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Lookup_Vuln_From_Teams"
                     }
                   ],
@@ -671,21 +551,14 @@
                   "id": "4",
                   "name": "Lookup Exploit with AttackerKB from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Lookup_Exploit_with_AttackerKB_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Lookup_Exploit_with_AttackerKB_from_Microsoft_Teams"
                     }
                   ],
@@ -695,21 +568,14 @@
                   "id": "5",
                   "name": "Enrich CVE with Recorded Future from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Enrich_CVE_with_Recorded_Future_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Enrich_CVE_with_Recorded_Future_from_Microsoft_Teams"
                     }
                   ],
@@ -719,21 +585,14 @@
                   "id": "6",
                   "name": "Lookup Top Remediations with Vulnerability Management from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Top_Remediations_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Top_Remediations_For_Asset_In_Teams"
                     }
                   ],
@@ -743,21 +602,14 @@
                   "id": "7",
                   "name": "Lookup Vulnerable Hosts with Vulnerability Management from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Lookup_Vulnerable_Hosts_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Lookup_Vulnerable_Hosts_From_Teams"
                     }
                   ],
@@ -767,21 +619,14 @@
                   "id": "8",
                   "name": "Lookup Host with Vulnerability Management from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Get_InsightVM_Host_Info_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Lookup_InsightVM_Host_Info_From_Teams"
                     }
                   ],
@@ -853,21 +698,14 @@
                   "id": "2",
                   "name": "Scan Asset with Vulnerability Management from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Scan_Asset_With_InsightVM_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Scan_Asset_With_InsightVM_From_Teams"
                     }
                   ],
@@ -884,21 +722,14 @@
                   "id": "4",
                   "name": "List All Inactive Assets with Vulnerability Management from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "List_All_Inactive_Assets_with_InsightVM_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "List_All_Inactive_Assets_with_InsightVM_from_Microsoft_Teams"
                     }
                   ],
@@ -942,21 +773,14 @@
                   "id": "1",
                   "name": "Manage Vulnerability Exception Requests with Vulnerability Management from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Manage_Vulnerability_Exception_Requests_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Teams_Vulnerability_Exception_Handling"
                     }
                   ],
@@ -966,21 +790,14 @@
                   "id": "2",
                   "name": "Manage Expiring Vulnerability Exceptions with Vulnerability Management and Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Manage_Expiring_Vulnerability_Exceptions_with_InsightVM"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Manage_Expiring_Vulnerability_Exceptions_with_InsightVM"
                     }
                   ],
@@ -1094,21 +911,14 @@
                   "id": "1",
                   "name": "Deploy Patch with HCL BigFix from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Deploy_Patch_With_BigFix_From_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Deploy_Patch_With_BigFix_From_Teams"
                     }
                   ],
@@ -1174,21 +984,14 @@
                   "id": "1",
                   "name": "Check Host Block Status with Fortinet Fortigate from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Check_Host_Block_Status_with_Fortinet_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Check_Host_Block_Status_with_Fortinet_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1198,21 +1001,14 @@
                   "id": "2",
                   "name": "Block Host with Fortinet Fortigate from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Host_with_Fortinet_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Host_with_Fortinet_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1222,21 +1018,14 @@
                   "id": "3",
                   "name": "Check Host Block Status with Palo Alto Firewall from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Check_Host_Block_Status_with_Palo_Alto_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Check_Host_Block_Status_with_Palo_Alto_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1246,21 +1035,14 @@
                   "id": "4",
                   "name": "Block Host with Palo Alto Firewall from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Host_with_Palo_Alto_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Host_with_Palo_Alto_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1270,21 +1052,14 @@
                   "id": "5",
                   "name": "Check Host Block Status with Check Point NGFW from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Check_Host_Block_Status_with_Check_Point_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Check_Host_Block_Status_with_Check_Point_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1294,21 +1069,14 @@
                   "id": "6",
                   "name": "Block Host with Check Point NGFW from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Host_with_Check_Point_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Host_with_Check_Point_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1318,21 +1086,14 @@
                   "id": "7",
                   "name": "Check Host Block Status with Cisco ASA from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Check_Host_Block_Status_with_Cisco_ASA_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Check_Host_Block_Status_with_Cisco_ASA_from_Microsoft_Teams"
                     }
                   ],
@@ -1342,21 +1103,14 @@
                   "id": "8",
                   "name": "Block Host with Cisco ASA from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Host_with_Cisco_ASA_Firewall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Host_with_Cisco_ASA_Firewall_from_Microsoft_Teams"
                     }
                   ],
@@ -1366,21 +1120,14 @@
                   "id": "9",
                   "name": "Check Host Block Status with SonicWall from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Check_Host_Block_Status_with_SonicWall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Check_Host_Block_Status_with_SonicWall_from_Microsoft_Teams"
                     }
                   ],
@@ -1390,21 +1137,14 @@
                   "id": "10",
                   "name": "Block Host with SonicWall from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Host_with_SonicWall_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Host_with_SonicWall_from_Microsoft_Teams"
                     }
                   ],
@@ -1414,21 +1154,14 @@
                   "id": "11",
                   "name": "Check Host Block Status with Cisco SourceFire from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Check_Host_Block_Status_with_SourceFire_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Check_Host_Block_Status_with_SourceFire_from_Microsoft_Teams"
                     }
                   ],
@@ -1438,21 +1171,14 @@
                   "id": "12",
                   "name": "Block Host with Cisco SourceFire from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Block_Host_with_SourceFire_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Block_Host_with_SourceFire_from_Microsoft_Teams"
                     }
                   ],
@@ -1496,21 +1222,14 @@
                   "id": "1",
                   "name": "Quarantine Endpoint with Broadcom Symantec Endpoint Protection from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_Broadcom_Symantec_Endpoint_Protection_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_Broadcom_Symantec_Endpoint_Protection_from_Microsoft_Teams"
                     }
                   ],
@@ -1520,21 +1239,14 @@
                   "id": "2",
                   "name": "Quarantine Endpoint with SentinelOne from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_SentinelOne_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_SentinelOne_from_Microsoft_Teams"
                     }
                   ],
@@ -1544,21 +1256,14 @@
                   "id": "3",
                   "name": "Quarantine Endpoint with Trend Micro Apex from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_Trend_Micro_Apex_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_Trend_Micro_Apex_from_Microsoft_Teams"
                     }
                   ],
@@ -1568,21 +1273,14 @@
                   "id": "4",
                   "name": "Quarantine Endpoint with Carbon Black EDR from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_Carbon_Black_EDR_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_Carbon_Black_EDR_from_Microsoft_Teams"
                     }
                   ],
@@ -1592,21 +1290,14 @@
                   "id": "5",
                   "name": "Quarantine Endpoint with CylanceOPTICS from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_CylanceOPTICS_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_CylanceOPTICS_from_Microsoft_Teams"
                     }
                   ],
@@ -1616,21 +1307,14 @@
                   "id": "7",
                   "name": "Quarantine Endpoint with Microsoft Defender ATP from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_Microsoft_Defender_ATP_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_Microsoft_Defender_ATP_from_Microsoft_Teams"
                     }
                   ],
@@ -1640,21 +1324,14 @@
                   "id": "8",
                   "name": "Quarantine Endpoint with Crowdstrike Falcon from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_CrowdStrike_Falcon_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_CrowdStrike_Falcon_from_Microsoft_Teams"
                     }
                   ],
@@ -1664,21 +1341,14 @@
                   "id": "9",
                   "name": "Quarantine Endpoint with Sophos Central from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_Sophos_Central_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_Sophos_Central_from_Microsoft_Teams"
                     }
                   ],
@@ -1688,21 +1358,14 @@
                   "id": "10",
                   "name": "Quarantine Endpoint with Microsoft Intune from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Quarantine_Endpoint_with_Microsoft_Intune_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Quarantine_Endpoint_with_Microsoft_Intune_from_Microsoft_Teams"
                     }
                   ],
@@ -1746,21 +1409,14 @@
                   "id": "1",
                   "name": "Blacklist Hash with Broadcom Symantec Endpoint Protection from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Hash_with_Symantec_Endpoint_Protection_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Hash_with_Symantec_Endpoint_Protection_from_Microsoft_Teams"
                     }
                   ],
@@ -1770,21 +1426,14 @@
                   "id": "2",
                   "name": "Blacklist Hash with SentinelOne from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Hash_with_SentinelOne_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Hash_with_SentinelOne_from_Microsoft_Teams"
                     }
                   ],
@@ -1794,21 +1443,14 @@
                   "id": "3",
                   "name": "Blacklist Indicators with Trend Micro Apex from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Indicators_with_Trend_Micro_Apex_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Indicators_with_Trend_Micro_Apex_from_Microsoft_Teams"
                     }
                   ],
@@ -1818,21 +1460,14 @@
                   "id": "4",
                   "name": "Blacklist Hash with CylancePROTECT from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Hash_with_CylancePROTECT_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Hash_with_CylancePROTECT_from_Microsoft_Teams"
                     }
                   ],
@@ -1842,21 +1477,14 @@
                   "id": "5",
                   "name": "Blacklist Indicators with Microsoft Defender ATP from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Indicators_with_Microsoft_Defender_ATP_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Indicators_with_Microsoft_Defender_ATP_from_Microsoft_Teams"
                     }
                   ],
@@ -1866,21 +1494,14 @@
                   "id": "7",
                   "name": "Blacklist Hash with Sophos Central from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Hash_with_Sophos_Central_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Hash_with_Sophos_Central_from_Microsoft_Teams"
                     }
                   ],
@@ -1890,21 +1511,14 @@
                   "id": "",
                   "name": "Blacklist Indicators with CrowdStrike Falcon from Slack or Microsoft Teams",
                   "configurable": "true",
-                  "options": [
-                    "Slack",
-                    "MS Teams"
-                  ],
+                  "options": ["Slack", "MS Teams"],
                   "slugNames": [
                     {
-                      "options": [
-                        "Slack"
-                      ],
+                      "options": ["Slack"],
                       "slugName": "Blacklist_Indicators_with_CrowdStrike_Falcon_from_Slack"
                     },
                     {
-                      "options": [
-                        "MS Teams"
-                      ],
+                      "options": ["MS Teams"],
                       "slugName": "Blacklist_Indicators_with_CrowdStrike_Falcon_from_Microsoft_Teams"
                     }
                   ],

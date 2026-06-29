@@ -127,7 +127,7 @@ describe('discoverProducts', () => {
 
     const products = await discoverProducts();
     expect(products.length).toBeGreaterThan(0);
-    expect(products.some(p => p.url.includes('insightidr'))).toBe(true);
+    expect(products.some((p) => p.url.includes('insightidr'))).toBe(true);
   });
 
   it('falls back when homepage returns zero valid product tiles', async () => {
@@ -158,9 +158,9 @@ describe('crawlByUrl', () => {
     await crawlByUrl('https://documentation.rapid7.com/incident-command/');
 
     // Should have fetched the sitemap (via fetchSitemapUrls)
-    const sitemapCalls = vi.mocked(axios.get).mock.calls.filter(
-      call => typeof call[0] === 'string' && call[0].includes('Sitemap.xml')
-    );
+    const sitemapCalls = vi
+      .mocked(axios.get)
+      .mock.calls.filter((call) => typeof call[0] === 'string' && call[0].includes('Sitemap.xml'));
     expect(sitemapCalls.length).toBeGreaterThan(0);
   });
 
@@ -174,9 +174,9 @@ describe('crawlByUrl', () => {
     await crawlByUrl('https://docs.rapid7.com/insightidr/');
 
     // Should NOT have fetched any sitemap
-    const sitemapCalls = vi.mocked(axios.get).mock.calls.filter(
-      call => typeof call[0] === 'string' && call[0].includes('Sitemap.xml')
-    );
+    const sitemapCalls = vi
+      .mocked(axios.get)
+      .mock.calls.filter((call) => typeof call[0] === 'string' && call[0].includes('Sitemap.xml'));
     expect(sitemapCalls.length).toBe(0);
   });
 
@@ -190,9 +190,9 @@ describe('crawlByUrl', () => {
     await crawlByUrl('https://help.rapid7.com/insightvm/en-us/api/');
 
     // Should NOT have fetched any sitemap
-    const sitemapCalls = vi.mocked(axios.get).mock.calls.filter(
-      call => typeof call[0] === 'string' && call[0].includes('Sitemap.xml')
-    );
+    const sitemapCalls = vi
+      .mocked(axios.get)
+      .mock.calls.filter((call) => typeof call[0] === 'string' && call[0].includes('Sitemap.xml'));
     expect(sitemapCalls.length).toBe(0);
   });
 

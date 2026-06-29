@@ -25,7 +25,7 @@ export interface IndexEntry {
 // ─── Common helpers ─────────────────────────────────────────────────────────
 
 export function sleep(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export function ensureDir(filePath: string): void {
@@ -36,11 +36,7 @@ export function ensureDir(filePath: string): void {
  * Run async tasks with bounded concurrency.
  * Returns results in the same order as the input items.
  */
-export async function parallelMap<T, R>(
-  items: T[],
-  fn: (item: T) => Promise<R>,
-  concurrency: number
-): Promise<R[]> {
+export async function parallelMap<T, R>(items: T[], fn: (item: T) => Promise<R>, concurrency: number): Promise<R[]> {
   const results: R[] = new Array(items.length);
   let nextIndex = 0;
 
@@ -66,7 +62,7 @@ export function updateIndex(entries: IndexEntry[]): void {
   }
 
   // Merge by path, dedup
-  const map = new Map(existing.map(e => [e.path, e]));
+  const map = new Map(existing.map((e) => [e.path, e]));
   for (const entry of entries) map.set(entry.path, entry);
 
   // Remove entries whose files no longer exist on disk
@@ -115,10 +111,7 @@ export function buildSearchIndex(): void {
     serialized[term] = Array.from(ids).sort((a, b) => a - b);
   }
 
-  fs.writeFileSync(
-    path.join(DOCS_DIR, 'search-index.json'),
-    JSON.stringify({ p: paths, i: serialized })
-  );
+  fs.writeFileSync(path.join(DOCS_DIR, 'search-index.json'), JSON.stringify({ p: paths, i: serialized }));
 
   console.log(`\n📇 Search index: ${Object.keys(serialized).length} stems across ${entries.length} docs`);
 }

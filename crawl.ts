@@ -45,29 +45,29 @@ export function isValidProductUrl(href: string): boolean {
 
 // Known Rapid7 product sections — full URLs so crawlSection works across hostnames
 const PRODUCT_SECTIONS: Record<string, string> = {
-  insightidr:                `${BASE_URL}/insightidr/`,
-  insightvm:                 `${BASE_URL}/insightvm/`,
-  insightappsec:             `${BASE_URL}/insightappsec/`,
-  insightconnect:            `${BASE_URL}/insightconnect/`,
-  insightagent:              `${BASE_URL}/insight-agent/`,
-  insightcloudsec:           `${BASE_URL}/insightcloudsec/`,
-  metasploit:                `${BASE_URL}/metasploit/`,
-  nexpose:                   `${BASE_URL}/nexpose/`,
-  appspider:                 `${BASE_URL}/appspider/`,
-  insightops:                `${BASE_URL}/insightops/`,
-  'threat-command':          `${BASE_URL}/threat-command/`,
-  'surface-command':         `${BASE_URL}/surface-command/`,
-  insight:                   `${BASE_URL}/insight/`,
-  services:                  `${BASE_URL}/services/`,
+  insightidr: `${BASE_URL}/insightidr/`,
+  insightvm: `${BASE_URL}/insightvm/`,
+  insightappsec: `${BASE_URL}/insightappsec/`,
+  insightconnect: `${BASE_URL}/insightconnect/`,
+  insightagent: `${BASE_URL}/insight-agent/`,
+  insightcloudsec: `${BASE_URL}/insightcloudsec/`,
+  metasploit: `${BASE_URL}/metasploit/`,
+  nexpose: `${BASE_URL}/nexpose/`,
+  appspider: `${BASE_URL}/appspider/`,
+  insightops: `${BASE_URL}/insightops/`,
+  'threat-command': `${BASE_URL}/threat-command/`,
+  'surface-command': `${BASE_URL}/surface-command/`,
+  insight: `${BASE_URL}/insight/`,
+  services: `${BASE_URL}/services/`,
   // documentation.rapid7.com (MadCap HTML5 with sitemap-seeded crawl)
-  'incident-command':        `${DOCUMENTATION_BASE_URL}/incident-command/`,
-  'exposure-command':        `${DOCUMENTATION_BASE_URL}/exposure-command/`,
+  'incident-command': `${DOCUMENTATION_BASE_URL}/incident-command/`,
+  'exposure-command': `${DOCUMENTATION_BASE_URL}/exposure-command/`,
   // API reference HTML docs on help.rapid7.com
-  'insightvm-api':           `${HELP_URL}/insightvm/en-us/api/`,
-  'insightidr-api':          `${HELP_URL}/insightidr/en-us/api/`,
+  'insightvm-api': `${HELP_URL}/insightvm/en-us/api/`,
+  'insightidr-api': `${HELP_URL}/insightidr/en-us/api/`,
   // OpenAPI JSON specs (fetched directly, not crawled as HTML)
-  'insightvm-api-v3-spec':   `${HELP_URL}/insightvm/en-us/api/api-v3.json`,
-  'insightvm-api-v4-spec':   `${HELP_URL}/insightvm/en-us/api/insightvm-api-v4.json`,
+  'insightvm-api-v3-spec': `${HELP_URL}/insightvm/en-us/api/api-v3.json`,
+  'insightvm-api-v4-spec': `${HELP_URL}/insightvm/en-us/api/insightvm-api-v4.json`,
 };
 
 // ─── Turndown setup ───────────────────────────────────────────────────────────
@@ -163,7 +163,10 @@ async function fetchPage(pageUrl: string): Promise<{ markdown: string; links: st
     let contentEl = $('body'); // fallback
     for (const sel of CONTENT_SELECTORS) {
       const el = $(sel).first();
-      if (el.length) { contentEl = el; break; }
+      if (el.length) {
+        contentEl = el;
+        break;
+      }
     }
 
     // Remove nav, sidebar, footer noise
@@ -245,7 +248,10 @@ async function crawlSection(startUrl: string, seeds?: string[]): Promise<void> {
     if (VERBOSE) process.stdout.write(`  [${count}] ${pageUrl} ... `);
 
     const result = await fetchPage(pageUrl);
-    if (!result) { failed++; continue; }
+    if (!result) {
+      failed++;
+      continue;
+    }
 
     const { markdown, links, title } = result;
     const filePath = urlToFilePath(pageUrl);
@@ -276,16 +282,18 @@ async function crawlSection(startUrl: string, seeds?: string[]): Promise<void> {
     }
 
     // Progress indicator for non-verbose mode
-    if (!VERBOSE && count % 50 === 0) process.stdout.write(`\r  ${startUrl} — ${count} pages crawled, ${updated} updated`);
+    if (!VERBOSE && count % 50 === 0)
+      process.stdout.write(`\r  ${startUrl} — ${count} pages crawled, ${updated} updated`);
 
     await sleep(DELAY_MS);
   }
 
   // Derive a local section directory from the start URL for stale-file cleanup
   const startParsed = new URL(startUrl);
-  const sectionLocalPath = startParsed.hostname !== 'docs.rapid7.com'
-    ? path.join(startParsed.hostname, startParsed.pathname)
-    : startParsed.pathname;
+  const sectionLocalPath =
+    startParsed.hostname !== 'docs.rapid7.com'
+      ? path.join(startParsed.hostname, startParsed.pathname)
+      : startParsed.pathname;
   const staleRemoved = cleanStaleFiles(sectionLocalPath, visitedFiles);
 
   updateIndex(newEntries);
@@ -299,9 +307,7 @@ async function crawlMadCapSection(productUrl: string): Promise<void> {
   if (seeds.length === 0) {
     // Sitemap empty or missing — try common MadCap first-page filenames as seeds
     const base = productUrl.replace(/\/$/, '');
-    seeds = ['overview.htm', 'getting-started.htm', 'introduction.htm', 'index.htm'].map(
-      s => `${base}/${s}`
-    );
+    seeds = ['overview.htm', 'getting-started.htm', 'introduction.htm', 'index.htm'].map((s) => `${base}/${s}`);
   }
   await crawlSection(productUrl, seeds);
 }
@@ -331,11 +337,7 @@ export async function discoverProducts(save = true): Promise<Array<{ name: strin
 
     if (save) {
       fs.mkdirSync(DOCS_DIR, { recursive: true });
-      fs.writeFileSync(
-        path.join(DOCS_DIR, 'product-catalog.json'),
-        JSON.stringify(products, null, 2),
-        'utf-8'
-      );
+      fs.writeFileSync(path.join(DOCS_DIR, 'product-catalog.json'), JSON.stringify(products, null, 2), 'utf-8');
     }
     console.log(`📋 Discovered ${products.length} products from homepage`);
     return products;
@@ -442,7 +444,7 @@ async function main(): Promise<void> {
       const catalogFile = path.join(DOCS_DIR, 'product-catalog.json');
       if (fs.existsSync(catalogFile)) {
         const catalog = JSON.parse(fs.readFileSync(catalogFile, 'utf-8')) as Array<{ name: string; url: string }>;
-        sectionUrl = catalog.find(p => p.name === sectionName)?.url;
+        sectionUrl = catalog.find((p) => p.name === sectionName)?.url;
       }
     }
     if (!sectionUrl) {
@@ -453,7 +455,9 @@ async function main(): Promise<void> {
   } else if (urlIdx !== -1) {
     const customUrl = args[urlIdx + 1];
     if (!isValidProductUrl(customUrl)) {
-      console.error(`Invalid URL: ${customUrl}. Must be an https:// URL on docs.rapid7.com, documentation.rapid7.com, or help.rapid7.com`);
+      console.error(
+        `Invalid URL: ${customUrl}. Must be an https:// URL on docs.rapid7.com, documentation.rapid7.com, or help.rapid7.com`,
+      );
       process.exit(1);
     }
     await crawlByUrl(customUrl);
@@ -482,7 +486,7 @@ async function main(): Promise<void> {
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-  main().catch(err => {
+  main().catch((err) => {
     console.error('Crawl failed:', err);
     process.exit(1);
   });

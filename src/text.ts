@@ -5,18 +5,107 @@
  */
 
 export const STOP_WORDS = new Set([
-  'a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-  'of', 'with', 'by', 'from', 'as', 'is', 'was', 'are', 'were', 'be',
-  'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will',
-  'would', 'could', 'should', 'may', 'might', 'can', 'shall', 'must',
-  'it', 'its', 'this', 'that', 'these', 'those', 'i', 'you', 'he',
-  'she', 'we', 'they', 'my', 'your', 'his', 'her', 'our', 'their',
-  'what', 'which', 'who', 'whom', 'how', 'when', 'where', 'why',
-  'not', 'no', 'nor', 'if', 'then', 'than', 'so', 'just', 'also',
-  'about', 'up', 'out', 'into', 'over', 'after', 'before', 'between',
-  'through', 'during', 'above', 'below', 'each', 'all', 'any', 'both',
-  'few', 'more', 'most', 'other', 'some', 'such', 'only', 'own',
-  'same', 'very', 'too', 'quite',
+  'a',
+  'an',
+  'the',
+  'and',
+  'or',
+  'but',
+  'in',
+  'on',
+  'at',
+  'to',
+  'for',
+  'of',
+  'with',
+  'by',
+  'from',
+  'as',
+  'is',
+  'was',
+  'are',
+  'were',
+  'be',
+  'been',
+  'being',
+  'have',
+  'has',
+  'had',
+  'do',
+  'does',
+  'did',
+  'will',
+  'would',
+  'could',
+  'should',
+  'may',
+  'might',
+  'can',
+  'shall',
+  'must',
+  'it',
+  'its',
+  'this',
+  'that',
+  'these',
+  'those',
+  'i',
+  'you',
+  'he',
+  'she',
+  'we',
+  'they',
+  'my',
+  'your',
+  'his',
+  'her',
+  'our',
+  'their',
+  'what',
+  'which',
+  'who',
+  'whom',
+  'how',
+  'when',
+  'where',
+  'why',
+  'not',
+  'no',
+  'nor',
+  'if',
+  'then',
+  'than',
+  'so',
+  'just',
+  'also',
+  'about',
+  'up',
+  'out',
+  'into',
+  'over',
+  'after',
+  'before',
+  'between',
+  'through',
+  'during',
+  'above',
+  'below',
+  'each',
+  'all',
+  'any',
+  'both',
+  'few',
+  'more',
+  'most',
+  'other',
+  'some',
+  'such',
+  'only',
+  'own',
+  'same',
+  'very',
+  'too',
+  'quite',
 ]);
 
 /**
@@ -39,12 +128,12 @@ export function stem(word: string): string {
   // -ing + doubled-consonant correction (scanning → scan, configuring → configur)
   if (word.length > 5 && word.endsWith('ing')) {
     const b = word.slice(0, -3);
-    return (b.length > 2 && b[b.length - 1] === b[b.length - 2]) ? b.slice(0, -1) : b;
+    return b.length > 2 && b[b.length - 1] === b[b.length - 2] ? b.slice(0, -1) : b;
   }
   // -ed + doubled-consonant correction (scanned → scan, configured → configur)
   if (word.length > 4 && word.endsWith('ed')) {
     const b = word.slice(0, -2);
-    return (b.length > 2 && b[b.length - 1] === b[b.length - 2]) ? b.slice(0, -1) : b;
+    return b.length > 2 && b[b.length - 1] === b[b.length - 2] ? b.slice(0, -1) : b;
   }
   // Plurals
   if (word.endsWith('ies') && word.length > 4) return word.slice(0, -3) + 'i';
@@ -55,7 +144,7 @@ export function stem(word: string): string {
   // -er + doubled-consonant correction (scanner → scan)
   if (word.length > 4 && word.endsWith('er')) {
     const b = word.slice(0, -2);
-    return (b.length > 2 && b[b.length - 1] === b[b.length - 2]) ? b.slice(0, -1) : b;
+    return b.length > 2 && b[b.length - 1] === b[b.length - 2] ? b.slice(0, -1) : b;
   }
   // Trailing -e (configure → configur, update → updat)
   if (word.length > 4 && word.endsWith('e')) return word.slice(0, -1);
@@ -68,5 +157,5 @@ export function tokenize(text: string): string[] {
     .toLowerCase()
     .replace(/[^a-z0-9]/g, ' ')
     .split(/\s+/)
-    .filter(t => t.length >= 2);
+    .filter((t) => t.length >= 2);
 }

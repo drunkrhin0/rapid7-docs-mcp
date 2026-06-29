@@ -7,8 +7,8 @@ services:
       context: ${GIT_SOURCE:-https://github.com/drunkrhin0/rapid7-docs-mcp.git}#${GIT_REF:-main}
       dockerfile: server/Dockerfile
     ports:
-      - "${MCP_PORT:-8002}:8000"
-      - "${HEALTH_PORT:-8001}:8001"
+      - '${MCP_PORT:-8002}:8000'
+      - '${HEALTH_PORT:-8001}:8001'
     volumes:
       - docs_data:/app/docs
       - site_data:/app/data
@@ -30,7 +30,7 @@ services:
       context: ${GIT_SOURCE:-https://github.com/drunkrhin0/rapid7-docs-mcp.git}#${GIT_REF:-main}
       dockerfile: server/Dockerfile
     ports:
-      - "${SSE_PORT:-8004}:8000"
+      - '${SSE_PORT:-8004}:8000'
     volumes:
       - docs_data:/app/docs
       - site_data:/app/data

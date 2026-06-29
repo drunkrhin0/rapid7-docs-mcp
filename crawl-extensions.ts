@@ -15,7 +15,15 @@ import * as cheerio from 'cheerio';
 import * as fs from 'fs';
 import * as path from 'path';
 import { createHash } from 'crypto';
-import { DOCS_DIR, IndexEntry, ensureDir, updateIndex, buildSearchIndex, sleep, parallelMap } from './src/crawl-utils.js';
+import {
+  DOCS_DIR,
+  IndexEntry,
+  ensureDir,
+  updateIndex,
+  buildSearchIndex,
+  sleep,
+  parallelMap,
+} from './src/crawl-utils.js';
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 
@@ -30,8 +38,8 @@ const USER_AGENT = 'Rapid7-Docs-MCP-Crawler/1.0 (personal homelab indexer)';
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 interface ExtensionResult {
-  name: string;           // slug: "abnormal-security"
-  title: string;          // "Abnormal Security"
+  name: string; // slug: "abnormal-security"
+  title: string; // "Abnormal Security"
   overview?: string;
   description?: string;
   keyFeatures?: string[];
@@ -130,7 +138,7 @@ function buildMarkdown(ext: ExtensionResult, helpMd: string | null): string {
   // Tags
   if (ext.tags?.length) {
     parts.push('');
-    parts.push(`**Tags:** ${ext.tags.map(t => t.displayName || t.name).join(', ')}`);
+    parts.push(`**Tags:** ${ext.tags.map((t) => t.displayName || t.name).join(', ')}`);
   }
 
   parts.push('');
@@ -279,8 +287,11 @@ async function crawlAllExtensions(): Promise<void> {
     }
 
     // Deduplicate within the page
-    const unique = data.results.filter(ext => {
-      if (seen.has(ext.name)) { skipped++; return false; }
+    const unique = data.results.filter((ext) => {
+      if (seen.has(ext.name)) {
+        skipped++;
+        return false;
+      }
       seen.add(ext.name);
       return true;
     });
@@ -380,7 +391,7 @@ function buildToolkitMarkdown(toolkit: ToolkitData): string {
     parts.push('');
 
     // "How It Works" steps
-    const howItWorks = sub.content.sections?.find(s => s.sectionTitle === 'How It Works');
+    const howItWorks = sub.content.sections?.find((s) => s.sectionTitle === 'How It Works');
     if (howItWorks) {
       parts.push(`### How It Works`);
       parts.push('');
@@ -404,14 +415,14 @@ function buildToolkitMarkdown(toolkit: ToolkitData): string {
       for (const wf of workflows) {
         const platforms = wf.options?.join(', ') || '';
         const links = (wf.slugNames || [])
-          .map(s => `[${s.options?.join('/') || 'Link'}](https://extensions.rapid7.com/extension/${s.slugName})`)
+          .map((s) => `[${s.options?.join('/') || 'Link'}](https://extensions.rapid7.com/extension/${s.slugName})`)
           .join(', ');
         parts.push(`| ${wf.name} | ${platforms} | ${links || 'N/A'} |`);
       }
       parts.push('');
 
       // Extended descriptions for workflows that have them
-      const withDesc = workflows.filter(wf => wf.extendedDescription);
+      const withDesc = workflows.filter((wf) => wf.extendedDescription);
       if (withDesc.length) {
         parts.push('**Workflow Details:**');
         parts.push('');
@@ -434,8 +445,8 @@ function buildToolkitsIndexMarkdown(toolkits: ToolkitsJson): string {
   parts.push('');
 
   for (const tk of toolkits.toolkits) {
-    const overview = toolkits.overviewCards.find(o => o.link === tk.link);
-    const header = toolkits.headerCards.find(h => h.url.includes(tk.link));
+    const overview = toolkits.overviewCards.find((o) => o.link === tk.link);
+    const header = toolkits.headerCards.find((h) => h.url.includes(tk.link));
     const desc = overview?.description || tk.description;
     const count = header?.totalNumber || tk.subTopics.reduce((n, s) => n + s.content.workflowList.workflows.length, 0);
 
@@ -443,12 +454,14 @@ function buildToolkitsIndexMarkdown(toolkits: ToolkitsJson): string {
     parts.push('');
     parts.push(`${desc.trim()}`);
     parts.push('');
-    parts.push(`**${count} workflows** across ${tk.subTopics.length} categories: ${tk.subTopics.map(s => s.title).join(', ')}`);
+    parts.push(
+      `**${count} workflows** across ${tk.subTopics.length} categories: ${tk.subTopics.map((s) => s.title).join(', ')}`,
+    );
     parts.push('');
   }
 
   // Coming soon
-  const comingSoon = toolkits.overviewCards.filter(o => o.comingSoon);
+  const comingSoon = toolkits.overviewCards.filter((o) => o.comingSoon);
   if (comingSoon.length) {
     parts.push('## Coming Soon');
     parts.push('');
@@ -500,7 +513,11 @@ async function crawlToolkits(): Promise<void> {
   } else {
     process.stdout.write('  toolkits/index.md ↩\n');
   }
-  newEntries.push({ path: indexRelative, title: 'Rapid7 InsightConnect Toolkits', url: 'https://extensions.rapid7.com/wfh-playbook' });
+  newEntries.push({
+    path: indexRelative,
+    title: 'Rapid7 InsightConnect Toolkits',
+    url: 'https://extensions.rapid7.com/wfh-playbook',
+  });
 
   // Individual toolkit pages
   for (const tk of toolkits.toolkits) {
@@ -547,10 +564,17 @@ async function main(): Promise<void> {
   if (args.includes('--list')) {
     console.log('\n📋 Fetching extensions list...\n');
     const data = await fetchExtensionsPage();
-    if (!data) { console.error('Failed to fetch extensions'); process.exit(1); }
+    if (!data) {
+      console.error('Failed to fetch extensions');
+      process.exit(1);
+    }
     console.log(`Total extensions: ${data.totalCount}\n`);
     for (const ext of data.results) {
-      const tags = ext.tags?.slice(0, 3).map(t => t.displayName || t.name).join(', ') || '';
+      const tags =
+        ext.tags
+          ?.slice(0, 3)
+          .map((t) => t.displayName || t.name)
+          .join(', ') || '';
       console.log(`  ${ext.name.padEnd(40)} ${ext.title.padEnd(35)} ${tags}`);
     }
     console.log(`\n  ... and ${data.totalCount - data.results.length} more. Run without --list to crawl all.`);
@@ -560,7 +584,10 @@ async function main(): Promise<void> {
   const slugIdx = args.indexOf('--slug');
   if (slugIdx !== -1) {
     const slug = args[slugIdx + 1];
-    if (!slug) { console.error('Missing --slug value'); process.exit(1); }
+    if (!slug) {
+      console.error('Missing --slug value');
+      process.exit(1);
+    }
     await crawlSingleExtension(slug);
   } else {
     await crawlAllExtensions();
@@ -573,7 +600,7 @@ async function main(): Promise<void> {
   buildSearchIndex();
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Extensions crawl failed:', err);
   process.exit(1);
 });

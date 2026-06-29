@@ -26,15 +26,9 @@ const SCRIPT = resolve(repoRoot, 'scripts/version-sync.mjs');
 function setupRepo() {
   const dir = mkdtempSync(join(tmpdir(), 'version-sync-test-'));
   mkdirSync(join(dir, 'server'), { recursive: true });
-  writeFileSync(
-    join(dir, 'package.json'),
-    JSON.stringify({ name: 'test', version: '1.2.3' }, null, 2),
-  );
+  writeFileSync(join(dir, 'package.json'), JSON.stringify({ name: 'test', version: '1.2.3' }, null, 2));
   writeFileSync(join(dir, 'server', '__init__.py'), '"""Module."""\n');
-  writeFileSync(
-    join(dir, 'server', 'pyproject.toml'),
-    `[project]\nname = "test"\nversion = "0.0.0"\n`,
-  );
+  writeFileSync(join(dir, 'server', 'pyproject.toml'), `[project]\nname = "test"\nversion = "0.0.0"\n`);
   return dir;
 }
 
@@ -106,10 +100,7 @@ describe('version-sync.mjs', () => {
   });
 
   it('handles pre-release versions (semver with suffix)', () => {
-    writeFileSync(
-      join(repo, 'package.json'),
-      JSON.stringify({ name: 'test', version: '2.0.0-rc.1' }),
-    );
+    writeFileSync(join(repo, 'package.json'), JSON.stringify({ name: 'test', version: '2.0.0-rc.1' }));
 
     const result = runScript(repo);
     expect(result.code).toBe(0);
