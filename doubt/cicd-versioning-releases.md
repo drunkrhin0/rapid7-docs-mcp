@@ -182,3 +182,14 @@ Running the TDD review surfaced additional gaps:
 4. **Latent TypeScript errors surfaced by expanded tsconfig include** — two pre-existing type errors in `crawl-site.ts` and `crawl.ts` that were previously hidden because the old `tsconfig.json` excluded root `*.ts` files. These block `npm run typecheck`. Per the user's own coding rules ("don't improve adjacent code, flag pre-existing issues"), these are documented in `plan/tasks.md` as Phase 7 follow-up tasks rather than fixed in this branch.
 
 5. **15 files need formatting** — the codebase hasn't been run through `prettier` yet. Documented as Phase 8 follow-up to keep the CI/CD diff focused.
+
+## Runner notes (dockhand)
+
+Quirks of the dockhand self-hosted Forgejo runner that future CI work on this repo will need:
+
+- **`runs-on: docker` is broken.** The runner tries to use the project's `Dockerfile` as the job image, and fails with `exec: "docker-entrypoint.sh": executable file not found in $PATH` (the entrypoint script doesn't exist in the runner context). Use `runs-on: ubuntu-22.04` (one of the runner's labels) — it maps to a pre-built Ubuntu 22.04 image with standard tooling.
+- **`data.forgejo.org` mirror is incomplete.** It doesn't have `gitleaks/gitleaks-action` or `aquasecurity/trivy-action`. Use direct Docker image references (`docker://zricethezav/gitleaks:...`, `docker://aquasec/trivy:...`) or skip the tools. The mirror does have `actions/checkout`, `actions/setup-node`, `actions/setup-python`, `docker/login-action`, `docker/metadata-action`, `docker/build-push-action`.
+- **Forgejo 1.22 has no `actions/runs/{id}/logs` API.** The `/actions/tasks` endpoint works (lists job status by head SHA) but per-job log retrieval returns 404. To debug CI failures, use `./scripts/ci-local.sh` locally with `act` and the `ghcr.io/catthehacker/ubuntu:act-latest` image — it produces the same errors as the remote runner, much faster than the push-and-wait cycle.
+- **SSH to dockhand (192.168.1.215) is locked down.** Can't `cat /var/lib/forgejo-runner/act/.../0_setup.txt` for live logs.
+- **`continue-on-error: true` on jobs is honored by Forgejo Actions** — a failing step inside a `continue-on-error: true` job reports the step as failed but the job itself passes. Use this for audit/SAST-style jobs where findings are reports, not blockers.
+- **Dep audit findings are real, not stale.** `npm audit` and `pip-audit` will find HIGH vulnerabilities in the current dep tree (esbuild, form-data, js-yaml, undici, vite, urllib3, yt-dlp). Renovate auto-PRs should keep these moving; for now, the audit job uses `|| true` so findings are visible without blocking PRs.

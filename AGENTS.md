@@ -52,4 +52,12 @@ cd server && pip install -e .[dev] && pytest
 - **Python imports use the package**: Tests run with `PYTHONPATH` pointing at the repo root, so imports use `from server.search import ...`. Running `python server/mcp_server.py` directly fails — use `python -m server.mcp_server` instead (as the Dockerfile does).
 - **SSE transport doesn't support health endpoint**: The `mcp-server-sse` container runs only FastMCP on port 8000 — no separate health port. Only the Streamable HTTP variant (`mcp-server`) exposes both MCP (8000) and health (8001).
 
+## CI
+
+The Forgejo Actions workflows live in `.forgejo/workflows/`. The dockhand self-hosted runner has labels `docker`, `ubuntu-latest`, `ubuntu-22.04`. **`runs-on: docker` is broken on this runner** — it tries to use the project's `Dockerfile` as the job image and fails on `docker-entrypoint.sh`. Always use `runs-on: ubuntu-22.04` for jobs that need real toolchains.
+
+After editing any file under `.forgejo/workflows/` or `.github/workflows/`, run `./scripts/ci-local.sh` before pushing. It uses `act` with the same `ghcr.io/catthehacker/ubuntu:act-latest` image as the runner, so it produces the same errors locally without the push-and-wait cycle. Forgejo 1.22 has no `actions/runs/{id}/logs` API, so the script is the only fast way to debug CI failures.
+
+See `doubt/cicd-versioning-releases.md` for the full runner-notes section.
+
 
