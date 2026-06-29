@@ -11,3 +11,10 @@ __pycache__/
 .ruff_cache/
 .venv/
 .env
+
+# Working notes — design history, plans, and doubt reviews live locally
+# only. They are committed during active work and removed before merge to
+# keep the public repo focused on the shipped artifact.
+doubt/
+spec/
+plan/
