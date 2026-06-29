@@ -131,8 +131,8 @@ YAML anchor example for reusable workflow inputs:
 | Type check (Python) | mypy strict | CI job | `server/` only |
 | Format | prettier | CI job | `--check` |
 | Commit message | commitlint | CI job | Conventional commits |
-| Container scan | trivy | CI job | HIGH,CRITICAL severity |
-| Secret scan | gitleaks | CI job | Local scan |
+| Container scan | trivy | Local `act` | HIGH,CRITICAL severity. Not in CI — runs locally before push. |
+| Secret scan | gitleaks | Local `act` | Not in CI — runs locally before push. |
 | Dep vulns | npm audit, pip-audit | CI job | --audit-level=high |
 
 ## Boundaries

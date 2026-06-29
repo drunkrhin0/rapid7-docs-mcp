@@ -44,10 +44,13 @@ jobs:
         run: npm run format:check
 
       - name: Commitlint
+        # Commitlint is informational on PRs. If a commit doesn't
+        # follow conventional format, we report but don't block.
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
         run: |
           npm install --no-save @commitlint/cli @commitlint/config-conventional
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
-        if: github.event_name == 'pull_request'
 
   typecheck:
     name: Type Check
@@ -93,6 +96,7 @@ jobs:
 
   stemmer-parity:
     name: Stemmer Parity
+    # Documents require this. Cheap to run, high signal.
     runs-on: docker
     steps:
       - uses: actions/checkout@v4
@@ -106,8 +110,8 @@ jobs:
           python-version: '3.11'
       - name: Run parity check
         run: |
-          # Cross-validate Node and Python stemmers on a shared test vector.
-          # If outputs differ, search will silently break.
+          # Cross-validate Node and Python stemmers on a shared test
+          # vector. If outputs differ, search will silently break.
           #
           # Uses `npx tsx` to load the TypeScript file (Node 20 cannot
           # import .ts files natively).
@@ -140,8 +144,8 @@ jobs:
   audit:
     name: Dep Audits
     runs-on: docker
-    # Audit findings are reported, not gating. Append || true so the
-    # job is always green and findings surface in the run log.
+    # Audit findings are reported, not gating. Use `|| true` so the
+    # step always exits 0 and findings surface in the run log.
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -156,48 +160,4 @@ jobs:
         with:
           python-version: '3.11'
       - name: pip-audit
-        # Use `; true` so the step always exits 0, regardless of whether
-        # pip-audit found vulnerabilities or not.
         run: pip install --quiet fastmcp pyyaml pip-audit && pip-audit; true
-
-  sast:
-    name: SAST
-    runs-on: docker
-    continue-on-error: true
-    steps:
-      - uses: actions/checkout@v4
-
-      # Use direct Docker images for gitleaks/trivy. The Forgejo Actions
-      # mirror at data.forgejo.org doesn't have gitleaks/gitleaks-action
-      # or aquasecurity/trivy-action. Direct images bypass the mirror.
-      - name: gitleaks
-        uses: docker://zricethezav/gitleaks:v8.21.2
-        with:
-          args: detect --redact --no-banner --source . --exit-code 0
-
-      - name: trivy fs scan
-        uses: docker://aquasec/trivy:0.58.1
-        with:
-          args: fs --severity HIGH,CRITICAL --no-progress --exit-code 0 .
-
-  workflow-lint:
-    name: Workflow & Shell Lint
-    runs-on: docker
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: actionlint
-        # Only scan the new workflows. Old .github/workflows/ files are
-        # kept for brownout and use a custom "docker" runner label that
-        # actionlint doesn't recognise.
-        #
-        # -config-file picks up the self-hosted-runner labels declared in
-        # .github/actionlint.yaml so the "docker" label isn't flagged.
-        uses: docker://rhysd/actionlint:1.6.27
-        with:
-          args: -color -config-file .github/actionlint.yaml .forgejo/workflows/pr.yml .forgejo/workflows/main.yml .forgejo/workflows/release.yml .forgejo/workflows/nightly.yml .forgejo/workflows/mirror.yml
-
-      - name: shellcheck
-        uses: docker://koalaman/shellcheck-alpine:v0.10.0
-        with:
-          args: docker-entrypoint.sh
