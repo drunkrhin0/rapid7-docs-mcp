@@ -3,17 +3,21 @@
  * Sync version from package.json to Python source files.
  *
  * Reads `package.json` version field and writes:
- *   - server/__init__.py → __version__ = "x.y.z"
- *   - server/pyproject.toml → project.version = "x.y.z" (via toml-cli)
+ *   - server/__init__.py: __version__ = "x.y.z"
+ *   - server/pyproject.toml: project.version = "x.y.z" (via @iarna/toml)
  *
  * Invoked by commit-and-tag-version's `postbump` hook.
  * Can also be run manually: `node scripts/version-sync.mjs`
+ *
+ * No external CLI dependencies — uses @iarna/toml (a pure-JS TOML parser)
+ * so the script works in any environment with Node and the package's
+ * devDependencies installed.
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
+import * as toml from '@iarna/toml';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -56,19 +60,12 @@ function writePythonVersion(version) {
 function writePyprojectVersion(version) {
   const root = findRepoRoot(cwd) || repoRoot;
   const pyprojectPath = join(root, 'server', 'pyproject.toml');
-  try {
-    execFileSync('toml', ['set', '--toml-path', pyprojectPath, 'project.version', version], {
-      stdio: 'pipe',
-    });
-    console.log(`  → server/pyproject.toml: project.version = "${version}"`);
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      console.error(`  ✗ toml-cli not found. Install with: pip install toml-cli`);
-      process.exit(1);
-    }
-    console.error(`  ✗ Failed to update pyproject.toml: ${err.message}`);
-    process.exit(1);
-  }
+  // Use @iarna/toml — a pure-JS parser, no external CLI needed.
+  const data = toml.parse(readFileSync(pyprojectPath, 'utf8'));
+  if (!data.project) data.project = {};
+  data.project.version = version;
+  writeFileSync(pyprojectPath, toml.stringify(data), 'utf8');
+  console.log(`  → server/pyproject.toml: project.version = "${version}"`);
 }
 
 function main() {

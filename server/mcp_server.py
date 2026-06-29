@@ -343,10 +343,12 @@ async def search_blog(
         return f"{msg}. Total indexed: {len(posts)} posts."
 
     text = "\n\n".join(
-        f"**[{i + 1}] {p.title}**\n"
-        f"{'Date: ' + p.date if p.date else 'Date: N/A'}"
-        f"{' | Category: ' + p.category if p.category else ''}\n"
-        f"URL: {p.url}"
+        (
+            f"**[{i + 1}] {p.title}**\n"
+            f"{'Date: ' + p.date if p.date else 'Date: N/A'}"
+            f"{(' | Category: ' + p.category) if p.category else ''}\n"
+            f"URL: {p.url}"
+        )
         for i, p in enumerate(results)
     )
 
@@ -409,10 +411,12 @@ async def search_resources(
         return f"{msg}. Total indexed: {len(resources)} resources."
 
     text = "\n\n".join(
-        f"**[{i + 1}] {r.title}**"
-        f"{'\nType: ' + r.type if r.type else ''}"
-        f"{'\n' + r.description if r.description else ''}"
-        f"{'\nURL: ' + r.url}"
+        (
+            f"**[{i + 1}] {r.title}**"
+            f"{('\nType: ' + r.type) if r.type else ''}"
+            f"{('\n' + r.description) if r.description else ''}"
+            f"{'\nURL: ' + r.url}"
+        )
         for i, r in enumerate(results)
     )
 

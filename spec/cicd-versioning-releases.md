@@ -48,7 +48,7 @@ Lives at `scripts/version-sync.mjs`. Runs as a `postbump` hook for `commit-and-t
 | Type checking (Python) | mypy (strict) | latest |
 | Formatting | Prettier | ^3 |
 | Commit message lint | commitlint + conventional commits | ^19 |
-| TOML editing | `toml-cli` (via pip) | latest |
+| TOML editing | `@iarna/toml` (pure JS) | ^2.2 |
 | Container build | docker/build-push-action | v6 |
 
 ## Required Forgejo Secrets
