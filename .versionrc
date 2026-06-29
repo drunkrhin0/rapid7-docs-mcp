@@ -10,7 +10,7 @@
     "precommit": false
   },
   "tagPrefix": "v",
-  "commitAll": false,
+  "commitAll": true,
   "packageFiles": [
     "package.json"
   ]

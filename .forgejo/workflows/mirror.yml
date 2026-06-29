@@ -1,9 +1,14 @@
 name: Mirror to GitHub
 
+# Fires AFTER release.yml completes successfully, so the tag only lands
+# on GitHub once the Forgejo release + GHCR images are in place. Avoids
+# the race where mirror pushes a tag to GitHub before release.yml
+# finishes (which would let any still-active GitHub-side workflows
+# fire on incomplete artifacts during brownout).
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_run:
+    workflows: ['Release']
+    types: [completed]
 
 permissions:
   contents: read
@@ -11,18 +16,29 @@ permissions:
 jobs:
   mirror-tag:
     name: Push tag to GitHub
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: docker
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
       - name: Push tag to GitHub mirror
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ github.event.workflow_run.head_branch }}
         run: |
           if [ -z "$GH_PAT" ]; then
             echo "::error::GH_PAT secret is not set. Cannot mirror to GitHub."
             exit 1
           fi
-          git config user.name "forgejo-mirror"
-          git config user.email "noreply@drunkrhin0.au"
-          git push https://x-access-token:${GH_PAT}@github.com/drunkrhin0/rapid7-docs-mcp.git "${TAG}"
+          if [ -z "$TAG" ]; then
+            echo "::error::No tag found in workflow_run event. Cannot mirror."
+            exit 1
+          fi
+          # Use extraHeader instead of embedding the PAT in the URL — avoids
+          # log-leak risk if git ever logs the remote URL.
+          git -c http.extraHeader="Authorization: Bearer ${GH_PAT}" \
+              push https://github.com/drunkrhin0/rapid7-docs-mcp.git "${TAG}"
           echo "Mirrored tag ${TAG} to github.com/drunkrhin0/rapid7-docs-mcp"

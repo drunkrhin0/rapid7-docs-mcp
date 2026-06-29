@@ -106,11 +106,15 @@ jobs:
         run: |
           # Cross-validate Node and Python stemmers on a shared test vector.
           # If outputs differ, search will silently break.
-          node -e "
-            const { stem, tokenize } = await import('./src/text.ts');
+          #
+          # Uses `npx tsx` to load the TypeScript file (Node 20 cannot
+          # import .ts files natively). The `npx tsx -e` form runs an
+          # inline script with TypeScript-aware module resolution.
+          npx tsx -e "
+            import { stem, tokenize } from './src/text.ts';
             const words = ['running', 'jumps', 'easily', 'national', 'connection', 'authentication'];
             console.log(JSON.stringify({ stems: words.map(stem), tokens: tokenize('the quick brown fox jumps over the lazy dog') }));
-          " --input-type=module > /tmp/node-output.json
+          " > /tmp/node-output.json
           cd server && python3 -c "
           import json
           from text import stem, tokenize
@@ -174,4 +178,3 @@ jobs:
         run: |
           apt-get update -qq && apt-get install -y -qq shellcheck > /dev/null
           shellcheck docker-entrypoint.sh
-        if: hashFiles('docker-entrypoint.sh') != ''

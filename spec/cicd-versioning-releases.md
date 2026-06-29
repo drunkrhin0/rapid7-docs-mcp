@@ -51,6 +51,15 @@ Lives at `scripts/version-sync.mjs`. Runs as a `postbump` hook for `commit-and-t
 | TOML editing | `toml-cli` (via pip) | latest |
 | Container build | docker/build-push-action | v6 |
 
+## Required Forgejo Secrets
+
+| Secret | Used by | Purpose | Source |
+|---|---|---|---|
+| `GITHUB_TOKEN` | All workflows | Auto-injected by Forgejo. Used for action-level auth. | Auto |
+| `GHCR_TOKEN` | `main.yml`, `release.yml` | GitHub PAT with `write:packages` scope. Auths `docker login` to ghcr.io. Forgejo's `GITHUB_TOKEN` is **not** valid for ghcr.io — a real GitHub PAT is required. | 1Password: `Github Token - Forgejo` |
+| `GH_PAT` | `mirror.yml` | GitHub fine-grained PAT, `contents: write` scoped to `drunkrhin0/rapid7-docs-mcp`. Used to push tags to the GitHub mirror. | 1Password: `vibecoding Access - forgejo git` |
+| `DOCKER_HOST` | `nightly.yml` | Optional. Default `unix:///var/run/docker.sock`. Override for remote daemons (e.g. `tcp://172.26.0.10:2375`). | Manual |
+
 ## Commands
 
 ```
@@ -82,7 +91,7 @@ npm run audit                — npm audit --audit-level=high
 │       ├── main.yml           — Build+push to GHCR on push to main
 │       ├── release.yml        — Triggered by v* tag: quality gates → build+push → release
 │       ├── nightly.yml        — Scheduled: dep audit + smoke test
-│       └── mirror.yml         — Triggered by v* tag: push tag to GitHub mirror
+│       └── mirror.yml         — workflow_run after Release: push tag to GitHub mirror
 ├── .github/
 │   └── renovate.json          — Renovate config (stays)
 ├── .versionrc                 — commit-and-tag-version config (NEW)
