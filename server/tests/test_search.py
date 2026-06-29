@@ -7,6 +7,7 @@ index.json and search-index.json to validate search accuracy.
 from __future__ import annotations
 
 import json
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -16,7 +17,7 @@ import server.search as search_mod
 
 
 @pytest.fixture
-def mock_data(tmp_path: Path):
+def mock_data(tmp_path: Path) -> Generator[Path, None, None]:
     """Set up a mock docs/ and data/ directory with sample crawl output."""
     docs_dir = tmp_path / "docs"
     data_dir = tmp_path / "data"
@@ -123,30 +124,30 @@ def mock_data(tmp_path: Path):
 
 
 class TestSearchDocs:
-    def test_search_finds_matching_docs(self, mock_data):
+    def test_search_finds_matching_docs(self, mock_data: Path) -> None:
         results = search_mod.search_docs("log sources")
         assert len(results) > 0
         titles = [r.entry.title for r in results]
         assert "Configure Log Sources" in titles
 
-    def test_search_returns_no_results_for_nonsense(self, mock_data):
+    def test_search_returns_no_results_for_nonsense(self, mock_data: Path) -> None:
         results = search_mod.search_docs("xyznonexistent")
         assert results == []
 
-    def test_section_filter_works(self, mock_data):
+    def test_section_filter_works(self, mock_data: Path) -> None:
         results = search_mod.search_docs("scan", section="insightvm")
         assert len(results) > 0
         for r in results:
             assert r.entry.path.startswith("insightvm/")
 
-    def test_search_score_order(self, mock_data):
+    def test_search_score_order(self, mock_data: Path) -> None:
         results = search_mod.search_docs("configure scan")
         # "configure" should hit both log-sources.md (title+body) and
         # scanning.md (body only) — but title hits get +10
         scores = [r.score for r in results]
         assert scores == sorted(scores, reverse=True), f"Scores should be descending: {scores}"
 
-    def test_search_finds_by_url_via_index(self, mock_data):
+    def test_search_finds_by_url_via_index(self, mock_data: Path) -> None:
         # docs_read lookup by URL
         path = "https://docs.rapid7.com/insightvm/docs/scanning"
         index = search_mod.load_index()
@@ -156,26 +157,26 @@ class TestSearchDocs:
 
 
 class TestDocReader:
-    def test_reads_existing_doc(self, mock_data):
+    def test_reads_existing_doc(self, mock_data: Path) -> None:
         content = search_mod.read_doc("insightidr/docs/log-sources.md")
         assert content is not None
         assert "Configure Log Sources" in content
 
-    def test_returns_none_for_missing_doc(self, mock_data):
+    def test_returns_none_for_missing_doc(self, mock_data: Path) -> None:
         content = search_mod.read_doc("nonexistent/file.md")
         assert content is None
 
-    def test_path_traversal_blocked(self, mock_data):
+    def test_path_traversal_blocked(self, mock_data: Path) -> None:
         content = search_mod.read_doc("../../../etc/passwd")
         assert content is None
 
 
 class TestBlogSearch:
-    def test_loads_blog_index(self, mock_data):
+    def test_loads_blog_index(self, mock_data: Path) -> None:
         posts = search_mod.load_blog_index()
         assert len(posts) == 2
 
-    def test_searches_blog_by_keyword(self, mock_data):
+    def test_searches_blog_by_keyword(self, mock_data: Path) -> None:
         posts = search_mod.load_blog_index()
         matching = [p for p in posts if "ransomware" in p.title.lower()]
         assert len(matching) == 1
@@ -183,27 +184,27 @@ class TestBlogSearch:
 
 
 class TestResourcesSearch:
-    def test_loads_resources(self, mock_data):
+    def test_loads_resources(self, mock_data: Path) -> None:
         resources = search_mod.load_resources()
         assert len(resources) == 2
 
-    def test_searches_resources(self, mock_data):
+    def test_searches_resources(self, mock_data: Path) -> None:
         resources = search_mod.load_resources()
         matching = [r for r in resources if "siem" in r.title.lower()]
         assert len(matching) == 1
 
 
 class TestProducts:
-    def test_reads_product(self, mock_data):
+    def test_reads_product(self, mock_data: Path) -> None:
         content = search_mod.read_product("insightidr")
         assert content is not None
         assert "SIEM" in content
 
-    def test_lists_products(self, mock_data):
+    def test_lists_products(self, mock_data: Path) -> None:
         products = search_mod.list_products()
         assert "insightidr" in products
         assert "insightvm" in products
 
-    def test_returns_none_for_unknown_product(self, mock_data):
+    def test_returns_none_for_unknown_product(self, mock_data: Path) -> None:
         content = search_mod.read_product("nonexistent")
         assert content is None

@@ -18,6 +18,7 @@ import json
 import os
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 from fastmcp import FastMCP
 from fastmcp.server.middleware import CallNext, Middleware, MiddlewareContext
@@ -58,7 +59,7 @@ INDEX_FILE = Path(__file__).resolve().parent.parent / "docs" / "index.json"
 class AuthMiddleware(Middleware):
     """Simple API key middleware for FastMCP."""
 
-    async def on_call_tool(self, context: MiddlewareContext, call_next: CallNext):
+    async def on_call_tool(self, context: MiddlewareContext, call_next: CallNext) -> Any:
         if AUTH_ENABLED:
             meta = getattr(context.message, "meta", None) or {}
             key = meta.get("api_key", "")
@@ -483,7 +484,7 @@ def main() -> None:
     print(f"Health endpoint on :{health_port}", file=sys.stderr)
 
     mcp.run(
-        transport=TRANSPORT,
+        transport=cast(Any, TRANSPORT),
         host="0.0.0.0",
         port=PORT,
     )
