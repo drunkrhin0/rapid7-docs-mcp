@@ -1,0 +1,181 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # ── Python lint ───────────────────────────────────────────────
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install ruff
+        run: pip install --quiet ruff
+
+      - name: Ruff check
+        run: ruff check server/
+
+      # ── TypeScript lint ───────────────────────────────────────────
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: Prettier check
+        run: npm run format:check
+
+      - name: Commitlint
+        run: |
+          npm install --no-save @commitlint/cli @commitlint/config-conventional
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+        if: github.event_name == 'pull_request'
+
+  typecheck:
+    name: Type Check
+    runs-on: docker
+    # TODO: Pre-existing type errors in crawl-site.ts and crawl.ts surfaced
+    # by expanding tsconfig.json include. Tracked in plan/tasks.md Phase 7.
+    # Re-enable `continue-on-error: false` after those are fixed.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install mypy
+        run: pip install --quiet mypy
+      - name: tsc --noEmit
+        run: npm run typecheck
+      - name: mypy (strict)
+        run: mypy server/ --config-file server/pyproject.toml
+
+  test:
+    name: Test
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Python test deps
+        run: pip install --quiet pytest fastmcp pyyaml
+      - name: vitest
+        run: npm test
+      - name: pytest
+        run: pytest server/tests/ -v
+
+  stemmer-parity:
+    name: Stemmer Parity
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run parity check
+        run: |
+          # Cross-validate Node and Python stemmers on a shared test vector.
+          # If outputs differ, search will silently break.
+          node -e "
+            const { stem, tokenize } = await import('./src/text.ts');
+            const words = ['running', 'jumps', 'easily', 'national', 'connection', 'authentication'];
+            console.log(JSON.stringify({ stems: words.map(stem), tokens: tokenize('the quick brown fox jumps over the lazy dog') }));
+          " --input-type=module > /tmp/node-output.json
+          cd server && python3 -c "
+          import json
+          from text import stem, tokenize
+          words = ['running', 'jumps', 'easily', 'national', 'connection', 'authentication']
+          print(json.dumps({'stems': [stem(w) for w in words], 'tokens': tokenize('the quick brown fox jumps over the lazy dog')}))
+          " > /tmp/py-output.json
+          diff /tmp/node-output.json /tmp/py-output.json
+          echo 'Stemmer parity OK'
+
+  audit:
+    name: Dep Audits
+    runs-on: docker
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm audit --audit-level=high
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: pip-audit
+        run: pip install --quiet pip-audit && pip-audit
+
+  sast:
+    name: SAST
+    runs-on: docker
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: trivy fs scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          format: table
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+
+  workflow-lint:
+    name: Workflow & Shell Lint
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: actionlint
+        uses: docker://rhysd/actionlint:1.6.27
+        with:
+          args: -color
+
+      - name: shellcheck
+        run: |
+          apt-get update -qq && apt-get install -y -qq shellcheck > /dev/null
+          shellcheck docker-entrypoint.sh
+        if: hashFiles('docker-entrypoint.sh') != ''

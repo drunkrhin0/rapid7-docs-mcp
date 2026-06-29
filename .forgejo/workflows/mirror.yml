@@ -1,0 +1,28 @@
+name: Mirror to GitHub
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  mirror-tag:
+    name: Push tag to GitHub
+    runs-on: docker
+    steps:
+      - name: Push tag to GitHub mirror
+        env:
+          GH_PAT: ${{ secrets.GH_PAT }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if [ -z "$GH_PAT" ]; then
+            echo "::error::GH_PAT secret is not set. Cannot mirror to GitHub."
+            exit 1
+          fi
+          git config user.name "forgejo-mirror"
+          git config user.email "noreply@drunkrhin0.au"
+          git push https://x-access-token:${GH_PAT}@github.com/drunkrhin0/rapid7-docs-mcp.git "${TAG}"
+          echo "Mirrored tag ${TAG} to github.com/drunkrhin0/rapid7-docs-mcp"

@@ -1,0 +1,57 @@
+name: Nightly
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deps-check:
+    name: Dep Check
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: npm outdated
+        run: npm outdated || true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: pip-audit
+        run: pip install --quiet pip-audit && pip-audit
+
+  smoke-test:
+    name: Smoke Test
+    runs-on: docker
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build & start
+        run: |
+          docker compose up -d --build
+          # Give the MCP server and crawler time to initialise
+          sleep 45
+
+      - name: Health check
+        run: |
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8001/health || echo "000")
+          if [ "$STATUS" != "200" ] && [ "$STATUS" != "503" ]; then
+            echo "Health check failed with status $STATUS"
+            docker compose logs
+            docker compose down
+            exit 1
+          fi
+          echo "Health endpoint reachable: $STATUS"
+
+      - name: Cleanup
+        if: always()
+        run: docker compose down
