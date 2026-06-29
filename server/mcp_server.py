@@ -22,7 +22,7 @@ from pathlib import Path
 from fastmcp import FastMCP
 from fastmcp.server.middleware import CallNext, Middleware, MiddlewareContext
 
-from . import __version__ as VERSION
+from . import __version__ as version
 from .middleware import RateLimitMiddleware
 from .search import (
     BlogPost,
@@ -73,7 +73,7 @@ class AuthMiddleware(Middleware):
 
 mcp = FastMCP(
     name="Rapid7 Docs",
-    version=VERSION,
+    version=version,
     instructions="""Rapid7 documentation and resource search assistant.
 
 Uses the Rapid7 Docs MCP server to search technical documentation, product
