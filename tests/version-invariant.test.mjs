@@ -69,10 +69,14 @@ function getCurrentVersion() {
   return pkg.version;
 }
 
+function escapeRegExp(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 describe('version invariant', () => {
   const version = getCurrentVersion();
   // Match the version in any quoted context: "x.y.z" or 'x.y.z'
-  const versionRegex = new RegExp(`['"\`]${version.replace(/\./g, '\\.')}['"\`]`);
+  const versionRegex = new RegExp(`['"\`]${escapeRegExp(version)}['"\`]`);
 
   it('does not hardcode the current version outside canonical files', () => {
     const files = walk(repoRoot);
