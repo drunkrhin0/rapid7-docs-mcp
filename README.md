@@ -2,7 +2,7 @@
 
 Search Rapid7 documentation, product info, blog posts, and resources from any MCP-compatible AI client. Self-hostable, authenticated, runs in Docker.
 
-Built on [FastMCP](https://gofastmcp.com). Serves both **Streamable HTTP** and **SSE** — works with Claude Desktop, OpenChamber, Bifrost, and any MCP-compatible client.
+Built on [FastMCP](https://gofastmcp.com). Serves both **Streamable HTTP** and **SSE**. Works with Claude Desktop, OpenChamber, Bifrost, and any MCP-compatible client.
 
 > Disclaimer: Vibe coded with Claude Code and Opencode. Created in personal time and is not officially supported or associated with Rapid7 and only uses public resources. Use at your own risk. Do not approach Rapid7 for support or issues regarding this project. Please open an issue instead.
 

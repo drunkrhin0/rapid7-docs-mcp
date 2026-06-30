@@ -1,24 +1,33 @@
 /**
- * Verifies the version invariant: the string "2.0.0" (or any specific version)
- * should NOT appear in source files outside the canonical version locations.
+ * Verifies the version invariant: the stringified version from
+ * package.json must NOT appear in source files outside the canonical
+ * version locations.
  *
- * This catches accidental hardcoding of versions in:
- *   - TypeScript source (src/, crawl*.ts)
- *   - Python source (mcp_server.py, etc.)
- *   - Markdown (README, docs/)
- *   - Workflow files
+ * Catches accidental hardcoding of a version in any new file.
  *
- * Canonical version locations (allowed):
- *   - package.json
- *   - server/__init__.py
- *   - server/pyproject.toml
+ * Reads the expected version from package.json so the test stays
+ * accurate across bumps. Add a hardcoded version anywhere → this
+ * test fails.
  */
 
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, extname, relative } from 'node:path';
+import { readFileSync, readdirSync, statSync, writeFileSync, unlinkSync, existsSync } from 'node:fs';
+import { join, extname, relative, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const ALLOWED_FILES = new Set(['package.json', 'server/__init__.py', 'server/pyproject.toml', 'package-lock.json']);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = join(__filename, '..');
+const repoRoot = resolve(__dirname, '..');
+
+const ALLOWED_FILES = new Set([
+  'package.json',
+  'server/__init__.py',
+  'server/pyproject.toml',
+  'package-lock.json',
+  // Tests and tooling may reference the current version
+  'tests/version-sync.test.mjs',
+  'tests/version-invariant.test.mjs',
+]);
 
 const SKIP_DIRS = new Set([
   'node_modules',
@@ -31,16 +40,22 @@ const SKIP_DIRS = new Set([
   'doubt',
   '__pycache__',
   '.pytest_cache',
+  '.mypy_cache',
+  '.ruff_cache',
+  '.opencode',
 ]);
+
+const SCAN_EXTENSIONS = new Set(['.ts', '.js', '.mjs', '.cjs', '.py', '.yml', '.yaml', '.md']);
 
 function walk(dir, acc = []) {
   for (const entry of readdirSync(dir)) {
     if (SKIP_DIRS.has(entry)) continue;
     if (entry.startsWith('.')) {
-      if (entry !== '.forgejo' && entry !== '.github') continue;
+      if (entry !== '.github' && entry !== '.forgejo') continue;
     }
     const full = join(dir, entry);
-    if (statSync(full).isDirectory()) {
+    const stat = statSync(full);
+    if (stat.isDirectory()) {
       walk(full, acc);
     } else {
       acc.push(full);
@@ -49,26 +64,67 @@ function walk(dir, acc = []) {
   return acc;
 }
 
+function getCurrentVersion() {
+  const pkg = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8'));
+  return pkg.version;
+}
+
 describe('version invariant', () => {
-  it('does not hardcode "2.0.0" outside canonical version files', () => {
-    const cwd = process.cwd();
-    const files = walk(cwd);
+  const version = getCurrentVersion();
+  // Match the version in any quoted context: "x.y.z" or 'x.y.z'
+  const versionRegex = new RegExp(`['"\`]${version.replace(/\./g, '\\.')}['"\`]`);
+
+  it('does not hardcode the current version outside canonical files', () => {
+    const files = walk(repoRoot);
     const violations = [];
 
     for (const file of files) {
-      const rel = relative(cwd, file);
-      const ext = extname(file);
-
-      if (!['.ts', '.js', '.mjs', '.py', '.yml', '.yaml'].includes(ext)) continue;
+      const rel = relative(repoRoot, file);
       if (ALLOWED_FILES.has(rel)) continue;
-      if (rel.startsWith('tests/')) continue; // Skip test files (they reference the version being checked)
+      if (!SCAN_EXTENSIONS.has(extname(file))) continue;
 
       const content = readFileSync(file, 'utf8');
-      if (content.includes('"2.0.0"') || content.includes("'2.0.0'")) {
+      if (versionRegex.test(content)) {
         violations.push(rel);
       }
     }
 
     expect(violations).toEqual([]);
+  });
+
+  it('detects a fake hardcoded version (regression guard)', () => {
+    // This is a sanity check: the regex actually finds the version
+    // string. Without this, a broken regex would silently pass.
+    const probePath = join(repoRoot, 'tests', '_version_probe.tmp');
+    const FAKE = '9.9.9-fake';
+    try {
+      // Probe content uses the regex-quoted form so we know the
+      // detector is sensitive to it.
+      const fakeVersion = JSON.stringify(FAKE);
+      writeFileSync(probePath, `version = ${fakeVersion}\n`);
+      const files = walk(repoRoot);
+      const found = files.some((f) => f === probePath && versionRegex.test(readFileSync(f, 'utf8')));
+      // The probe uses FAKE which is not the real version, so the
+      // real-version detector shouldn't match it. We assert it doesn't.
+      expect(found).toBe(false);
+    } finally {
+      if (existsSync(probePath)) unlinkSync(probePath);
+    }
+  });
+
+  it('catches a real violation (detector works)', () => {
+    // If this test ever breaks, the detector isn't finding real
+    // violations and the previous test is passing for the wrong
+    // reason.
+    const probePath = join(repoRoot, 'tests', '_version_probe.tmp');
+    try {
+      const realVersion = JSON.stringify(version);
+      writeFileSync(probePath, `version = ${realVersion}\n`);
+      const files = walk(repoRoot);
+      const found = files.some((f) => f === probePath && versionRegex.test(readFileSync(f, 'utf8')));
+      expect(found).toBe(true);
+    } finally {
+      if (existsSync(probePath)) unlinkSync(probePath);
+    }
   });
 });

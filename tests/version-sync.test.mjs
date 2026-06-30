@@ -129,4 +129,42 @@ describe('version-sync.mjs', () => {
     expect(init).toContain('__all__ = ["foo"]');
     expect(init).toContain('__version__ = "1.2.3"');
   });
+
+  it('preserves comments in server/pyproject.toml (I2)', () => {
+    const pyprojectPath = join(repo, 'server', 'pyproject.toml');
+    writeFileSync(
+      pyprojectPath,
+      `[project]
+name = "test"
+version = "0.0.0"
+
+[tool.ruff.lint]
+ignore = ["E501"]  # line length handled by formatter
+`,
+    );
+
+    runScript(repo);
+
+    const pyproject = readFileSync(pyprojectPath, 'utf8');
+    // The comment must survive the version bump
+    expect(pyproject).toContain('# line length handled by formatter');
+  });
+
+  it('errors cleanly when server/__init__.py is missing (I3)', () => {
+    rmSync(join(repo, 'server', '__init__.py'));
+
+    const result = runScript(repo);
+    expect(result.code).toBe(1);
+    expect(result.stderr).toMatch(/__init__\.py/);
+    expect(result.stderr).toMatch(/Failed to (read|write)/);
+  });
+
+  it('errors cleanly when server/pyproject.toml is missing (I3)', () => {
+    rmSync(join(repo, 'server', 'pyproject.toml'));
+
+    const result = runScript(repo);
+    expect(result.code).toBe(1);
+    expect(result.stderr).toMatch(/pyproject\.toml/);
+    expect(result.stderr).toMatch(/Failed to (read|write)/);
+  });
 });

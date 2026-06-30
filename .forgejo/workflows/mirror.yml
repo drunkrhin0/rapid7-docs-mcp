@@ -19,7 +19,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.1.7
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -27,18 +27,36 @@ jobs:
       - name: Push tag to GitHub mirror
         env:
           GH_PAT: ${{ secrets.GH_PAT }}
-          TAG: ${{ github.event.workflow_run.head_branch }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: |
-          if [ -z "$GH_PAT" ]; then
+          set -euo pipefail
+          if [ -z "${GH_PAT:-}" ]; then
             echo "::error::GH_PAT secret is not set. Cannot mirror to GitHub."
             exit 1
           fi
-          if [ -z "$TAG" ]; then
-            echo "::error::No tag found in workflow_run event. Cannot mirror."
+          if [ -z "${HEAD_SHA:-}" ]; then
+            echo "::error::head_sha missing from workflow_run event. Cannot mirror."
             exit 1
           fi
+          # head_branch is empty for tag pushes on GitHub Actions and
+          # may also be empty on Forgejo. Resolve the tag name from
+          # head_sha instead — always populated.
+          TAG=$(git tag --points-at "$HEAD_SHA")
+          if [ -z "$TAG" ]; then
+            echo "::error::No tag points at $HEAD_SHA. The Release workflow must have created one."
+            exit 1
+          fi
+          # Defensive: only mirror tags (not branches). The mirror
+          # exists for tag artifacts, not branch sync.
+          case "$TAG" in
+            v*) ;;
+            *)
+              echo "::error::Ref $TAG is not a version tag (must start with 'v'). Refusing to mirror."
+              exit 1
+              ;;
+          esac
           # Use extraHeader instead of embedding the PAT in the URL — avoids
           # log-leak risk if git ever logs the remote URL.
           git -c http.extraHeader="Authorization: Bearer ${GH_PAT}" \
-              push https://github.com/drunkrhin0/rapid7-docs-mcp.git "${TAG}"
-          echo "Mirrored tag ${TAG} to github.com/drunkrhin0/rapid7-docs-mcp"
+              push https://github.com/drunkrhin0/rapid7-docs-mcp.git "$TAG"
+          echo "Mirrored tag $TAG to github.com/drunkrhin0/rapid7-docs-mcp"
